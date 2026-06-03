@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+
+  <rect width="400" height="400" fill="#FEF0F5" rx="56"/>
+
+  <!-- Calligraphy brush, vertical, centered -->
+  <!-- Handle -->
+  <rect x="193" y="85" width="14" height="64" rx="5" fill="#D4849A"/>
+  <!-- Grip rings -->
+  <rect x="191" y="108" width="18" height="3" rx="1" fill="#B86880"/>
+  <rect x="191" y="118" width="18" height="3" rx="1" fill="#B86880"/>
+  <!-- Ferrule (metal band) -->
+  <rect x="186" y="149" width="28" height="13" rx="3" fill="#8A4060"/>
+  <!-- Bristles: tapered triangle -->
+  <path d="M 188,162 L 212,162 L 200,215 Z" fill="#3D2040"/>
+  <!-- Bristle sheen -->
+  <path d="M 197,170 L 203,170 L 200,215 Z" fill="#5A3060" opacity="0.5"/>
+
+  <!-- Ink stroke under brush — a bold calligraphic horizontal mark -->
+  <path d="M 128,178 C 132,168 155,164 200,166 C 245,164 268,168 272,178
+           C 268,188 245,192 200,190 C 155,192 132,188 128,178 Z"
+        fill="#3D2040" opacity="0.12"/>
+
+  <line x1="130" y1="220" x2="270" y2="220"
+        stroke="#E8A0B4" stroke-width="1" opacity="0.55"/>
+
+  <text x="200" y="292" text-anchor="middle"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="70" font-weight="800" fill="#4A2040">JLPT</text>
+
+  <text x="200" y="322" text-anchor="middle"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="13" font-weight="400" letter-spacing="5"
+        fill="#C07090">KANJI STUDY</text>
+
+</svg>

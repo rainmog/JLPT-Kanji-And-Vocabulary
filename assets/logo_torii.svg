@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+
+  <rect width="400" height="400" fill="#FEF0F5" rx="56"/>
+
+  <!-- Torii gate -->
+  <!-- Kasagi: curved top beam with upswept ends -->
+  <path d="M 124,114 C 136,90 164,88 200,90 C 236,88 264,90 276,114
+           L 268,114 C 258,94 236,96 200,98 C 164,96 142,94 132,114 Z"
+        fill="#D4607A"/>
+  <!-- Shimagi: second beam -->
+  <rect x="148" y="118" width="104" height="11" rx="3" fill="#D4607A"/>
+  <!-- Left pillar -->
+  <rect x="160" y="129" width="17" height="80" rx="4" fill="#D4607A"/>
+  <!-- Right pillar -->
+  <rect x="223" y="129" width="17" height="80" rx="4" fill="#D4607A"/>
+  <!-- Nuki: crossbar -->
+  <rect x="153" y="152" width="94" height="11" rx="3" fill="#D4607A"/>
+
+  <line x1="130" y1="220" x2="270" y2="220"
+        stroke="#E8A0B4" stroke-width="1" opacity="0.55"/>
+
+  <text x="200" y="292" text-anchor="middle"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="70" font-weight="800" fill="#4A2040">JLPT</text>
+
+  <text x="200" y="322" text-anchor="middle"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="13" font-weight="400" letter-spacing="5"
+        fill="#C07090">KANJI STUDY</text>
+
+</svg>

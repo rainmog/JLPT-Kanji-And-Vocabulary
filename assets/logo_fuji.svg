@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+
+  <rect width="400" height="400" fill="#FEF0F5" rx="56"/>
+
+  <!-- Mount Fuji -->
+  <!-- Mountain body -->
+  <path d="M 105,202 L 200,95 L 295,202 Z" fill="#C87090"/>
+  <!-- Snow cap -->
+  <path d="M 172,130 L 200,95 L 228,130 C 218,138 182,138 172,130 Z" fill="#FFF8FA"/>
+  <!-- Soft base shadow -->
+  <ellipse cx="200" cy="202" rx="98" ry="8" fill="#C87090" opacity="0.18"/>
+
+  <line x1="130" y1="220" x2="270" y2="220"
+        stroke="#E8A0B4" stroke-width="1" opacity="0.55"/>
+
+  <text x="200" y="292" text-anchor="middle"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="70" font-weight="800" fill="#4A2040">JLPT</text>
+
+  <text x="200" y="322" text-anchor="middle"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="13" font-weight="400" letter-spacing="5"
+        fill="#C07090">KANJI STUDY</text>
+
+</svg>

@@ -1,0 +1,32 @@
+# Python pipeline intermediates (keep final kanji.db in kanji_app/assets/)
+tools/data/*
+!tools/data/n1_questions.json
+!tools/data/n2_questions.json
+!tools/data/n3_questions.json
+!tools/data/n4_questions.json
+!tools/data/n5_questions.json
+tools/kanjidic2.xml
+tools/compact/
+tools/dev_artifacts/
+__pycache__/
+*.pyc
+.env
+
+# Python venv
+venv/
+.venv/
+
+# Internal dev docs — not for public repo
+DEVNOTES.md
+CLAUDE.md
+prompt-to-start.md
+audit_results.txt
+TODO.md
+JLPT_N3_N2_N1_PLAN.md
+docs/
+
+# Backups
+*.zip
+
+# Claude tooling
+.superpowers/
