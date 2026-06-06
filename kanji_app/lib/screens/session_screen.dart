@@ -657,6 +657,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen>
         _showingFeedback = true;
         _lastAnswerCorrect = isCorrect;
         _lastCorrectAnswer = correctMsg;
+        _lastEnglishTranslation = question.meaning.split(',').take(3).map((s) => s.trim()).join(' / ');
       });
     } else if (question is SentenceQuestion) {
       if (widget.multipleChoice) {

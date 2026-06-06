@@ -31,9 +31,7 @@ class SoundService {
     _ambientPlayer.setReleaseMode(ReleaseMode.loop);
   }
 
-  // Call once from main() before runApp — sets audio context for all players.
-  // Using ambient category on iOS mixes with other apps (music, podcasts).
-  // On Android, AudioFocus.none avoids interrupting background audio.
+  // Call once from main() before runApp.
   static Future<void> init() async {
     await AudioPlayer.global.setAudioContext(AudioContext(
       iOS: AudioContextIOS(
@@ -47,66 +45,83 @@ class SoundService {
         audioFocus: AndroidAudioFocus.none,
       ),
     ));
+    await _instance._preloadAll();
+  }
+
+  // Plays each SFX silently to force decode, then pauses at position 0.
+  // onPlayerComplete listener re-arms the player after each use.
+  Future<void> _preloadAll() async {
+    final sfx = [
+      (_selectPlayer,  'audio/select_button.wav'),
+      (_correctPlayer, 'audio/Sparkle.mp3'),
+      (_wrongPlayer,   'audio/Wrong.mp3'),
+      (_backPlayer,    'audio/go_back.wav'),
+      (_startPlayer,   'audio/test_practice_start.wav'),
+      (_completePlayer,'audio/test_practice_complete.wav'),
+    ];
+    await Future.wait(sfx.map((e) => _prime(e.$1, e.$2)));
+  }
+
+  Future<void> _prime(AudioPlayer player, String source) async {
+    player.setReleaseMode(ReleaseMode.stop);
+    player.onPlayerComplete.listen((_) async {
+      // Re-arm: seek to start and pause so resume() is instant next time.
+      try {
+        await player.seek(Duration.zero);
+        await player.pause();
+      } catch (_) {}
+    });
+    try {
+      await player.setVolume(0);
+      await player.play(AssetSource(source));
+      await player.seek(Duration.zero);
+      await player.pause();
+      await player.setVolume(_sfxVolume);
+    } catch (_) {}
   }
 
   factory SoundService() => _instance;
 
-  Future<void> playCorrect() async {
+  void playCorrect() {
     if (!sfxEnabled) return;
-    try {
-      await _correctPlayer.stop();
-      await _correctPlayer.play(AssetSource('audio/Sparkle.mp3'));
-      await _correctPlayer.setVolume(_sfxVolume);
-    } catch (_) {}
+    _correctPlayer.resume();
   }
 
-  Future<void> playWrong() async {
+  void playWrong() {
     if (!sfxEnabled) return;
-    try {
-      await _wrongPlayer.stop();
-      await _wrongPlayer.play(AssetSource('audio/Wrong.mp3'));
-      await _wrongPlayer.setVolume(_sfxVolume);
-    } catch (_) {}
+    _wrongPlayer.resume();
   }
 
-  Future<void> playSelectButton() async {
+  void playSelectButton() {
     if (!sfxEnabled) return;
-    try {
-      await _selectPlayer.stop();
-      await _selectPlayer.play(AssetSource('audio/select_button.wav'));
-      await _selectPlayer.setVolume(_sfxVolume);
-    } catch (_) {}
+    _selectPlayer.resume();
   }
 
-  Future<void> playGoBack() async {
+  void playGoBack() {
     if (!sfxEnabled) return;
-    try {
-      await _backPlayer.stop();
-      await _backPlayer.play(AssetSource('audio/go_back.wav'));
-      await _backPlayer.setVolume(_sfxVolume);
-    } catch (_) {}
+    _backPlayer.resume();
   }
 
-  Future<void> playTestStart() async {
+  void playTestStart() {
     if (!sfxEnabled) return;
-    try {
-      await _startPlayer.stop();
-      await _startPlayer.play(AssetSource('audio/test_practice_start.wav'));
-      await _startPlayer.setVolume(_sfxVolume);
-    } catch (_) {}
+    _startPlayer.resume();
   }
 
-  Future<void> playTestComplete() async {
+  void playTestComplete() {
     if (!sfxEnabled) return;
-    try {
-      await _completePlayer.stop();
-      await _completePlayer.play(AssetSource('audio/test_practice_complete.wav'));
-      await _completePlayer.setVolume(_sfxVolume);
-    } catch (_) {}
+    _completePlayer.resume();
   }
 
   Future<void> setSfxVolume(double volume) async {
     _sfxVolume = volume;
+    await Future.wait([
+      _selectPlayer.setVolume(volume),
+      _correctPlayer.setVolume(volume),
+      _wrongPlayer.setVolume(volume),
+      _backPlayer.setVolume(volume),
+      _startPlayer.setVolume(volume),
+      _completePlayer.setVolume(volume),
+    ]);
   }
 
   Future<void> setAmbient(String trackKey) async {
@@ -114,8 +129,8 @@ class SoundService {
     _currentAmbient = trackKey;
     await _ambientPlayer.stop();
     if (trackKey != 'none' && ambientEnabled) {
-      await _ambientPlayer.play(AssetSource('audio/ambience/$trackKey'));
       await _ambientPlayer.setVolume(_currentVolume);
+      await _ambientPlayer.play(AssetSource('audio/ambience/$trackKey'));
     }
   }
 

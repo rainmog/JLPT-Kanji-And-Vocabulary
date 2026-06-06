@@ -199,7 +199,7 @@ class VocabRepository {
     final placeholders = List.filled(levels.length, '?').join(',');
     final limitClause = limit != null ? 'LIMIT $limit' : '';
     final rows = await dbService.query(
-      'SELECT * FROM vocabulary WHERE jlpt_level IN ($placeholders) ORDER BY RANDOM() $limitClause',
+      'SELECT * FROM vocabulary WHERE jlpt_level IN ($placeholders) ORDER BY jlpt_level DESC, id ASC $limitClause',
       levels,
     );
     return rows.map(VocabWord.fromMap).toList();
@@ -220,7 +220,7 @@ class VocabRepository {
       '''SELECT DISTINCT v.* FROM vocabulary v
          JOIN vocabulary_tags vt ON v.id = vt.vocab_id
          WHERE vt.tag IN ($tagPlaceholders) $levelClause
-         ORDER BY RANDOM() $limitClause''',
+         ORDER BY v.jlpt_level DESC, v.id ASC $limitClause''',
       args,
     );
     return rows.map(VocabWord.fromMap).toList();

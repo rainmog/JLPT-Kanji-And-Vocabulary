@@ -37,18 +37,21 @@ class _WordSessionScreenState extends ConsumerState<WordSessionScreen> {
 
     final qs = <WordQuestion>[];
     for (final k in kanji) {
+      String topMeanings(String m) => m.split(',').take(3).map((s) => s.trim()).join(' / ');
+
       final wrongReadings = kanji.where((x) => x.id != k.id).take(3).map((x) => x.onReading.split('・')[0]).toList();
-      final wrongMeanings = kanji.where((x) => x.id != k.id).take(3).map((x) => x.meaning.split(',')[0]).toList();
+      final wrongMeanings = kanji.where((x) => x.id != k.id).take(3).map((x) => topMeanings(x.meaning)).toList();
+      final correctMeaning = topMeanings(k.meaning);
 
       final readings = [k.onReading.split('・')[0], ...wrongReadings]..shuffle();
-      final meanings = [k.meaning.split(',')[0], ...wrongMeanings]..shuffle();
+      final meanings = [correctMeaning, ...wrongMeanings]..shuffle();
 
       qs.add(WordQuestion(
         kanji: k,
         readings: readings,
         meanings: meanings,
         correctReading: k.onReading.split('・')[0],
-        correctMeaning: k.meaning.split(',')[0],
+        correctMeaning: correctMeaning,
       ));
     }
 

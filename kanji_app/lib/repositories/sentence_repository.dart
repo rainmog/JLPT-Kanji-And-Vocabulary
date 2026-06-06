@@ -81,6 +81,13 @@ class SentenceRepository {
   static String _toHiragana(String s) => String.fromCharCodes(
       s.codeUnits.map((c) => (c >= 0x30A1 && c <= 0x30F6) ? c - 0x60 : c));
 
+  static bool _containsKanji(String s) => s.split('').any((c) {
+    final code = c.codeUnitAt(0);
+    return (code >= 0x4E00 && code <= 0x9FFF) ||
+        (code >= 0x3400 && code <= 0x4DBF) ||
+        (code >= 0xF900 && code <= 0xFAFF);
+  });
+
   static String _readingLabel(String? on, String? kun) {
     final onStr = (on ?? '').split('・')[0].trim();
     // strip okurigana suffix (e.g. "たべ.る" → "たべ")
@@ -297,7 +304,7 @@ class SentenceRepository {
           String? word;
           String? correctReading;
           for (final t in tokens) {
-            if (t.isKanji && t.kanjiChar == kanji.character && t.surface.length > 1) {
+            if (t.isKanji && t.kanjiChar == kanji.character && t.surface.length > 1 && _containsKanji(t.surface)) {
               word = t.surface;
               correctReading = _toHiragana(t.reading);
               break;
@@ -363,7 +370,7 @@ class SentenceRepository {
       allQuestions.add(KanjiQuestion(
         kanjiId: kanji.id,
         character: kanji.character,
-        meaning: meaning,
+        meaning: kanji.meaning,
         readingOptions: [correctLabel, ...wrongReadings]..shuffle(),
         meaningOptions: [meaning, ...wrongMeanings]..shuffle(),
         correctReading: correctLabel,
@@ -477,7 +484,7 @@ class SentenceRepository {
       questions.add(KanjiQuestion(
         kanjiId: id,
         character: char,
-        meaning: meaning,
+        meaning: row['meaning'] as String,
         readingOptions: readingOptions,
         meaningOptions: meaningOptions,
         correctReading: correctLabel,
@@ -573,7 +580,7 @@ class SentenceRepository {
         String? correctReading;
         for (final t in textStructured) {
           final token = t as Map<String, dynamic>;
-          if (token['kanji_char'] == char && (token['surface'] as String).length > 1) {
+          if (token['kanji_char'] == char && (token['surface'] as String).length > 1 && _containsKanji(token['surface'] as String)) {
             word = token['surface'] as String;
             correctReading = _toHiragana(token['reading'] as String);
             break;

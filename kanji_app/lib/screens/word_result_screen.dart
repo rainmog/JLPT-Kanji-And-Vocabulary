@@ -56,7 +56,13 @@ class _WordResultScreenState extends State<WordResultScreen> {
                   color: widget.correct ? AppColors.correct : AppColors.incorrect,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
+              Text(
+                widget.question.correctMeaning,
+                style: TextStyle(fontSize: 15, color: AppColors.muted),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
 
               // Show answers
               Container(

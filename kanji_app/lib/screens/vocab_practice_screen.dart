@@ -7,6 +7,7 @@ import '../services/sound_service.dart';
 import '../theme.dart';
 import '../utils/romaji_converter.dart';
 import '../utils/vocab_answer_validator.dart';
+import '../widgets/ruby_text.dart';
 import '../widgets/scale_on_press.dart';
 
 class VocabPracticeScreen extends ConsumerStatefulWidget {
@@ -58,10 +59,9 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen> {
 
   Future<void> _load() async {
     final learned = await progressRepo.getLearnedKanjiCharacters();
-    final shuffled = [...widget.words]..shuffle();
     if (!mounted) return;
     setState(() {
-      _queue = shuffled;
+      _queue = widget.words;
       _learnedKanji = learned;
       _loading = false;
     });
@@ -69,23 +69,6 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen> {
   }
 
   VocabWord get _current => _queue[_currentIndex];
-
-  String _displayWord(VocabWord word) {
-    if (widget.reverseMode) return word.meanings;
-    if (!widget.suppressFurigana) return word.reading;
-    if (word.word == word.reading) return word.reading;
-    final kanjiChars = word.word.split('').where(_isKanji);
-    if (kanjiChars.isEmpty) return word.reading;
-    if (kanjiChars.every((c) => _learnedKanji.contains(c))) return word.word;
-    return word.reading;
-  }
-
-  bool _isKanji(String c) {
-    final code = c.codeUnitAt(0);
-    return (code >= 0x4E00 && code <= 0x9FFF) ||
-           (code >= 0x3400 && code <= 0x4DBF) ||
-           (code >= 0xF900 && code <= 0xFAFF);
-  }
 
   Future<void> _buildOptions() async {
     if (widget.reverseMode) {
@@ -188,7 +171,6 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen> {
     }
 
     final word = _current;
-    final displayWord = _displayWord(word);
     final progress = '${_currentIndex + 1} / ${_queue.length}';
     final hintText = widget.reverseMode ? 'Type Japanese reading...' : 'Type English meaning...';
     final correctAnswer = widget.reverseMode ? word.reading : word.meanings;
@@ -213,9 +195,22 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen> {
               Expanded(
                 child: Center(
                   child: SingleChildScrollView(
-                    child: Text(displayWord,
-                        style: TextStyle(fontSize: 52, color: AppColors.kanjiColor),
-                        textAlign: TextAlign.center),
+                    child: widget.reverseMode
+                        ? Text(word.meanings,
+                            style: TextStyle(fontSize: 36, color: AppColors.kanjiColor),
+                            textAlign: TextAlign.center)
+                        : word.word == word.reading
+                            ? Text(word.word,
+                                style: TextStyle(fontSize: 52, color: AppColors.kanjiColor),
+                                textAlign: TextAlign.center)
+                            : RubyText(
+                                '{${word.word}|${word.reading}}',
+                                fontSize: 52,
+                                color: AppColors.kanjiColor,
+                                showFurigana: !widget.suppressFurigana,
+                                suppressedKanji: widget.suppressFurigana ? null : _learnedKanji,
+                                centered: true,
+                              ),
                   ),
                 ),
               ),
