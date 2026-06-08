@@ -6,9 +6,8 @@ import '../utils/app_route.dart';
 import '../services/onboarding_service.dart';
 import '../services/export_service.dart';
 import '../services/settings_service.dart';
-import '../repositories/kana_repository.dart';
-import 'home_screen.dart';
 import 'onboarding_welcome_back_screen.dart';
+import 'onboarding_auto_progression_screen.dart';
 
 // ── Page 1: Welcome ────────────────────────────────────────────────────────────
 
@@ -32,57 +31,115 @@ class _OnboardingWelcomeScreenState extends ConsumerState<OnboardingWelcomeScree
   @override
   Widget build(BuildContext context) {
     ref.watch(themeColorsProvider);
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(height: screenHeight * 0.12),
-              Text(
-                'Welcome to JLPT Kanji & Vocabulary',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.fg,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'A few notes on how to get started.',
-                style: TextStyle(fontSize: 15, color: AppColors.muted),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 36),
-              _TutorialCarousel(
-                pageController: _pageController,
-                currentPage: _currentPage,
-                onPageChanged: (i) => setState(() => _currentPage = i),
-              ),
-              const Spacer(),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.btnBg,
-                  foregroundColor: AppColors.fg,
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppColors.buttonRadius),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Top bar with Skip button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      AppRoute.to(const OnboardingLevelSelectionScreen()),
+                    ),
+                    child: Text(
+                      'Skip',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.muted,
+                      ),
+                    ),
                   ),
+                ],
+              ),
+            ),
+
+            // Title area
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: Column(
+                children: [
+                  Text(
+                    'Welcome to JLPT Kanji & Vocabulary',
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.fg,
+                      letterSpacing: -0.6,
+                      height: 1.2,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'A few notes on how to get started.',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.muted,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+
+            // Carousel card (Expanded)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 22, 20, 8),
+                child: _TutorialCarousel(
+                  pageController: _pageController,
+                  currentPage: _currentPage,
+                  onPageChanged: (i) => setState(() => _currentPage = i),
                 ),
-                onPressed: () => Navigator.push(
+              ),
+            ),
+
+            // Get started button
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 18),
+              child: GestureDetector(
+                onTap: () => Navigator.push(
                   context,
                   AppRoute.to(const OnboardingLevelSelectionScreen()),
                 ),
-                child: const Text('Get started'),
+                child: Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(17),
+                    border: Border.all(color: AppColors.pillBg),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Get started',
+                    style: TextStyle(
+                      fontSize: 16.5,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.fg,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ),
               ),
-              const SizedBox(height: 40),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -106,24 +163,33 @@ class _TutorialCarousel extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          height: 440,
-          decoration: BoxDecoration(
-            color: AppColors.btnBg,
-            borderRadius: BorderRadius.circular(AppColors.containerRadius),
-          ),
-          clipBehavior: Clip.hardEdge,
-          child: PageView(
-            controller: pageController,
-            onPageChanged: onPageChanged,
-            children: const [
-              _TutorialPage1(),
-              _TutorialPage2(),
-              _TutorialPage3(),
-            ],
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(26),
+              border: Border.all(color: AppColors.pillBg),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            clipBehavior: Clip.hardEdge,
+            child: PageView(
+              controller: pageController,
+              onPageChanged: onPageChanged,
+              children: const [
+                _TutorialPage1(),
+                _TutorialPage2(),
+                _TutorialPage3(),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 14),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -131,17 +197,21 @@ class _TutorialCarousel extends StatelessWidget {
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 margin: const EdgeInsets.symmetric(horizontal: 3),
-                width: i == currentPage ? 16 : 6,
-                height: 6,
+                width: i == currentPage ? 22 : 7,
+                height: 7,
                 decoration: BoxDecoration(
                   color: i == currentPage ? AppColors.accent : AppColors.pillBg,
-                  borderRadius: BorderRadius.circular(3),
+                  borderRadius: BorderRadius.circular(99),
                 ),
               ),
             const SizedBox(width: 8),
             Text(
               '${currentPage + 1} / $_pageCount',
-              style: TextStyle(fontSize: 12, color: AppColors.muted),
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppColors.muted,
+              ),
             ),
           ],
         ),
@@ -156,30 +226,59 @@ class _TutorialPage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 22),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'This app has 3 kanji/vocab states:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.fg),
+            'This app has 3 kanji & vocab states',
+            style: TextStyle(
+              fontSize: 16.5,
+              fontWeight: FontWeight.w800,
+              color: AppColors.fg,
+              letterSpacing: -0.2,
+            ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _StateChip(label: 'Not Learned', kanji: '字', color: AppColors.muted),
-              _StateChip(label: 'Target', kanji: '字', color: AppColors.accent, showTarget: true),
-              _StateChip(label: 'Learned', kanji: '字', color: AppColors.correct, showCheck: true),
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              _StateTile(variant: _StateTileVariant.not),
+              _StateTile(variant: _StateTileVariant.target),
+              _StateTile(variant: _StateTileVariant.learned),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 22),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.muted,
+                height: 1.65,
+              ),
+              children: [
+                const TextSpan(text: 'Choose “'),
+                TextSpan(
+                  text: 'target',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.fg,
+                  ),
+                ),
+                const TextSpan(
+                  text: '” kanji or vocabulary any time — only your targets appear in practice.',
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
           Text(
-            'You can choose target kanji at any time; only these targeted kanji will appear in your practice sessions. '
-            'To convert them to learned you must correctly identify them in the test mode which quizzes you on your targets.',
-            style: TextStyle(fontSize: 14, color: AppColors.muted, height: 1.4),
+            'You can turn a “target” into a “learned” kanji or vocabulary by correctly answering it in test mode. You can take tests to progress whenever you are ready.',
+            style: TextStyle(fontSize: 13, color: AppColors.muted, height: 1.4),
             textAlign: TextAlign.center,
           ),
         ],
@@ -188,70 +287,109 @@ class _TutorialPage1 extends StatelessWidget {
   }
 }
 
-class _StateChip extends StatelessWidget {
-  final String label;
-  final String kanji;
-  final Color color;
-  final bool showTarget;
-  final bool showCheck;
+enum _StateTileVariant { not, target, learned }
 
-  const _StateChip({
-    required this.label,
-    required this.kanji,
-    required this.color,
-    this.showTarget = false,
-    this.showCheck = false,
-  });
+class _StateTile extends StatelessWidget {
+  final _StateTileVariant variant;
+  const _StateTile({required this.variant});
 
   @override
   Widget build(BuildContext context) {
+    late Color cardColor;
+    late Color borderColor;
+    late Color inkColor;
+    late String label;
+    Color? badgeBg;
+    IconData? badgeIcon;
+
+    switch (variant) {
+      case _StateTileVariant.not:
+        cardColor = AppColors.surface;
+        borderColor = AppColors.pillBg;
+        inkColor = AppColors.muted;
+        label = 'Not learned';
+      case _StateTileVariant.target:
+        cardColor = AppColors.accent.withValues(alpha: 0.13);
+        borderColor = AppColors.accent;
+        inkColor = AppColors.fg;
+        label = 'Target';
+        badgeBg = AppColors.accent;
+        badgeIcon = Icons.star;
+      case _StateTileVariant.learned:
+        cardColor = const Color(0xFF4E9D69).withValues(alpha: 0.13);
+        borderColor = const Color(0xFF4E9D69);
+        inkColor = const Color(0xFF4E9D69);
+        label = 'Learned';
+        badgeBg = const Color(0xFF4E9D69);
+        badgeIcon = Icons.check;
+    }
+
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Stack(
           clipBehavior: Clip.none,
           children: [
             Container(
-              width: 44,
-              height: 44,
-              alignment: Alignment.center,
+              width: 66,
+              height: 66,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: color.withValues(alpha: 0.4)),
-              ),
-              child: Text(kanji, style: TextStyle(fontSize: 22, color: color)),
-            ),
-            if (showTarget)
-              Positioned(
-                top: -4,
-                right: -4,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: AppColors.accent,
-                    borderRadius: BorderRadius.circular(4),
+                color: cardColor,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: borderColor, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.07),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
                   ),
-                  child: Text('★', style: TextStyle(fontSize: 8, color: AppColors.bg)),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '字',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w600,
+                  color: inkColor,
+                  fontFamily: 'NotoSerifCJKjp',
                 ),
               ),
-            if (showCheck)
+            ),
+            if (badgeBg != null && badgeIcon != null)
               Positioned(
-                top: -4,
-                right: -4,
+                top: -7,
+                right: -7,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
+                  width: 24,
+                  height: 24,
                   decoration: BoxDecoration(
-                    color: AppColors.correct,
-                    borderRadius: BorderRadius.circular(4),
+                    color: badgeBg,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.12),
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
-                  child: Text('✓', style: TextStyle(fontSize: 8, color: AppColors.bg)),
+                  alignment: Alignment.center,
+                  child: Icon(badgeIcon, size: 12, color: Colors.white),
                 ),
               ),
           ],
         ),
-        const SizedBox(height: 5),
-        Text(label, style: TextStyle(fontSize: 10, color: AppColors.muted)),
+        const SizedBox(height: 9),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w700,
+            color: AppColors.muted,
+          ),
+        ),
       ],
     );
   }
@@ -288,6 +426,12 @@ class _TutorialPage2 extends StatelessWidget {
             style: TextStyle(fontSize: 14, color: AppColors.muted, height: 1.4),
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 10),
+          Text(
+            'These are not directly tied-in to the overall progression system and are only there to help prepare specifically for these exams. You can check your scores in your test history to see your long term progress.',
+            style: TextStyle(fontSize: 13, color: AppColors.muted, height: 1.4),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
@@ -302,30 +446,35 @@ class _TutorialPage3 extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             'Themes & Ambient Music',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.fg),
-            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          Icon(Icons.palette_outlined, color: AppColors.accent, size: 36),
-          const SizedBox(height: 10),
-          Text(
-            'Change your theme at any time from the Settings page.',
-            style: TextStyle(fontSize: 15, color: AppColors.fg),
-            textAlign: TextAlign.center,
-          ),
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Icon(Icons.palette_outlined, color: AppColors.accent, size: 30),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Change your theme at any time from the Settings page.',
+                style: TextStyle(fontSize: 15, color: AppColors.fg),
+              ),
+            ),
+          ]),
           const SizedBox(height: 16),
-          Icon(Icons.music_note_outlined, color: AppColors.accent, size: 36),
-          const SizedBox(height: 10),
-          Text(
-            'Play ambient background sounds that won\'t interfere with other apps\' audio.',
-            style: TextStyle(fontSize: 14, color: AppColors.muted, height: 1.4),
-            textAlign: TextAlign.center,
-          ),
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Icon(Icons.music_note_outlined, color: AppColors.accent, size: 30),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Play ambient background sounds that won\'t interfere with other apps\' audio.',
+                style: TextStyle(fontSize: 14, color: AppColors.fg, height: 1.4),
+              ),
+            ),
+          ]),
         ],
       ),
     );
@@ -337,20 +486,6 @@ class _TutorialPage3 extends StatelessWidget {
 class OnboardingLevelSelectionScreen extends ConsumerWidget {
   const OnboardingLevelSelectionScreen({super.key});
 
-  Future<void> _applyAndGo(BuildContext context, WidgetRef ref, Future<void> Function() apply, {bool hideKana = false}) async {
-    await apply();
-    if (hideKana) {
-      final settings = ref.read(settingsProvider);
-      await ref.read(settingsProvider.notifier).update(settings.copyWith(hideKanaPractice: true));
-      await kanaRepo.setAllLearned(type: 'hiragana');
-      await kanaRepo.setAllLearned(type: 'katakana');
-    }
-    await OnboardingService.markOnboardingComplete();
-    if (context.mounted) {
-      Navigator.pushReplacement(context, AppRoute.to(const HomeScreen()));
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(themeColorsProvider);
@@ -359,102 +494,179 @@ class OnboardingLevelSelectionScreen extends ConsumerWidget {
       backgroundColor: AppColors.bg,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(32, 60, 32, 40),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 340),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'Choose your level.',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.fg,
-                    ),
-                    textAlign: TextAlign.center,
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Back button
+              GestureDetector(
+                onTap: () => Navigator.maybePop(context),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.pillBg),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'This can be changed later.',
-                    style: TextStyle(fontSize: 14, color: AppColors.muted),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 36),
-                  _LevelButton(
-                    label: 'Clean Start',
-                    onTap: () => _applyAndGo(context, ref, () async {}),
-                  ),
-                  const SizedBox(height: 12),
-                  _LevelButton(
-                    label: 'JLPT N5',
-                    onTap: () => _applyAndGo(context, ref,
-                        () => OnboardingService.applyN5Targets(kanjiCount: 10, vocabCount: 20)),
-                  ),
-                  const SizedBox(height: 12),
-                  _LevelButton(
-                    label: 'JLPT N4',
-                    onTap: () => _applyAndGo(context, ref,
-                        () => OnboardingService.applyLevelTargets(level: 4),
-                        hideKana: true),
-                  ),
-                  const SizedBox(height: 12),
-                  _LevelButton(
-                    label: 'JLPT N3',
-                    onTap: () => _applyAndGo(context, ref,
-                        () => OnboardingService.applyLevelTargets(level: 3),
-                        hideKana: true),
-                  ),
-                  const SizedBox(height: 12),
-                  _LevelButton(
-                    label: 'JLPT N2',
-                    onTap: () => _applyAndGo(context, ref,
-                        () => OnboardingService.applyLevelTargets(level: 2),
-                        hideKana: true),
-                  ),
-                  const SizedBox(height: 12),
-                  _LevelButton(
-                    label: 'JLPT N1',
-                    onTap: () => _applyAndGo(context, ref,
-                        () => OnboardingService.applyLevelTargets(level: 1),
-                        hideKana: true),
-                  ),
-                  const SizedBox(height: 24),
-                  Divider(color: AppColors.pillBg),
-                  const SizedBox(height: 24),
-                  _LevelButton(
-                    label: 'I have a user data file',
-                    onTap: () async {
-                      try {
-                        final ok = await exportService.importProgress(
-                          context,
-                          ref.read(settingsProvider),
-                          (s) => ref.read(settingsProvider.notifier).update(s),
-                        );
-                        if (ok && context.mounted) {
-                          await OnboardingService.markOnboardingComplete();
-                          Navigator.pushReplacement(
-                            context,
-                            AppRoute.to(const OnboardingWelcomeBackScreen()),
-                          );
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Import failed: $e'),
-                              backgroundColor: AppColors.incorrectBg,
-                            ),
-                          );
-                        }
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 32),
-                ],
+                  alignment: Alignment.center,
+                  child: Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.fg),
+                ),
               ),
-            ),
+              const SizedBox(height: 16),
+
+              // Title
+              Text(
+                'Choose Your Level',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.fg,
+                  letterSpacing: -0.6,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'You can change this any time.',
+                style: TextStyle(
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.muted,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+
+              // Clean Start card
+              _LevelCard(
+                onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: null))),
+                leading: Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.13),
+                    borderRadius: BorderRadius.circular(13),
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(Icons.auto_awesome, size: 20, color: AppColors.accent),
+                ),
+                title: 'Clean start',
+                subtitle: 'Pick targets yourself as you go',
+              ),
+              const SizedBox(height: 24),
+
+              // Section label
+              Padding(
+                padding: const EdgeInsets.only(left: 4, bottom: 10),
+                child: Text(
+                  'OR START FROM A JLPT LEVEL',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.0,
+                    color: AppColors.muted.withValues(alpha: 0.6),
+                  ),
+                ),
+              ),
+
+              // Level rows
+              _LevelRow(
+                level: 'N5',
+                tag: 'Beginner',
+                onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: 5))),
+              ),
+              const SizedBox(height: 9),
+              _LevelRow(
+                level: 'N4',
+                tag: 'Elementary',
+                onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: 4))),
+              ),
+              const SizedBox(height: 9),
+              _LevelRow(
+                level: 'N3',
+                tag: 'Intermediate',
+                onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: 3))),
+              ),
+              const SizedBox(height: 9),
+              _LevelRow(
+                level: 'N2',
+                tag: 'Upper-int.',
+                onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: 2))),
+              ),
+              const SizedBox(height: 9),
+              _LevelRow(
+                level: 'N1',
+                tag: 'Advanced',
+                onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: 1))),
+              ),
+
+              // "I have a user data file" dashed button
+              const SizedBox(height: 28),
+              GestureDetector(
+                onTap: () async {
+                  try {
+                    final ok = await exportService.importProgress(
+                      context,
+                      ref.read(settingsProvider),
+                      (s) => ref.read(settingsProvider.notifier).update(s),
+                    );
+                    if (ok && context.mounted) {
+                      await OnboardingService.markOnboardingComplete();
+                      if (context.mounted) {
+                        Navigator.pushReplacement(
+                          context,
+                          AppRoute.to(const OnboardingWelcomeBackScreen()),
+                        );
+                      }
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Import failed: $e'),
+                          backgroundColor: AppColors.incorrectBg,
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: AppColors.pillBg,
+                      width: 1.5,
+                      strokeAlign: BorderSide.strokeAlignInside,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.upload_file, size: 17, color: AppColors.muted),
+                      const SizedBox(width: 9),
+                      Text(
+                        'I have a user data file',
+                        style: TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.muted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -462,24 +674,156 @@ class OnboardingLevelSelectionScreen extends ConsumerWidget {
   }
 }
 
-class _LevelButton extends StatelessWidget {
-  final String label;
+class _LevelCard extends StatelessWidget {
   final VoidCallback onTap;
-  const _LevelButton({required this.label, required this.onTap});
+  final Widget leading;
+  final String title;
+  final String subtitle;
+
+  const _LevelCard({
+    required this.onTap,
+    required this.leading,
+    required this.title,
+    required this.subtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.btnBg,
-        foregroundColor: AppColors.fg,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppColors.buttonRadius),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.pillBg, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            leading,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.fg,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.muted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-      onPressed: onTap,
-      child: Text(label, textAlign: TextAlign.center),
+    );
+  }
+}
+
+class _LevelRow extends StatelessWidget {
+  final String level;
+  final String tag;
+  final VoidCallback onTap;
+
+  const _LevelRow({
+    required this.level,
+    required this.tag,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.pillBg, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // N-badge
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.accent,
+                borderRadius: BorderRadius.circular(13),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                level,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'JLPT $level',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.fg,
+                    ),
+                  ),
+                  Text(
+                    tag,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.muted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Empty selection circle
+            Container(
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(99),
+                border: Border.all(color: AppColors.pillBg, width: 2),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
