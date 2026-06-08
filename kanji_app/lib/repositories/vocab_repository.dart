@@ -165,6 +165,22 @@ class VocabRepository {
     return (rows.first['cnt'] as int?) ?? 0;
   }
 
+  /// Returns up to [count] vocab words not yet targeted and not yet learned,
+  /// ordered N5→N1 by jlpt_level DESC, then by id ASC (frequency order).
+  Future<List<VocabWord>> getNextUntargetedVocab(int count) async {
+    if (count <= 0) return [];
+    final rows = await dbService.query('''
+      SELECT v.* FROM vocabulary v
+      WHERE v.id NOT IN (SELECT vocab_id FROM vocabulary_targets)
+      AND v.id NOT IN (
+        SELECT vocab_id FROM vocabulary_progress WHERE learned_at IS NOT NULL
+      )
+      ORDER BY v.jlpt_level DESC, v.id ASC
+      LIMIT ?
+    ''', [count]);
+    return rows.map(VocabWord.fromMap).toList();
+  }
+
   Future<Set<int>> getLearnedIds() async {
     final rows = await dbService.query(
       'SELECT vocab_id FROM vocabulary_progress WHERE word_to_meaning = 1',

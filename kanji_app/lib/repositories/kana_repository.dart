@@ -147,6 +147,34 @@ class KanaRepository {
     }
   }
 
+  Future<List<KanaCharacter>> getNextUntargetedKana(int count) async {
+    if (count <= 0) return [];
+    final rows = await dbService.query('''
+      SELECT k.*, COALESCE(p.status, 'unlearned') AS status
+      FROM kana k
+      LEFT JOIN kana_progress p ON k.id = p.kana_id
+      WHERE COALESCE(p.status, 'unlearned') = 'unlearned'
+      ORDER BY k.id ASC
+      LIMIT ?
+    ''', [count]);
+    return rows.map(KanaCharacter.fromRow).toList();
+  }
+
+  Future<int> getTargetedCount() async {
+    final rows = await dbService.query('''
+      SELECT COUNT(*) as cnt FROM kana_progress WHERE status = 'target'
+    ''');
+    return (rows.first['cnt'] as int?) ?? 0;
+  }
+
+  Future<bool> allKanaLearned() async {
+    final total = (await dbService.query('SELECT COUNT(*) as cnt FROM kana')).first['cnt'] as int;
+    final learned = (await dbService.query(
+      "SELECT COUNT(*) as cnt FROM kana_progress WHERE status='learned'"
+    )).first['cnt'] as int;
+    return learned >= total;
+  }
+
   Future<void> setRowStatus(String row, String type, String status) async {
     final chars = await getByRows([row], type: type);
     for (final ch in chars) {
