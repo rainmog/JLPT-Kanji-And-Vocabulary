@@ -1,4 +1,5 @@
 import '../services/database_service.dart';
+import '../repositories/kana_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LevelBounds {
@@ -50,8 +51,9 @@ class OnboardingService {
     // Set learned levels
     for (final level in bounds.learnedLevels) {
       await db.execute('''
-        UPDATE user_progress SET status='learned'
-        WHERE kanji_id IN (SELECT id FROM kanji WHERE jlpt_level=?)
+        INSERT INTO user_progress (kanji_id, status)
+        SELECT id, 'learned' FROM kanji WHERE jlpt_level=?
+        ON CONFLICT(kanji_id) DO UPDATE SET status='learned'
       ''', [level]);
       await db.execute('''
         INSERT OR IGNORE INTO vocabulary_progress (vocab_id, word_to_meaning, meaning_to_word, learned_at)
@@ -62,9 +64,10 @@ class OnboardingService {
     // Set target-all levels
     for (final level in bounds.targetAllLevels) {
       await db.execute('''
-        UPDATE user_progress SET status='target'
-        WHERE kanji_id IN (SELECT id FROM kanji WHERE jlpt_level=?)
-        AND status='unlearned'
+        INSERT INTO user_progress (kanji_id, status)
+        SELECT id, 'target' FROM kanji WHERE jlpt_level=?
+        ON CONFLICT(kanji_id) DO UPDATE SET
+          status = CASE WHEN status = 'unlearned' THEN 'target' ELSE status END
       ''', [level]);
       final vocabIds = await db.query(
         'SELECT id FROM vocabulary WHERE jlpt_level=?', [level],
@@ -83,10 +86,12 @@ class OnboardingService {
     ''', [bounds.targetSampleLevel, kanjiSampleCount]);
 
     for (final row in kanjiIds) {
-      await db.execute(
-        "UPDATE user_progress SET status='target' WHERE kanji_id=? AND status='unlearned'",
-        [row['id']],
-      );
+      await db.execute('''
+        INSERT INTO user_progress (kanji_id, status)
+        VALUES (?, 'target')
+        ON CONFLICT(kanji_id) DO UPDATE SET
+          status = CASE WHEN status = 'unlearned' THEN 'target' ELSE status END
+      ''', [row['id']]);
     }
 
     final vocabIds = await db.query('''
@@ -113,10 +118,11 @@ class OnboardingService {
         SELECT id FROM kanji WHERE jlpt_level=5 ORDER BY id ASC LIMIT ?
       ''', [kanjiCount]);
       for (final row in kanjiIds) {
-        await db.execute(
-          "UPDATE user_progress SET status='target' WHERE kanji_id=?",
-          [row['id']],
-        );
+        await db.execute('''
+          INSERT INTO user_progress (kanji_id, status)
+          VALUES (?, 'target')
+          ON CONFLICT(kanji_id) DO UPDATE SET status='target'
+        ''', [row['id']]);
       }
     }
 
@@ -130,6 +136,15 @@ class OnboardingService {
           VALUES (?, strftime('%s','now'))
         ''', [row['id']]);
       }
+    }
+  }
+
+  /// Sets the first [count] unlearned kana characters as targets.
+  /// Called during N5 onboarding.
+  static Future<void> setKanaTargetBatch({int count = 10}) async {
+    final kana = await kanaRepo.getNextUntargetedKana(count);
+    for (final ch in kana) {
+      await kanaRepo.setStatus(ch.id, 'target');
     }
   }
 
