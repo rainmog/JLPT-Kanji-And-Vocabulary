@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/preferences_service.dart';
-import '../theme.dart';
-import 'session_screen.dart';
+import '../services/settings_service.dart';
+import '../services/sound_service.dart';
+import '../theme_provider.dart';
 import '../utils/app_route.dart';
+import '../widgets/k_setup.dart';
 import 'matching_game_config_screen.dart';
+import 'session_screen.dart';
 import 'speed_read_config_screen.dart';
 
 class TargetPracticeConfigScreen extends ConsumerStatefulWidget {
@@ -15,13 +18,10 @@ class TargetPracticeConfigScreen extends ConsumerStatefulWidget {
       _TargetPracticeConfigScreenState();
 }
 
-class _TargetPracticeConfigScreenState
-    extends ConsumerState<TargetPracticeConfigScreen> {
-  String selectedMode = 'sentence';
-  int questionCount = 20;
-  int minDifficulty = 1;
-  int maxDifficulty = 4;
-  bool multipleChoice = true;
+class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfigScreen> {
+  String _mode = 'sentence';
+  bool _multipleChoice = true;
+  int _count = 20;
 
   @override
   void initState() {
@@ -33,175 +33,117 @@ class _TargetPracticeConfigScreenState
     final prefs = await PreferencesService.load();
     if (!mounted) return;
     setState(() {
-      selectedMode = prefs['mode'] == 'wordpractice' ? 'wordpractice' : prefs['mode'];
-      questionCount = prefs['count'];
-      minDifficulty = prefs['minDifficulty'];
-      maxDifficulty = prefs['maxDifficulty'];
-      multipleChoice = prefs['multipleChoice'];
+      _mode = prefs['mode'] == 'wordpractice' ? 'wordpractice' : prefs['mode'];
+      _count = prefs['count'];
+      _multipleChoice = prefs['multipleChoice'];
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Practice Target Kanji')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Start button at top
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _startSession,
-                child: const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Text('Start Practice', style: TextStyle(fontSize: 18)),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            Text('Practice Mode',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            ...['word', 'sentence', 'wordpractice'].map((mode) {
-              final isSelected = selectedMode == mode;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isSelected ? AppColors.accent : AppColors.btnBg,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    onPressed: () => setState(() {
-                      selectedMode = mode;
-                      if (mode == 'wordpractice') multipleChoice = true;
-                    }),
-                    child: Text(_modeLabel(mode)),
-                  ),
-                ),
-              );
-            }),
-            const SizedBox(height: 20),
-
-            if (selectedMode != 'wordpractice') ...[
-              Text('Input Mode',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              Row(children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: !multipleChoice ? AppColors.accent : AppColors.btnBg,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    onPressed: () => setState(() => multipleChoice = false),
-                    child: const Text('Type the Answer'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: multipleChoice ? AppColors.accent : AppColors.btnBg,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    onPressed: () => setState(() => multipleChoice = true),
-                    child: const Text('Multiple Choice'),
-                  ),
-                ),
-              ]),
-              const SizedBox(height: 20),
-            ],
-
-            Text('Question Count: $questionCount',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Slider(
-              value: questionCount.toDouble(),
-              min: 5,
-              max: 60,
-              divisions: 11,
-              label: questionCount.toString(),
-              onChanged: (v) {
-                final rounded = ((v.toInt() / 5).round() * 5).clamp(5, 60);
-                setState(() => questionCount = rounded);
-              },
-            ),
-            const SizedBox(height: 20),
-
-            Text('Difficulty: $minDifficulty – $maxDifficulty',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            RangeSlider(
-              values: RangeValues(minDifficulty.toDouble(), maxDifficulty.toDouble()),
-              min: 1,
-              max: 9,
-              divisions: 8,
-              labels: RangeLabels(minDifficulty.toString(), maxDifficulty.toString()),
-              onChanged: (v) => setState(() {
-                minDifficulty = v.start.round();
-                maxDifficulty = v.end.round();
-              }),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.pillBg),
-                onPressed: () => Navigator.push(context, AppRoute.to(
-                  const MatchingGameConfigScreen(matchContext: MatchContext.kanji),
-                )),
-                child: Text('Matching Game', style: TextStyle(color: AppColors.fg, fontSize: 16)),
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.pillBg),
-                onPressed: () => Navigator.push(context, AppRoute.to(
-                  const SpeedReadConfigScreen(speedContext: SpeedReadContext.kanji),
-                )),
-                child: Text('Speed Reading', style: TextStyle(color: AppColors.fg, fontSize: 16)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _startSession() {
+    final settings = ref.read(settingsProvider);
     PreferencesService.save(
-      mode: selectedMode,
+      mode: _mode,
       levels: {1, 2, 3, 4, 5},
       tags: const {},
-      count: questionCount,
-      minDifficulty: minDifficulty,
-      maxDifficulty: maxDifficulty,
-      multipleChoice: multipleChoice,
+      count: _count,
+      multipleChoice: _multipleChoice,
     );
+    soundService.playSelectButton();
     Navigator.push(context, AppRoute.to(SessionScreen(
-      mode: selectedMode,
-      jlptLevels: [1, 2, 3, 4, 5],
+      mode: _mode,
+      jlptLevels: const [1, 2, 3, 4, 5],
       tags: const [],
-      questionCount: questionCount,
-      minDifficulty: minDifficulty,
-      maxDifficulty: maxDifficulty,
-      multipleChoice: multipleChoice,
+      questionCount: _count,
+      minDifficulty: settings.difficultyMin,
+      maxDifficulty: settings.difficultyMax,
+      multipleChoice: _multipleChoice,
       targetOnly: true,
     )));
   }
 
-  String _modeLabel(String mode) {
-    switch (mode) {
-      case 'word': return 'Compounds';
-      case 'sentence': return 'Sentences';
-      case 'wordpractice': return 'On/Kun & Meaning Practice';
-      default: return mode;
-    }
+  @override
+  Widget build(BuildContext context) {
+    final colors = ref.watch(themeColorsProvider);
+
+    return Scaffold(
+      backgroundColor: colors.bg,
+      body: SafeArea(
+        child: Column(children: [
+          KSetupHeader(badge: '字', title: 'Practice Kanji', colors: colors),
+
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                KSetupField(
+                  label: 'Practice mode',
+                  child: KChoiceList(
+                    options: const [
+                      KChoiceItem(id: 'sentence', label: 'Sentences', sub: 'See it used in context', icon: Icons.menu_book_rounded),
+                      KChoiceItem(id: 'word', label: 'Compounds', sub: 'Words built from this kanji', icon: Icons.auto_awesome_rounded),
+                      KChoiceItem(id: 'wordpractice', label: 'On / Kun & meaning', sub: 'Readings and definitions', icon: Icons.school_rounded),
+                    ],
+                    value: _mode,
+                    onChanged: (v) => setState(() { _mode = v; if (v == 'wordpractice') _multipleChoice = true; }),
+                    colors: colors,
+                  ),
+                ),
+                if (_mode != 'wordpractice')
+                  KSetupField(
+                    label: 'Answer mode',
+                    child: KSeg(
+                      options: const [
+                        KSegOption(id: 'mc', label: 'Multiple choice'),
+                        KSegOption(id: 'type', label: 'Type the answer'),
+                      ],
+                      value: _multipleChoice ? 'mc' : 'type',
+                      onChanged: (v) => setState(() => _multipleChoice = v == 'mc'),
+                      colors: colors,
+                    ),
+                  ),
+                KSetupField(
+                  label: 'Questions',
+                  child: KCountChips(
+                    options: const [10, 20, 30, 40],
+                    value: _count,
+                    onChanged: (v) => setState(() => _count = v),
+                    colors: colors,
+                  ),
+                ),
+                KSetupField(
+                  label: 'Or try a game mode',
+                  child: Column(children: [
+                    KGameButton(
+                      icon: Icons.auto_awesome_rounded,
+                      label: 'Matching game',
+                      sub: 'Pair kanji with meanings against the clock',
+                      colors: colors,
+                      onTap: () => Navigator.push(context, AppRoute.to(
+                        const MatchingGameConfigScreen(matchContext: MatchContext.kanji),
+                      )),
+                    ),
+                    const SizedBox(height: 9),
+                    KGameButton(
+                      icon: Icons.bolt_rounded,
+                      label: 'Speed reading',
+                      sub: 'Read as many as you can in 60 seconds',
+                      colors: colors,
+                      onTap: () => Navigator.push(context, AppRoute.to(
+                        const SpeedReadConfigScreen(speedContext: SpeedReadContext.kanji),
+                      )),
+                    ),
+                  ]),
+                ),
+              ]),
+            ),
+          ),
+
+          KStickyFooter(
+            colors: colors,
+            child: KStartButton(label: 'Start practice', colors: colors, onTap: _startSession),
+          ),
+        ]),
+      ),
+    );
   }
 }

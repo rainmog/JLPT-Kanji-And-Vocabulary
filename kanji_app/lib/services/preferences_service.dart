@@ -29,8 +29,8 @@ class PreferencesService {
     required Set<int> levels,
     required Set<String> tags,
     required int count,
-    required int minDifficulty,
-    required int maxDifficulty,
+    int? minDifficulty,
+    int? maxDifficulty,
     required bool multipleChoice,
   }) async {
     final prefs = await SharedPreferences.getInstance();
@@ -38,8 +38,8 @@ class PreferencesService {
     await prefs.setStringList(_keyLevels, levels.map((l) => l.toString()).toList());
     await prefs.setStringList(_keyTags, tags.toList());
     await prefs.setInt(_keyCount, count);
-    await prefs.setInt(_keyMinDiff, minDifficulty);
-    await prefs.setInt(_keyMaxDiff, maxDifficulty);
+    if (minDifficulty != null) await prefs.setInt(_keyMinDiff, minDifficulty);
+    if (maxDifficulty != null) await prefs.setInt(_keyMaxDiff, maxDifficulty);
     await prefs.setBool(_keyMultipleChoice, multipleChoice);
   }
 }
