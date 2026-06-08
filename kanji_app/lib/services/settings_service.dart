@@ -20,11 +20,16 @@ class AppSettings {
   final bool sfxEnabled;
   final bool ambientEnabled;
   final bool animationsEnabled;
+  final bool showTrackerPicker;
   final String englishFont;
   final String japaneseFont;
-  final String homeKanjiProgress; // 'total' | 'N5'..'N1' | tag name
-  final String homeVocabProgress;  // 'total' | 'N5'..'N1'
-  final bool hideKanaPractice;
+  final List<String> homeTrackers; // e.g. ['kanji:all', 'vocab:all', 'kanji:N5']
+  final int dailyGoal;
+  final bool autoProgressionEnabled;
+  final int autoProgressionKanjiQuota;
+  final int autoProgressionVocabQuota;
+  final List<int> completedKanjiLevels;
+  final List<int> completedVocabLevels;
 
   const AppSettings({
     this.difficultyMin = 1,
@@ -37,11 +42,16 @@ class AppSettings {
     this.sfxEnabled = true,
     this.ambientEnabled = true,
     this.animationsEnabled = true,
+    this.showTrackerPicker = true,
     this.englishFont = 'Inter',
     this.japaneseFont = 'NotoSerifCJKjp',
-    this.homeKanjiProgress = 'total',
-    this.homeVocabProgress = 'total',
-    this.hideKanaPractice = false,
+    this.homeTrackers = const ['kanji:all', 'vocab:all'],
+    this.dailyGoal = 20,
+    this.autoProgressionEnabled = true,
+    this.autoProgressionKanjiQuota = 15,
+    this.autoProgressionVocabQuota = 30,
+    this.completedKanjiLevels = const [],
+    this.completedVocabLevels = const [],
   });
 
   AppSettings copyWith({
@@ -55,11 +65,16 @@ class AppSettings {
     bool? sfxEnabled,
     bool? ambientEnabled,
     bool? animationsEnabled,
+    bool? showTrackerPicker,
     String? englishFont,
     String? japaneseFont,
-    String? homeKanjiProgress,
-    String? homeVocabProgress,
-    bool? hideKanaPractice,
+    List<String>? homeTrackers,
+    int? dailyGoal,
+    bool? autoProgressionEnabled,
+    int? autoProgressionKanjiQuota,
+    int? autoProgressionVocabQuota,
+    List<int>? completedKanjiLevels,
+    List<int>? completedVocabLevels,
   }) => AppSettings(
     difficultyMin: difficultyMin ?? this.difficultyMin,
     difficultyMax: difficultyMax ?? this.difficultyMax,
@@ -71,11 +86,16 @@ class AppSettings {
     sfxEnabled: sfxEnabled ?? this.sfxEnabled,
     ambientEnabled: ambientEnabled ?? this.ambientEnabled,
     animationsEnabled: animationsEnabled ?? this.animationsEnabled,
+    showTrackerPicker: showTrackerPicker ?? this.showTrackerPicker,
     englishFont: englishFont ?? this.englishFont,
     japaneseFont: japaneseFont ?? this.japaneseFont,
-    homeKanjiProgress: homeKanjiProgress ?? this.homeKanjiProgress,
-    homeVocabProgress: homeVocabProgress ?? this.homeVocabProgress,
-    hideKanaPractice: hideKanaPractice ?? this.hideKanaPractice,
+    homeTrackers: homeTrackers ?? this.homeTrackers,
+    dailyGoal: dailyGoal ?? this.dailyGoal,
+    autoProgressionEnabled: autoProgressionEnabled ?? this.autoProgressionEnabled,
+    autoProgressionKanjiQuota: autoProgressionKanjiQuota ?? this.autoProgressionKanjiQuota,
+    autoProgressionVocabQuota: autoProgressionVocabQuota ?? this.autoProgressionVocabQuota,
+    completedKanjiLevels: completedKanjiLevels ?? this.completedKanjiLevels,
+    completedVocabLevels: completedVocabLevels ?? this.completedVocabLevels,
   );
 
   Map<String, dynamic> toJson() => {
@@ -89,11 +109,16 @@ class AppSettings {
     'sfxEnabled': sfxEnabled,
     'ambientEnabled': ambientEnabled,
     'animationsEnabled': animationsEnabled,
+    'showTrackerPicker': showTrackerPicker,
     'englishFont': englishFont,
     'japaneseFont': japaneseFont,
-    'homeKanjiProgress': homeKanjiProgress,
-    'homeVocabProgress': homeVocabProgress,
-    'hideKanaPractice': hideKanaPractice,
+    'homeTrackers': homeTrackers,
+    'dailyGoal': dailyGoal,
+    'autoProgressionEnabled': autoProgressionEnabled,
+    'autoProgressionKanjiQuota': autoProgressionKanjiQuota,
+    'autoProgressionVocabQuota': autoProgressionVocabQuota,
+    'completedKanjiLevels': completedKanjiLevels,
+    'completedVocabLevels': completedVocabLevels,
   };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -107,11 +132,16 @@ class AppSettings {
     sfxEnabled: j['sfxEnabled'] as bool? ?? true,
     ambientEnabled: j['ambientEnabled'] as bool? ?? true,
     animationsEnabled: j['animationsEnabled'] as bool? ?? true,
+    showTrackerPicker: j['showTrackerPicker'] as bool? ?? true,
     englishFont: j['englishFont'] as String? ?? 'Inter',
     japaneseFont: j['japaneseFont'] as String? ?? 'NotoSerifCJKjp',
-    homeKanjiProgress: j['homeKanjiProgress'] as String? ?? 'total',
-    homeVocabProgress: j['homeVocabProgress'] as String? ?? 'total',
-    hideKanaPractice: j['hideKanaPractice'] as bool? ?? false,
+    homeTrackers: (j['homeTrackers'] as List<dynamic>?)?.cast<String>() ?? const ['kanji:all', 'vocab:all'],
+    dailyGoal: j['dailyGoal'] as int? ?? 20,
+    autoProgressionEnabled: j['autoProgressionEnabled'] as bool? ?? true,
+    autoProgressionKanjiQuota: j['autoProgressionKanjiQuota'] as int? ?? 15,
+    autoProgressionVocabQuota: j['autoProgressionVocabQuota'] as int? ?? 30,
+    completedKanjiLevels: (j['completedKanjiLevels'] as List<dynamic>?)?.cast<int>() ?? const [],
+    completedVocabLevels: (j['completedVocabLevels'] as List<dynamic>?)?.cast<int>() ?? const [],
   );
 }
 
