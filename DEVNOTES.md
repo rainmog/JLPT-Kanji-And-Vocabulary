@@ -83,7 +83,7 @@ Hub-and-spoke: `HomeScreen` is the root; all screens push onto navigator and pop
 
 **✅ = updated to KDesign/k_setup system** | **⬜ = not yet updated** | **❌ = orphaned (unreachable)**
 
-✅ **home_screen.dart**: Hub root. Top icon bar (SFX, ambient, credits, settings) → configurable tracker card (`homeTrackers: List<String>` from `AppSettings`; heading "CURRENT TOTAL TARGETS"; `+` button bottom-right conditionally shown via `showTrackerPicker`) → `Expanded` hero session block (target counts + goal ring + Start studying) → 3 quick-launch tiles (Set targets / Dictionary / JLPT test). Body is a `Stack`: `HomeBgLayer` + `SakuraPetalsOverlay` behind `SafeArea` content. `_TrackerPickerSheet`: modal bottom sheet with Kanji/Vocab `PageView`, tag rows.
+✅ **home_screen.dart**: Hub root. `ConsumerStatefulWidget`; `initState` triggers `_runAutoProgression()` via `addPostFrameCallback`. Top icon bar → configurable tracker card (`homeTrackers`, heading "CURRENT TARGETS") → hero block (kanji/vocab/kana target counts + "TODAY'S GOAL" ring + "Test Targets" OutlinedButton + "Start studying" ElevatedButton) → 3 quick-launch tiles (Set targets / Dictionary / JLPT). Body is a `Stack`: `HomeBgLayer` + `SakuraPetalsOverlay`. `_targetCountProvider` returns `({int kanji, int vocab, int kana})`; kana row shown conditionally. Navigation pops invalidate `_targetCountProvider`.
 ✅ **study_picker_screen.dart**: Picker for Kana / Kanji / Vocab → launches respective config screen.
 ✅ **target_practice_config_screen.dart**: Kanji target practice config — mode, JLPT levels, tags, count, difficulty range. Uses `k_setup.dart`.
 ✅ **kana_practice_config_screen.dart**: Kana quiz type selector + session size → `KanaPracticeScreen`. Entry point for Matching Game and Speed Reading. Uses `k_setup.dart`.
@@ -101,7 +101,8 @@ Hub-and-spoke: `HomeScreen` is the root; all screens push onto navigator and pop
 ✅ **speed_read_screen.dart**: Flash word/kana then MC pick. Ghosted hint at 55% opacity (not hidden). Last 5 results in `SpeedReadScreen.history`.
 ✅ **session_summary_screen.dart**: Post-session summary. Animated score RichText, stat pills, learned char tiles.
 ✅ **jlpt_test_result_screen.dart**: JLPT test results. Total score card + section breakdown (colored left border) + missed questions. Converted to `ConsumerStatefulWidget`.
-✅ **onboarding_welcome_screen.dart** / **onboarding_level_selection_screen.dart**: Onboarding flow redesigned. Carousel with `_StateTile` cards, pill dots. Level selection: accent N-badge + radio rows + dashed import button. N5 → 10 kanji + 20 vocab targeted; N4–N1 → easier levels learned, 10+30 from chosen level.
+✅ **onboarding_welcome_screen.dart** / **onboarding_level_selection_screen.dart**: Onboarding flow redesigned. Carousel with `_StateTile` cards, pill dots. Level selection navigates to `OnboardingAutoProgressionScreen` — all level/clean-start setup happens there.
+✅ **onboarding_auto_progression_screen.dart**: Post-level-selection page. Explanation card + auto-progression toggle. `_finish()` applies level targets (N5: `applyN5Targets` + `setKanaTargetBatch`; N4–N1: `applyLevelTargets` + `setAllLearned` for kana; clean start: no targets, auto-progression fills). Sets `homeTrackers`. Navigates to HomeScreen removing all onboarding routes.
 ⬜ **select_target_kanji_screen.dart**: "By Level" + "By Category" → `KanjiGridScreen` (5-col grid).
 ⬜ **vocab_list_screen.dart**: 3-col grid, color-coded. `VocabFilter.level(n)` for TargetsScreen.
 ⬜ **select_target_kana_screen.dart**: Kana target selection by row.
