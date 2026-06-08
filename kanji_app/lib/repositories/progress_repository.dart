@@ -9,44 +9,60 @@ class ProgressRepository {
   }
 
   Future<void> markLearned(int kanjiId) async {
-    await dbService.execute(
-      "UPDATE user_progress SET status='learned', consecutive_correct=0 WHERE kanji_id=?",
-      [kanjiId]
-    );
+    await dbService.execute('''
+      INSERT INTO user_progress (kanji_id, status, consecutive_correct)
+      VALUES (?, 'learned', 0)
+      ON CONFLICT(kanji_id) DO UPDATE SET status='learned', consecutive_correct=0
+    ''', [kanjiId]);
   }
 
   Future<void> markTarget(int kanjiId) async {
-    await dbService.execute(
-      "UPDATE user_progress SET status='target' WHERE kanji_id=?",
-      [kanjiId]
-    );
+    await dbService.execute('''
+      INSERT INTO user_progress (kanji_id, status)
+      VALUES (?, 'target')
+      ON CONFLICT(kanji_id) DO UPDATE SET status='target'
+    ''', [kanjiId]);
   }
 
   Future<void> markUnlearned(int kanjiId) async {
-    await dbService.execute(
-      "UPDATE user_progress SET status='unlearned', consecutive_correct=0 WHERE kanji_id=?",
-      [kanjiId]
-    );
+    await dbService.execute('''
+      INSERT INTO user_progress (kanji_id, status, consecutive_correct)
+      VALUES (?, 'unlearned', 0)
+      ON CONFLICT(kanji_id) DO UPDATE SET status='unlearned', consecutive_correct=0
+    ''', [kanjiId]);
   }
 
   /// Bulk-target all unlearned kanji in [ids]. Learned kanji are untouched.
   Future<void> markAllTarget(List<int> ids) async {
     if (ids.isEmpty) return;
-    final placeholders = List.filled(ids.length, '?').join(',');
-    await dbService.execute(
-      "UPDATE user_progress SET status='target' WHERE kanji_id IN ($placeholders) AND status='unlearned'",
-      ids,
-    );
+    final db = await dbService.database;
+    final batch = db.batch();
+    for (final id in ids) {
+      batch.rawInsert('''
+        INSERT INTO user_progress (kanji_id, status)
+        VALUES (?, 'target')
+        ON CONFLICT(kanji_id) DO UPDATE SET
+          status = CASE WHEN status != 'learned' THEN 'target' ELSE status END
+      ''', [id]);
+    }
+    await batch.commit(noResult: true);
   }
 
   /// Bulk-unlearn all targeted kanji in [ids]. Learned kanji are untouched.
   Future<void> markAllUnlearned(List<int> ids) async {
     if (ids.isEmpty) return;
-    final placeholders = List.filled(ids.length, '?').join(',');
-    await dbService.execute(
-      "UPDATE user_progress SET status='unlearned', consecutive_correct=0 WHERE kanji_id IN ($placeholders) AND status='target'",
-      ids,
-    );
+    final db = await dbService.database;
+    final batch = db.batch();
+    for (final id in ids) {
+      batch.rawInsert('''
+        INSERT INTO user_progress (kanji_id, status, consecutive_correct)
+        VALUES (?, 'unlearned', 0)
+        ON CONFLICT(kanji_id) DO UPDATE SET
+          status = CASE WHEN status = 'target' THEN 'unlearned' ELSE status END,
+          consecutive_correct = 0
+      ''', [id]);
+    }
+    await batch.commit(noResult: true);
   }
 
   /// Returns kanji_ids of all target kanji.

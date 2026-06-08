@@ -257,8 +257,8 @@ class KanjiRepository {
   /// Map key = jlpt_level (int), value = list of (Kanji, status string) records.
   Future<Map<int, List<(Kanji, String)>>> getAllKanjiWithStatus() async {
     final rows = await dbService.query('''
-      SELECT k.*, p.status FROM kanji k
-      JOIN user_progress p ON k.id = p.kanji_id
+      SELECT k.*, COALESCE(p.status, 'unlearned') AS status FROM kanji k
+      LEFT JOIN user_progress p ON k.id = p.kanji_id
       ORDER BY k.jlpt_level DESC, k.id ASC
     ''');
     final result = <int, List<(Kanji, String)>>{};
@@ -273,8 +273,8 @@ class KanjiRepository {
   /// Returns kanji with status for a specific tag, ordered by level desc.
   Future<List<(Kanji, String)>> getKanjiWithStatusForTag(String tag) async {
     final rows = await dbService.query('''
-      SELECT k.*, p.status FROM kanji k
-      JOIN user_progress p ON k.id = p.kanji_id
+      SELECT k.*, COALESCE(p.status, 'unlearned') AS status FROM kanji k
+      LEFT JOIN user_progress p ON k.id = p.kanji_id
       JOIN kanji_tags kt ON k.id = kt.kanji_id
       WHERE kt.tag = ?
       ORDER BY k.jlpt_level DESC, k.id ASC
@@ -294,6 +294,22 @@ class KanjiRepository {
       ORDER BY k.jlpt_level DESC, k.id ASC
     ''');
     return rows.map(Kanji.fromMap).toList();
+  }
+
+  /// Bulk-set [ids] to 'target' only if currently 'unlearned'. Used by auto-progression.
+  Future<void> bulkSetTarget(List<int> ids) async {
+    if (ids.isEmpty) return;
+    final db = await dbService.database;
+    final batch = db.batch();
+    for (final id in ids) {
+      batch.rawInsert('''
+        INSERT INTO user_progress (kanji_id, status)
+        VALUES (?, 'target')
+        ON CONFLICT(kanji_id) DO UPDATE SET
+          status = CASE WHEN status = 'unlearned' THEN 'target' ELSE status END
+      ''', [id]);
+    }
+    await batch.commit(noResult: true);
   }
 
   /// Returns all kanji characters at or below the given JLPT test level.
