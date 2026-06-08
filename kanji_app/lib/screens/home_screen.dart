@@ -132,6 +132,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final (:result, :updatedSettings) = await autoProgressionService.run(settings: settings);
     if (!mounted) return;
     await ref.read(settingsProvider.notifier).update(updatedSettings);
+    if (!mounted) return;
     if (result.addedKanji > 0 || result.addedVocab > 0 || result.addedKana > 0) {
       ref.invalidate(_targetCountProvider);
     }
@@ -424,7 +425,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         onPressed: () {
                           soundService.playSelectButton();
                           Navigator.push(context, AppRoute.to(const TargetPracticeConfigScreen()))
-                              .then((_) => ref.invalidate(_targetCountProvider));
+                              .then((_) { if (mounted) ref.invalidate(_targetCountProvider); });
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -490,7 +491,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 accent: true,
                 colors: colors,
                 onTap: () => Navigator.push(context, AppRoute.to(const TargetsScreen()))
-                    .then((_) => ref.invalidate(_targetCountProvider)),
+                    .then((_) { if (mounted) ref.invalidate(_targetCountProvider); }),
               ),
               const SizedBox(width: 12),
               _QuickTile(
