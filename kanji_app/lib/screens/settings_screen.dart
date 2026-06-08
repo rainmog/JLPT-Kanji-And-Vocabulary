@@ -7,16 +7,18 @@ import '../services/export_service.dart';
 import '../services/sound_service.dart';
 import '../theme.dart';
 import '../theme_provider.dart';
+import '../widgets/k_setup.dart';
 import 'onboarding_welcome_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(themeColorsProvider);
+    final colors = ref.watch(themeColorsProvider);
     final s = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
-    // Sync audio state on settings load/change.
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       soundService.setAmbientVolume(s.ambientVolume);
       soundService.setSfxVolume(s.sfxVolume);
@@ -24,256 +26,326 @@ class SettingsScreen extends ConsumerWidget {
       soundService.ambientEnabled = s.ambientEnabled;
       if (!s.ambientEnabled) soundService.stopAmbient();
     });
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.bg,
-        title: Text('Settings', style: TextStyle(color: AppColors.fg)),
-        iconTheme: IconThemeData(color: AppColors.fg),
-      ),
-      body: ListView(padding: const EdgeInsets.all(20), children: [
-        Text('AUDIO', style: TextStyle(fontSize: 13, color: AppColors.muted, letterSpacing: 1)),
-        const SizedBox(height: 12),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text('Ambient SFX', style: TextStyle(color: AppColors.fg)),
-          const SizedBox(width: 16),
+      backgroundColor: colors.bg,
+      body: SafeArea(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 6),
+            child: KBackHeader(title: 'Settings', colors: colors),
+          ),
+
           Expanded(
-            child: DropdownButton<String>(
-              value: s.ambientSfx,
-              isExpanded: true,
-              dropdownColor: AppColors.surface,
-              style: TextStyle(color: AppColors.fg),
-              underline: Container(height: 1, color: AppColors.pillBg),
-              onChanged: (value) {
-                if (value == null) return;
-                notifier.update(s.copyWith(ambientSfx: value));
-                soundService.setAmbient(value);
-              },
-              items: ambientTracks.entries.map((e) =>
-                DropdownMenuItem<String>(
-                  value: e.key,
-                  child: Text(e.value, style: TextStyle(color: AppColors.fg, fontSize: 14)),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+                // ── Audio ──────────────────────────────────────────────
+                KSectionLabel(text: 'Audio', colors: colors),
+                KPanel(
+                  colors: colors,
+                  children: [
+                    KSettingRow(
+                      icon: Icons.music_note_rounded,
+                      label: 'Ambient sound',
+                      sub: 'Plays in the background',
+                      colors: colors,
+                      trailing: KToggle(
+                        value: s.ambientEnabled,
+                        colors: colors,
+                        onChanged: (v) {
+                          final u = s.copyWith(ambientEnabled: v);
+                          notifier.update(u);
+                          soundService.ambientEnabled = v;
+                          if (!v) soundService.stopAmbient();
+                          else if (s.ambientSfx != 'none') soundService.setAmbient(s.ambientSfx);
+                        },
+                      ),
+                    ),
+                    KSettingRow(
+                      icon: Icons.volume_up_rounded,
+                      label: 'Sound effects',
+                      colors: colors,
+                      separator: true,
+                      trailing: KToggle(
+                        value: s.sfxEnabled,
+                        colors: colors,
+                        onChanged: (v) {
+                          final u = s.copyWith(sfxEnabled: v);
+                          notifier.update(u);
+                          soundService.sfxEnabled = v;
+                        },
+                      ),
+                    ),
+                    _SliderRow(
+                      icon: Icons.surround_sound_rounded,
+                      label: 'Ambient volume',
+                      value: s.ambientVolume,
+                      colors: colors,
+                      onChanged: (v) {
+                        notifier.update(s.copyWith(ambientVolume: v));
+                        soundService.setAmbientVolume(v);
+                      },
+                    ),
+                    _SliderRow(
+                      icon: Icons.graphic_eq_rounded,
+                      label: 'SFX volume',
+                      value: s.sfxVolume,
+                      colors: colors,
+                      onChanged: (v) {
+                        notifier.update(s.copyWith(sfxVolume: v));
+                        soundService.setSfxVolume(v);
+                      },
+                    ),
+                    _DropdownRow(
+                      icon: Icons.forest_rounded,
+                      label: 'Ambient track',
+                      value: s.ambientSfx,
+                      items: ambientTracks,
+                      colors: colors,
+                      onChanged: (v) {
+                        if (v == null) return;
+                        notifier.update(s.copyWith(ambientSfx: v));
+                        soundService.setAmbient(v);
+                      },
+                    ),
+                  ],
                 ),
-              ).toList(),
-            ),
-          ),
-        ]),
-        Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: Text(
-            'Plays in the background. Mixes with other audio (music, podcasts).',
-            style: TextStyle(fontSize: 12, color: AppColors.muted),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(children: [
-          Text('Ambient Volume', style: TextStyle(color: AppColors.fg)),
-          Expanded(
-            child: Slider(
-              value: s.ambientVolume,
-              min: 0.0,
-              max: 1.0,
-              divisions: 10,
-              activeColor: AppColors.accent,
-              inactiveColor: AppColors.pillBg,
-              onChanged: (v) {
-                notifier.update(s.copyWith(ambientVolume: v));
-                soundService.setAmbientVolume(v);
-              },
-            ),
-          ),
-        ]),
-        const SizedBox(height: 8),
-        Row(children: [
-          Text('SFX Volume', style: TextStyle(color: AppColors.fg)),
-          Expanded(
-            child: Slider(
-              value: s.sfxVolume,
-              min: 0.0,
-              max: 1.0,
-              divisions: 10,
-              activeColor: AppColors.accent,
-              inactiveColor: AppColors.pillBg,
-              onChanged: (v) {
-                notifier.update(s.copyWith(sfxVolume: v));
-                soundService.setSfxVolume(v);
-              },
-            ),
-          ),
-        ]),
-        const SizedBox(height: 32),
-        Text('APPEARANCE', style: TextStyle(fontSize: 13, color: AppColors.muted, letterSpacing: 1)),
-        const SizedBox(height: 12),
-        const _ThemeSelector(),
-        const SizedBox(height: 16),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text('Animations', style: TextStyle(color: AppColors.fg)),
-          Switch(
-            value: s.animationsEnabled,
-            activeColor: AppColors.accent,
-            onChanged: (v) => notifier.update(s.copyWith(animationsEnabled: v)),
-          ),
-        ]),
-        const SizedBox(height: 8),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Expanded(child: Text('Hide hiragana/katakana practice from main page',
-            style: TextStyle(color: AppColors.fg))),
-          Switch(
-            value: s.hideKanaPractice,
-            activeColor: AppColors.accent,
-            onChanged: (v) => notifier.update(s.copyWith(hideKanaPractice: v)),
-          ),
-        ]),
-        const SizedBox(height: 16),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text('English Font', style: TextStyle(color: AppColors.fg)),
-          const SizedBox(width: 16),
-          Expanded(
-            child: DropdownButton<String>(
-              value: s.englishFont,
-              isExpanded: true,
-              dropdownColor: AppColors.surface,
-              style: TextStyle(color: AppColors.fg),
-              underline: Container(height: 1, color: AppColors.pillBg),
-              onChanged: (v) { if (v != null) notifier.update(s.copyWith(englishFont: v)); },
-              items: englishFonts.entries.map((e) => DropdownMenuItem(
-                value: e.value,
-                child: Text(e.key, style: TextStyle(color: AppColors.fg, fontSize: 14)),
-              )).toList(),
-            ),
-          ),
-        ]),
-        const SizedBox(height: 12),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text('Japanese Font', style: TextStyle(color: AppColors.fg)),
-          const SizedBox(width: 16),
-          Expanded(
-            child: DropdownButton<String>(
-              value: s.japaneseFont,
-              isExpanded: true,
-              dropdownColor: AppColors.surface,
-              style: TextStyle(color: AppColors.fg),
-              underline: Container(height: 1, color: AppColors.pillBg),
-              onChanged: (v) { if (v != null) notifier.update(s.copyWith(japaneseFont: v)); },
-              items: japaneseFonts.entries.map((e) => DropdownMenuItem(
-                value: e.value,
-                child: Text(e.key, style: TextStyle(color: AppColors.fg, fontSize: 14)),
-              )).toList(),
-            ),
-          ),
-        ]),
-        const SizedBox(height: 32),
-        Text('DATA', style: TextStyle(fontSize: 13, color: AppColors.muted, letterSpacing: 1)),
-        const SizedBox(height: 12),
-        ElevatedButton(
-          onPressed: () async {
-            final path = await exportService.exportProgress(ref.read(settingsProvider));
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Saved to $path'), backgroundColor: AppColors.correctBg));
-            }
-          },
-          child: Text('Export Progress'),
-        ),
-        const SizedBox(height: 8),
-        ElevatedButton(
-          onPressed: () async {
-            try {
-              final ok = await exportService.importProgress(
-                context,
-                ref.read(settingsProvider),
-                (s) => ref.read(settingsProvider.notifier).update(s),
-              );
-              if (context.mounted && ok) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Progress imported successfully'),
-                    backgroundColor: AppColors.correctBg,
+
+                // ── Appearance ─────────────────────────────────────────
+                KSectionLabel(text: 'Appearance', colors: colors),
+                Container(
+                  constraints: const BoxConstraints(maxHeight: 280),
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: KDesign.line(colors)),
+                    boxShadow: KDesign.shadowSm(colors),
                   ),
-                );
-              }
-            } catch (e) {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Import failed: $e'),
-                    backgroundColor: AppColors.incorrectBg,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: SingleChildScrollView(
+                      child: _ThemePanel(colors: colors, inScroll: true),
+                    ),
                   ),
-                );
-              }
-            }
-          },
-          child: const Text('Import Progress'),
-        ),
-        const SizedBox(height: 8),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2a0808), foregroundColor: AppColors.incorrect),
-          onPressed: () => _confirmClearUserData(context, ref),
-          child: const Text('Clear User Data'),
-        ),
-        SizedBox(height: MediaQuery.of(context).viewPadding.bottom + 20),
-      ]),
+                ),
+                const SizedBox(height: 12),
+                KPanel(
+                  colors: colors,
+                  children: [
+                    KSettingRow(
+                      icon: Icons.animation_rounded,
+                      label: 'Animations',
+                      colors: colors,
+                      trailing: KToggle(
+                        value: s.animationsEnabled,
+                        colors: colors,
+                        onChanged: (v) {
+                          notifier.update(s.copyWith(animationsEnabled: v));
+                        },
+                      ),
+                    ),
+                    KSettingRow(
+                      icon: Icons.add_circle_outline_rounded,
+                      label: 'Show progress tracker button',
+                      sub: 'Shows + button on home to add/remove trackers',
+                      colors: colors,
+                      separator: true,
+                      trailing: KToggle(
+                        value: s.showTrackerPicker,
+                        colors: colors,
+                        onChanged: (v) => notifier.update(s.copyWith(showTrackerPicker: v)),
+                      ),
+                    ),
+                    _DropdownRow(
+                      icon: Icons.text_fields_rounded,
+                      label: 'English font',
+                      value: s.englishFont,
+                      items: englishFonts,
+                      colors: colors,
+                      onChanged: (v) { if (v != null) notifier.update(s.copyWith(englishFont: v)); },
+                    ),
+                  ],
+                ),
+
+                // ── Study ──────────────────────────────────────────────
+                KSectionLabel(text: 'Study', colors: colors),
+                KPanel(
+                  colors: colors,
+                  children: [
+                    KSettingRow(
+                      icon: Icons.auto_awesome_rounded,
+                      label: 'Automatic progression',
+                      sub: 'Automatically fills your targets as you learn',
+                      colors: colors,
+                      trailing: KToggle(
+                        value: s.autoProgressionEnabled,
+                        colors: colors,
+                        onChanged: (v) => notifier.update(s.copyWith(autoProgressionEnabled: v)),
+                      ),
+                    ),
+                    if (s.autoProgressionEnabled) ...[
+                      _CounterRow(
+                        icon: Icons.translate_rounded,
+                        label: 'Kanji quota',
+                        sub: 'Target kanji to maintain',
+                        value: s.autoProgressionKanjiQuota,
+                        min: 5,
+                        max: 50,
+                        step: 5,
+                        colors: colors,
+                        onChanged: (v) => notifier.update(s.copyWith(autoProgressionKanjiQuota: v)),
+                      ),
+                      _CounterRow(
+                        icon: Icons.menu_book_rounded,
+                        label: 'Vocabulary quota',
+                        sub: 'Target vocab to maintain',
+                        value: s.autoProgressionVocabQuota,
+                        min: 10,
+                        max: 100,
+                        step: 10,
+                        colors: colors,
+                        onChanged: (v) => notifier.update(s.copyWith(autoProgressionVocabQuota: v)),
+                      ),
+                    ],
+                    KSetupField(
+                      label: 'Sentence difficulty  ·  ${s.difficultyMin}–${s.difficultyMax}',
+                      hint: 'Applies to kanji and vocabulary sentence practice.',
+                      child: KDualRange(
+                        lo: s.difficultyMin,
+                        hi: s.difficultyMax,
+                        onChanged: (a, b) => notifier.update(s.copyWith(difficultyMin: a, difficultyMax: b)),
+                        colors: colors,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+
+                // ── Data ───────────────────────────────────────────────
+                KSectionLabel(text: 'Data', colors: colors),
+                KPanel(
+                  colors: colors,
+                  children: [
+                    KSettingRow(
+                      icon: Icons.upload_rounded,
+                      label: 'Export progress',
+                      sub: 'Save a backup file',
+                      colors: colors,
+                      trailing: Icon(Icons.chevron_right_rounded, size: 18, color: KDesign.inkFaint(colors)),
+                      onTap: () async {
+                        final path = await exportService.exportProgress(ref.read(settingsProvider));
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Saved to $path'), backgroundColor: colors.correct),
+                          );
+                        }
+                      },
+                    ),
+                    KSettingRow(
+                      icon: Icons.download_rounded,
+                      label: 'Import progress',
+                      sub: 'Restore from a backup file',
+                      colors: colors,
+                      separator: true,
+                      trailing: Icon(Icons.chevron_right_rounded, size: 18, color: KDesign.inkFaint(colors)),
+                      onTap: () async {
+                        try {
+                          final ok = await exportService.importProgress(
+                            context,
+                            ref.read(settingsProvider),
+                            (s) => ref.read(settingsProvider.notifier).update(s),
+                          );
+                          if (context.mounted && ok) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: const Text('Progress imported successfully'), backgroundColor: colors.correct),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Import failed: $e'), backgroundColor: colors.incorrect),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                    KSettingRow(
+                      icon: Icons.delete_forever_rounded,
+                      label: 'Clear all user data',
+                      sub: 'Resets all progress and settings',
+                      colors: colors,
+                      separator: true,
+                      trailing: Icon(Icons.chevron_right_rounded, size: 18, color: colors.incorrect.withValues(alpha: 0.7)),
+                      onTap: () => _confirmClearUserData(context, ref, colors),
+                    ),
+                  ],
+                ),
+              ]),
+            ),
+          ),
+        ]),
+      ),
     );
   }
 
-  void _confirmClearUserData(BuildContext context, WidgetRef ref) {
+  void _confirmClearUserData(BuildContext context, WidgetRef ref, ThemeColors colors) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: Text('Clear all user data?', style: TextStyle(color: AppColors.fg)),
+        backgroundColor: colors.surface,
+        title: Text('Clear all user data?', style: TextStyle(color: KDesign.ink(colors))),
         content: Text(
           'This resets ALL progress — kanji, vocabulary, test history, and settings. '
           'You will return to the onboarding screen. This cannot be undone.',
-          style: TextStyle(color: AppColors.muted),
+          style: TextStyle(color: KDesign.inkSoft(colors)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: TextStyle(color: AppColors.muted)),
+            child: Text('Cancel', style: TextStyle(color: KDesign.inkSoft(colors))),
           ),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              await _doBackupAndClear(context, ref, backup: true);
+              await _doBackupAndClear(context, ref, colors, backup: true);
             },
-            child: Text('Backup & Clear', style: TextStyle(color: AppColors.accent)),
+            child: Text('Backup & Clear', style: TextStyle(color: colors.accent)),
           ),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              await _doBackupAndClear(context, ref, backup: false);
+              await _doBackupAndClear(context, ref, colors, backup: false);
             },
-            child: Text('Clear Without Backup', style: TextStyle(color: AppColors.incorrect)),
+            child: Text('Clear Without Backup', style: TextStyle(color: colors.incorrect)),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _doBackupAndClear(BuildContext context, WidgetRef ref, {required bool backup}) async {
+  Future<void> _doBackupAndClear(BuildContext context, WidgetRef ref, ThemeColors colors, {required bool backup}) async {
     if (backup) {
       final now = DateTime.now();
       final date = '${now.year.toString().padLeft(4, '0')}-'
           '${now.month.toString().padLeft(2, '0')}-'
           '${now.day.toString().padLeft(2, '0')}';
-      final filename = 'kanji_backup_$date.json';
-      final path = await exportService.exportProgress(ref.read(settingsProvider), filename: filename);
+      final path = await exportService.exportProgress(ref.read(settingsProvider), filename: 'kanji_backup_$date.json');
       if (context.mounted && path != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Backup saved to $path'), backgroundColor: AppColors.correctBg),
+          SnackBar(content: Text('Backup saved to $path'), backgroundColor: colors.correct),
         );
         await Future.delayed(const Duration(seconds: 2));
       }
     }
 
-    // Clear all user tables
     await dbService.execute("DELETE FROM user_progress");
     await dbService.execute("DELETE FROM vocabulary_targets");
     await dbService.execute("DELETE FROM vocabulary_progress");
     try { await dbService.execute("DELETE FROM test_history"); } catch (_) {}
     try { await dbService.execute("DELETE FROM session_log"); } catch (_) {}
 
-    // Clear all SharedPreferences (onboarding flag, JLPT progress, settings)
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
 
@@ -284,39 +356,9 @@ class SettingsScreen extends ConsumerWidget {
       );
     }
   }
-
-  void _confirmReset(BuildContext context, WidgetRef ref) {
-    showDialog(context: context, builder: (_) => AlertDialog(
-      backgroundColor: AppColors.surface,
-      title: Text('Reset progress?', style: TextStyle(color: AppColors.fg)),
-      content: Text('All learned kanji will be reset to unlearned. This cannot be undone.',
-        style: TextStyle(color: AppColors.muted)),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context),
-          child: Text('Cancel', style: TextStyle(color: AppColors.muted))),
-        TextButton(
-          onPressed: () async {
-            await dbService.execute("UPDATE user_progress SET status='unlearned', consecutive_correct=0");
-            if (context.mounted) Navigator.pop(context);
-          },
-          child: Text('Reset', style: TextStyle(color: AppColors.incorrect)),
-        ),
-      ],
-    ));
-  }
 }
 
-const _themeTaglines = {
-  AppTheme.simpleLight:  'Simple, clean, default.',
-  AppTheme.simpleDark:   'Simple, clean, easy on the eyes.',
-  AppTheme.sakura:       'Pastel pinks. Comes too quickly every year.',
-  AppTheme.galaxy:       'Cosmic blues. There\'s a cowboy out there somewhere.',
-  AppTheme.tetris:       'Colorful bricks on a dark background.',
-  AppTheme.loveLetter:   'Snow whites, pale blues.',
-  AppTheme.lily:         'Forever Ashikaga.',
-  AppTheme.totoro:       'It\'s pronounced Jiburi. Ignore Miyazaki.',
-  AppTheme.midnightCity: 'Turn up the music Miss Takeuchi.',
-};
+// ── Theme panel ───────────────────────────────────────────────────────────────
 
 const _themeLabels = {
   AppTheme.simpleLight:  'Simple Light',
@@ -330,199 +372,254 @@ const _themeLabels = {
   AppTheme.midnightCity: 'Midnight City',
 };
 
-class _ThemeSelector extends ConsumerWidget {
-  const _ThemeSelector();
+const _themeTaglines = {
+  AppTheme.simpleLight:  'Simple, clean, default.',
+  AppTheme.simpleDark:   'Simple, clean, easy on the eyes.',
+  AppTheme.sakura:       'Pastel pinks. Comes too quickly every year.',
+  AppTheme.galaxy:       'Cosmic blues. There\'s a cowboy out there somewhere.',
+  AppTheme.tetris:       'Colorful bricks on a dark background.',
+  AppTheme.loveLetter:   'Snow whites, pale blues.',
+  AppTheme.lily:         'Forever Ashikaga.',
+  AppTheme.totoro:       'It\'s pronounced Jiburi. Ignore Miyazaki.',
+  AppTheme.midnightCity: 'Turn up the music Miss Takeuchi.',
+};
+
+class _ThemePanel extends ConsumerWidget {
+  final ThemeColors colors;
+  final bool inScroll;
+  const _ThemePanel({required this.colors, this.inScroll = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentTheme = ref.watch(themeNotifier);
+    final current = ref.watch(themeNotifier);
     final notifier = ref.read(themeNotifier.notifier);
 
-    return Column(
-      children: AppTheme.values.expand((theme) => [
-        _ThemeRadio(
-          label: _themeLabels[theme] ?? theme.name,
-          tagline: _themeTaglines[theme] ?? '',
-          theme: theme,
-          isSelected: currentTheme == theme,
-          onSelected: () => notifier.setTheme(theme),
+    final items = AppTheme.values.asMap().entries.map((entry) {
+      final i = entry.key;
+      final theme = entry.value;
+      final on = current == theme;
+      return GestureDetector(
+        onTap: () => notifier.setTheme(theme),
+        child: Container(
+          decoration: BoxDecoration(
+            border: i > 0 ? Border(top: BorderSide(color: KDesign.line(colors).withValues(alpha: 0.6))) : null,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          child: Row(children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 22, height: 22,
+              decoration: BoxDecoration(
+                color: on ? colors.accent : Colors.transparent,
+                shape: BoxShape.circle,
+                border: on ? null : Border.all(color: KDesign.line(colors), width: 2),
+              ),
+              child: on ? const Icon(Icons.check_rounded, size: 14, color: Colors.white) : null,
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(_themeLabels[theme] ?? theme.name, style: TextStyle(
+                  fontSize: 15, fontWeight: FontWeight.w700,
+                  color: KDesign.ink(colors),
+                )),
+                if (on)
+                  Text(_themeTaglines[theme] ?? '', style: TextStyle(
+                    fontSize: 12.5, fontWeight: FontWeight.w600,
+                    color: KDesign.inkSoft(colors), fontStyle: FontStyle.italic,
+                  )),
+              ]),
+            ),
+          ]),
         ),
-        const SizedBox(height: 8),
-      ]).toList(),
+      );
+    }).toList();
+
+    if (inScroll) {
+      return Column(mainAxisSize: MainAxisSize.min, children: items);
+    }
+    return KPanel(colors: colors, children: items);
+  }
+}
+
+// ── Slider row ────────────────────────────────────────────────────────────────
+
+class _SliderRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final double value;
+  final ThemeColors colors;
+  final void Function(double) onChanged;
+  const _SliderRow({required this.icon, required this.label, required this.value, required this.colors, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: KDesign.line(colors).withValues(alpha: 0.6))),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 12, 8, 8),
+      child: Row(children: [
+        Container(
+          width: 38, height: 38,
+          decoration: BoxDecoration(
+            color: KDesign.tint(colors),
+            borderRadius: BorderRadius.circular(11),
+          ),
+          child: Icon(icon, size: 19, color: colors.accent),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: KDesign.ink(colors))),
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                overlayShape: SliderComponentShape.noOverlay,
+                trackHeight: 4,
+                activeTrackColor: colors.accent,
+                inactiveTrackColor: KDesign.soft(colors),
+                thumbColor: Colors.white,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 9),
+              ),
+              child: Slider(
+                value: value, min: 0, max: 1, divisions: 10,
+                onChanged: onChanged,
+              ),
+            ),
+          ]),
+        ),
+      ]),
     );
   }
 }
 
-class _ThemeRadio extends StatelessWidget {
-  final String label;
-  final String tagline;
-  final AppTheme theme;
-  final bool isSelected;
-  final VoidCallback onSelected;
+// ── Counter row ───────────────────────────────────────────────────────────────
 
-  const _ThemeRadio({
-    required this.label,
-    required this.tagline,
-    required this.theme,
-    required this.isSelected,
-    required this.onSelected,
+class _CounterRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String sub;
+  final int value;
+  final int min;
+  final int max;
+  final int step;
+  final ThemeColors colors;
+  final ValueChanged<int> onChanged;
+
+  const _CounterRow({
+    required this.icon, required this.label, required this.sub,
+    required this.value, required this.min, required this.max,
+    required this.step, required this.colors, required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onSelected,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Radio<bool>(
-            value: true,
-            groupValue: isSelected,
-            onChanged: (_) => onSelected(),
-            activeColor: AppColors.accent,
-          ),
-          const SizedBox(width: 8),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: KDesign.line(colors).withValues(alpha: 0.6))),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(children: [
+          Icon(icon, size: 20, color: KDesign.inkSoft(colors)),
+          const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(label, style: TextStyle(color: AppColors.fg)),
-                if (isSelected && tagline.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(tagline,
-                      style: TextStyle(fontSize: 12, color: AppColors.muted,
-                          fontStyle: FontStyle.italic)),
-                  ),
-              ],
-            ),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(label, style: TextStyle(
+                fontSize: 14, fontWeight: FontWeight.w600, color: KDesign.ink(colors),
+              )),
+              Text(sub, style: TextStyle(fontSize: 12, color: KDesign.inkSoft(colors))),
+            ]),
           ),
-        ],
+          Row(children: [
+            GestureDetector(
+              onTap: value > min ? () => onChanged(value - step) : null,
+              child: Container(
+                width: 30, height: 30,
+                decoration: BoxDecoration(
+                  color: KDesign.tint(colors),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: Icon(Icons.remove_rounded, size: 18, color:
+                  value > min ? KDesign.ink(colors) : KDesign.inkFaint(colors)),
+              ),
+            ),
+            SizedBox(
+              width: 42,
+              child: Text('$value',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: KDesign.ink(colors)),
+              ),
+            ),
+            GestureDetector(
+              onTap: value < max ? () => onChanged(value + step) : null,
+              child: Container(
+                width: 30, height: 30,
+                decoration: BoxDecoration(
+                  color: KDesign.tint(colors),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: Icon(Icons.add_rounded, size: 18, color:
+                  value < max ? KDesign.ink(colors) : KDesign.inkFaint(colors)),
+              ),
+            ),
+          ]),
+        ]),
       ),
     );
   }
 }
 
-class _FontSizeSelector extends ConsumerWidget {
-  const _FontSizeSelector();
+// ── Dropdown row ──────────────────────────────────────────────────────────────
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final appearanceSettings = ref.watch(appearanceSettingsProvider);
-
-    if (appearanceSettings == null) {
-      return const SizedBox.shrink();
-    }
-
-    final currentSize = appearanceSettings.getFontSize();
-    const sizes = [0.8, 1.0, 1.2, 1.5];
-    const labels = ['Small', 'Normal', 'Large', 'Extra Large'];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Font Size', style: TextStyle(color: AppColors.fg, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
-        ...List.generate(sizes.length, (i) {
-          final size = sizes[i];
-          final label = labels[i];
-          final isSelected = (currentSize - size).abs() < 0.01;
-
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: _SettingTile(
-              label: label,
-              isSelected: isSelected,
-              onTap: () async {
-                await appearanceSettings.setFontSize(size);
-                // ignore: avoid_types_on_closure_parameters
-                ref.invalidate(appearanceSettingsProvider);
-              },
-            ),
-          );
-        }),
-      ],
-    );
-  }
-}
-
-class _ContrastSelector extends ConsumerWidget {
-  const _ContrastSelector();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final appearanceSettings = ref.watch(appearanceSettingsProvider);
-
-    if (appearanceSettings == null) {
-      return const SizedBox.shrink();
-    }
-
-    final currentContrast = appearanceSettings.getContrast();
-    const contrasts = ['normal', 'high', 'ultra'];
-    const labels = ['Normal', 'High', 'Ultra'];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Contrast', style: TextStyle(color: AppColors.fg, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
-        ...List.generate(contrasts.length, (i) {
-          final contrast = contrasts[i];
-          final label = labels[i];
-          final isSelected = currentContrast == contrast;
-
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: _SettingTile(
-              label: label,
-              isSelected: isSelected,
-              onTap: () async {
-                await appearanceSettings.setContrast(contrast);
-                // ignore: avoid_types_on_closure_parameters
-                ref.invalidate(appearanceSettingsProvider);
-              },
-            ),
-          );
-        }),
-      ],
-    );
-  }
-}
-
-class _SettingTile extends StatelessWidget {
+class _DropdownRow extends StatelessWidget {
+  final IconData icon;
   final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _SettingTile({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
+  final String value;
+  final Map<String, String> items;
+  final ThemeColors colors;
+  final void Function(String?) onChanged;
+  const _DropdownRow({required this.icon, required this.label, required this.value, required this.items, required this.colors, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.accent.withValues(alpha: 0.2) : AppColors.pillBg,
-          borderRadius: BorderRadius.circular(AppColors.containerRadius),
-          border: Border.all(
-            color: isSelected ? AppColors.accent : Colors.transparent,
-            width: 1,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label, style: TextStyle(color: AppColors.fg)),
-            if (isSelected) Icon(Icons.check, color: AppColors.accent, size: 18),
-          ],
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: KDesign.line(colors).withValues(alpha: 0.6))),
       ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(children: [
+        Container(
+          width: 38, height: 38,
+          decoration: BoxDecoration(
+            color: KDesign.tint(colors),
+            borderRadius: BorderRadius.circular(11),
+          ),
+          child: Icon(icon, size: 19, color: colors.accent),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: KDesign.ink(colors))),
+            const SizedBox(height: 4),
+            DropdownButton<String>(
+              value: value,
+              isExpanded: true,
+              dropdownColor: colors.surface,
+              style: TextStyle(color: KDesign.ink(colors), fontSize: 14, fontWeight: FontWeight.w600),
+              underline: Container(height: 1, color: KDesign.line(colors)),
+              icon: Icon(Icons.unfold_more_rounded, size: 18, color: KDesign.inkFaint(colors)),
+              onChanged: onChanged,
+              items: items.entries.map((e) => DropdownMenuItem<String>(
+                value: e.value,
+                child: Text(e.key, style: TextStyle(color: KDesign.ink(colors), fontSize: 14)),
+              )).toList(),
+            ),
+          ]),
+        ),
+      ]),
     );
   }
 }
