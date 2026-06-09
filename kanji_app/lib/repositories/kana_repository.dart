@@ -147,16 +147,18 @@ class KanaRepository {
     }
   }
 
-  Future<List<KanaCharacter>> getNextUntargetedKana(int count) async {
+  Future<List<KanaCharacter>> getNextUntargetedKana(int count, {String? type}) async {
     if (count <= 0) return [];
+    final typeClause = type != null ? 'AND k.type = ?' : '';
     final rows = await dbService.query('''
       SELECT k.*, COALESCE(p.status, 'unlearned') AS status
       FROM kana k
       LEFT JOIN kana_progress p ON k.id = p.kana_id
       WHERE COALESCE(p.status, 'unlearned') = 'unlearned'
+      $typeClause
       ORDER BY k.id ASC
       LIMIT ?
-    ''', [count]);
+    ''', [if (type != null) type, count]);
     return rows.map(KanaCharacter.fromRow).toList();
   }
 
@@ -184,8 +186,8 @@ class KanaRepository {
 
   Future<void> recordResult(int kanaId, bool correct) async {
     await dbService.execute('''
-      INSERT INTO kana_progress (kana_id, status, consecutive_correct, total_seen, total_correct)
-      VALUES (?, 'unlearned', ?, 1, ?)
+      INSERT INTO kana_progress (kana_id, status, consecutive_correct, total_seen, total_correct, practice_correct_count)
+      VALUES (?, 'unlearned', ?, 1, ?, 0)
       ON CONFLICT(kana_id) DO UPDATE SET
         consecutive_correct = CASE WHEN ? THEN consecutive_correct+1 ELSE 0 END,
         total_seen = total_seen+1,
@@ -194,8 +196,30 @@ class KanaRepository {
           WHEN ? AND consecutive_correct+1 >= 3 THEN 'learned'
           WHEN status='learned' AND NOT ? THEN 'target'
           ELSE status
+        END,
+        practice_correct_count = CASE
+          WHEN ? AND consecutive_correct+1 >= 3 THEN 0
+          ELSE practice_correct_count
         END
-    ''', [kanaId, correct ? 1 : 0, correct ? 1 : 0, correct, correct, correct, correct]);
+    ''', [kanaId, correct ? 1 : 0, correct ? 1 : 0, correct, correct, correct, correct, correct]);
+  }
+
+  Future<void> incrementPracticeCount(int kanaId) async {
+    await dbService.execute('''
+      INSERT INTO kana_progress (kana_id, practice_correct_count)
+      VALUES (?, 1)
+      ON CONFLICT(kana_id) DO UPDATE SET practice_correct_count = practice_correct_count + 1
+    ''', [kanaId]);
+  }
+
+  Future<Map<int, int>> getPracticeCountsForIds(List<int> ids) async {
+    if (ids.isEmpty) return {};
+    final placeholders = List.filled(ids.length, '?').join(',');
+    final rows = await dbService.query(
+      'SELECT kana_id, COALESCE(practice_correct_count, 0) AS cnt FROM kana_progress WHERE kana_id IN ($placeholders)',
+      ids,
+    );
+    return {for (final r in rows) r['kana_id'] as int: r['cnt'] as int};
   }
 
   // Words
