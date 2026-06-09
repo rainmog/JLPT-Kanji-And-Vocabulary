@@ -10,9 +10,9 @@ class ProgressRepository {
 
   Future<void> markLearned(int kanjiId) async {
     await dbService.execute('''
-      INSERT INTO user_progress (kanji_id, status, consecutive_correct)
-      VALUES (?, 'learned', 0)
-      ON CONFLICT(kanji_id) DO UPDATE SET status='learned', consecutive_correct=0
+      INSERT INTO user_progress (kanji_id, status, consecutive_correct, practice_correct_count)
+      VALUES (?, 'learned', 0, 0)
+      ON CONFLICT(kanji_id) DO UPDATE SET status='learned', consecutive_correct=0, practice_correct_count=0
     ''', [kanjiId]);
   }
 
@@ -103,6 +103,24 @@ class ProgressRepository {
       SET consecutive_correct = 0, total_seen = total_seen + 1
       WHERE kanji_id = ?
     ''', [kanjiId]);
+  }
+
+  Future<void> incrementPracticeCount(int kanjiId) async {
+    await dbService.execute('''
+      INSERT INTO user_progress (kanji_id, practice_correct_count)
+      VALUES (?, 1)
+      ON CONFLICT(kanji_id) DO UPDATE SET practice_correct_count = practice_correct_count + 1
+    ''', [kanjiId]);
+  }
+
+  Future<Map<int, int>> getPracticeCountsForIds(List<int> ids) async {
+    if (ids.isEmpty) return {};
+    final placeholders = List.filled(ids.length, '?').join(',');
+    final rows = await dbService.query(
+      'SELECT kanji_id, COALESCE(practice_correct_count, 0) AS cnt FROM user_progress WHERE kanji_id IN ($placeholders)',
+      ids,
+    );
+    return {for (final r in rows) r['kanji_id'] as int: r['cnt'] as int};
   }
 
   Future<void> logSession({
