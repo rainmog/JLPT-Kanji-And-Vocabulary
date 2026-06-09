@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../repositories/sentence_repository.dart';
 import '../services/preferences_service.dart';
 import '../services/settings_service.dart';
 import '../services/sound_service.dart';
@@ -7,6 +8,7 @@ import '../theme_provider.dart';
 import '../utils/app_route.dart';
 import '../widgets/k_setup.dart';
 import 'matching_game_config_screen.dart';
+import 'practice_preview_screen.dart';
 import 'session_screen.dart';
 import 'speed_read_config_screen.dart';
 
@@ -22,6 +24,7 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
   String _mode = 'sentence';
   bool _multipleChoice = true;
   int _count = 20;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -39,7 +42,9 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
     });
   }
 
-  void _startSession() {
+  Future<void> _startSession() async {
+    if (_loading) return;
+    setState(() => _loading = true);
     final settings = ref.read(settingsProvider);
     PreferencesService.save(
       mode: _mode,
@@ -49,15 +54,34 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
       multipleChoice: _multipleChoice,
     );
     soundService.playSelectButton();
-    Navigator.push(context, AppRoute.to(SessionScreen(
-      mode: _mode,
+
+    final kanjiList = await sentenceRepo.pickKanjiForSession(
       jlptLevels: const [1, 2, 3, 4, 5],
       tags: const [],
-      questionCount: _count,
-      minDifficulty: settings.difficultyMin,
-      maxDifficulty: settings.difficultyMax,
-      multipleChoice: _multipleChoice,
+      count: _count,
       targetOnly: true,
+      reviewOnly: false,
+      orderByPracticeCount: true,
+    );
+
+    if (!mounted) return;
+    setState(() => _loading = false);
+
+    Navigator.push(context, AppRoute.to(PracticePreviewScreen(
+      items: KanjiPreviewItems(kanjiList),
+      onBegin: (ctx) {
+        Navigator.push(ctx, AppRoute.to(SessionScreen(
+          mode: _mode,
+          jlptLevels: const [1, 2, 3, 4, 5],
+          tags: const [],
+          questionCount: _count,
+          minDifficulty: settings.difficultyMin,
+          maxDifficulty: settings.difficultyMax,
+          multipleChoice: _multipleChoice,
+          targetOnly: true,
+          fixedKanjiIds: kanjiList.map((k) => k.id).toList(),
+        )));
+      },
     )));
   }
 
@@ -140,7 +164,11 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
 
           KStickyFooter(
             colors: colors,
-            child: KStartButton(label: 'Start practice', colors: colors, onTap: _startSession),
+            child: KStartButton(
+              label: _loading ? 'Loading…' : 'Start practice',
+              colors: colors,
+              onTap: _startSession,
+            ),
           ),
         ]),
       ),
