@@ -712,16 +712,33 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
 
   // ── Next question / session end ───────────────────────────────────────────────
 
-  void _handleNext(
+  Future<void> _handleNext(
     BuildContext context,
     QuizController controller,
     QuizState state,
-  ) {
+  ) async {
     _autoNextTimer?.cancel();
     if (controller.isLastQuestion) {
       final session = state.session;
+
+      // Prefetch practice counts for all questions in session
+      final ids = session.questions.map((q) => q.kanjiId).toList();
+      final counts = await progressRepo.getPracticeCountsForIds(ids);
+
+      // Build display list sorted descending by count (de-duplicated by kanjiId)
+      final seen = <int>{};
+      final practiceCounts = <({String display, int count})>[];
+      for (final q in session.questions) {
+        if (seen.add(q.kanjiId)) {
+          final cnt = counts[q.kanjiId] ?? 0;
+          practiceCounts.add((display: q.character, count: cnt));
+        }
+      }
+      practiceCounts.sort((a, b) => b.count.compareTo(a.count));
+
+      if (!mounted) return;
       Navigator.pushReplacement(
-        context,
+        this.context,
         AppRoute.to(SessionSummaryScreen(
           correct: session.score,
           total: session.answers.length,
@@ -729,6 +746,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
               .where((a) => a.isCorrect)
               .map((a) => a.question.character)
               .toList(),
+          practiceCounts: practiceCounts,
         )),
       );
       return;
