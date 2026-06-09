@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/vocab_repository.dart';
 import '../theme.dart';
+import '../widgets/item_info_sheet.dart';
 
 sealed class VocabFilter {
   const VocabFilter();
@@ -77,6 +78,27 @@ class _VocabListScreenState extends ConsumerState<VocabListScreen> {
       return;
     }
     if (_busy) return;
+
+    if (_learnedIds.contains(word.id)) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Already Learned'),
+          content: Text(
+            '"${word.word}" is already learned. Set it back to unlearned?',
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+            TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Yes')),
+          ],
+        ),
+      );
+      if (confirm != true) return;
+      setState(() { _learnedIds.remove(word.id); _targetIds.remove(word.id); });
+      await vocabRepo.markUnlearned(word.id);
+      return;
+    }
+
     _busy = true;
     final isTarget = _targetIds.contains(word.id);
     setState(() {
@@ -92,22 +114,39 @@ class _VocabListScreenState extends ConsumerState<VocabListScreen> {
 
   Future<void> _selectAll() async {
     if (_busy) return;
-    _busy = true;
     final ids = _words.map((w) => w.id).toList();
-    final allSelected = ids.isNotEmpty && ids.every(_targetIds.contains);
-    setState(() {
-      if (allSelected) {
-        _targetIds.removeAll(ids);
-      } else {
-        _targetIds.addAll(ids);
+    final hasUnlearned = ids.any((id) => !_targetIds.contains(id) && !_learnedIds.contains(id));
+
+    if (!hasUnlearned) {
+      // All are learned or targeted — ask to reset all to unlearned
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Reset all to unlearned?'),
+          content: const Text(
+            'All words are already learned or targeted. Set all to unlearned?',
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+            TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Reset')),
+          ],
+        ),
+      );
+      if (confirm != true) return;
+      _busy = true;
+      setState(() { _targetIds.removeAll(ids); _learnedIds.removeAll(ids); });
+      for (final id in ids) {
+        await vocabRepo.markUnlearned(id);
       }
-    });
-    if (allSelected) {
-      await vocabRepo.deselectAllTargets(ids);
+      _busy = false;
     } else {
-      await vocabRepo.selectAllTargets(ids);
+      // Set unlearned → target; leave learned untouched
+      _busy = true;
+      final toTarget = ids.where((id) => !_targetIds.contains(id) && !_learnedIds.contains(id)).toList();
+      setState(() => _targetIds.addAll(toTarget));
+      await vocabRepo.selectAllTargets(toTarget);
+      _busy = false;
     }
-    _busy = false;
   }
 
   Color _tileColor(VocabWord word) {
@@ -131,7 +170,8 @@ class _VocabListScreenState extends ConsumerState<VocabListScreen> {
     }
 
     final ids = _words.map((w) => w.id).toList();
-    final allSelected = ids.isNotEmpty && ids.every(_targetIds.contains);
+    final allSelected = ids.isNotEmpty &&
+        ids.every((id) => _targetIds.contains(id) || _learnedIds.contains(id));
 
     return Scaffold(
       appBar: AppBar(
@@ -192,6 +232,7 @@ class _VocabListScreenState extends ConsumerState<VocabListScreen> {
                   final showReading = word.word != word.reading;
                   return GestureDetector(
                     onTap: () => _toggle(word),
+                    onLongPress: () => showVocabInfoSheet(context, word),
                     child: Container(
                       decoration: BoxDecoration(
                         color: _tileColor(word),

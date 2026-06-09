@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../repositories/kana_repository.dart';
 import '../theme.dart';
 import '../widgets/scale_on_press.dart';
+import '../widgets/item_info_sheet.dart';
 
 class SelectTargetKanaScreen extends StatefulWidget {
   final String type; // 'hiragana' | 'katakana'
@@ -40,6 +41,33 @@ class _SelectTargetKanaScreenState extends State<SelectTargetKanaScreen> {
   }
 
   Future<void> _toggleChar(KanaCharacter ch) async {
+    if (ch.status == 'learned') {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: AppColors.surface,
+          title: Text('Mark as unlearned?', style: TextStyle(color: AppColors.fg)),
+          content: Text(
+            '${ch.character} (${ch.romaji}) is already learned. Set it back to unlearned?',
+            style: TextStyle(color: AppColors.muted),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text('Cancel', style: TextStyle(color: AppColors.muted)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text('Yes', style: TextStyle(color: AppColors.accent)),
+            ),
+          ],
+        ),
+      );
+      if (confirm != true) return;
+      await kanaRepo.setStatus(ch.id, 'unlearned');
+      await _load();
+      return;
+    }
     final next = ch.status == 'target' ? 'unlearned' : 'target';
     await kanaRepo.setStatus(ch.id, next);
     await _load();
@@ -47,11 +75,40 @@ class _SelectTargetKanaScreenState extends State<SelectTargetKanaScreen> {
 
   Future<void> _toggleRow(String row) async {
     final rowChars = _byRow[row] ?? [];
-    final allTargeted = rowChars.every((c) => c.status == 'target' || c.status == 'learned');
-    final newStatus = allTargeted ? 'unlearned' : 'target';
-    for (final ch in rowChars) {
-      if (ch.status != 'learned') {
-        await kanaRepo.setStatus(ch.id, newStatus);
+    final hasUnlearned = rowChars.any((c) => c.status == 'unlearned');
+    if (!hasUnlearned) {
+      // All are learned or target — ask to reset all to unlearned
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: AppColors.surface,
+          title: Text('Reset row to unlearned?', style: TextStyle(color: AppColors.fg)),
+          content: Text(
+            'All characters in "$row" are already learned or targeted. Set all to unlearned?',
+            style: TextStyle(color: AppColors.muted),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text('Cancel', style: TextStyle(color: AppColors.muted)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text('Reset', style: TextStyle(color: AppColors.accent)),
+            ),
+          ],
+        ),
+      );
+      if (confirm != true) return;
+      for (final ch in rowChars) {
+        await kanaRepo.setStatus(ch.id, 'unlearned');
+      }
+    } else {
+      // Set unlearned → target; leave learned untouched
+      for (final ch in rowChars) {
+        if (ch.status == 'unlearned') {
+          await kanaRepo.setStatus(ch.id, 'target');
+        }
       }
     }
     await _load();
@@ -227,7 +284,8 @@ class _SelectTargetKanaScreenState extends State<SelectTargetKanaScreen> {
 
                         return ScaleOnPress(
                           child: GestureDetector(
-                            onTap: ch.status == 'learned' ? null : () => _toggleChar(ch),
+                            onTap: () => _toggleChar(ch),
+                            onLongPress: () => showKanaInfoSheet(context, ch),
                             child: Container(
                               width: 60,
                               padding: const EdgeInsets.symmetric(vertical: 10),

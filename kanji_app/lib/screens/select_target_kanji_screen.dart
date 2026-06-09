@@ -6,6 +6,7 @@ import '../services/sound_service.dart';
 import '../theme.dart';
 import '../utils/app_route.dart';
 import '../widgets/scale_on_press.dart';
+import '../widgets/item_info_sheet.dart';
 
 final _kanjiTagsProvider = FutureProvider.autoDispose<List<String>>(
   (ref) => kanjiRepo.getAllTags(),
@@ -41,7 +42,7 @@ class SelectTargetKanjiScreen extends ConsumerWidget {
             _LevelButton(
               label: 'All Kanji',
               onTap: () => Navigator.push(context,
-                AppRoute.to(const _KanjiGridScreen(level: null))),
+                AppRoute.to(const KanjiGridScreen(level: null))),
             ),
             const SizedBox(height: 8),
             Row(children: [5, 4, 3, 2, 1].map((level) => Expanded(
@@ -50,7 +51,7 @@ class SelectTargetKanjiScreen extends ConsumerWidget {
                 child: _LevelButton(
                   label: 'N$level',
                   onTap: () => Navigator.push(context,
-                    AppRoute.to(_KanjiGridScreen(level: level))),
+                    AppRoute.to(KanjiGridScreen(level: level))),
                 ),
               ),
             )).toList()),
@@ -71,7 +72,7 @@ class SelectTargetKanjiScreen extends ConsumerWidget {
                     children: tags.map((tag) => _TagButton(
                       tag: tag,
                       onTap: () => Navigator.push(context,
-                        AppRoute.to(_KanjiGridScreen(level: null, tag: tag))),
+                        AppRoute.to(KanjiGridScreen(level: null, tag: tag))),
                     )).toList(),
                   ),
             ),
@@ -121,16 +122,16 @@ class _TagButton extends StatelessWidget {
   }
 }
 
-class _KanjiGridScreen extends ConsumerStatefulWidget {
+class KanjiGridScreen extends ConsumerStatefulWidget {
   final int? level;
   final String? tag;
-  const _KanjiGridScreen({required this.level, this.tag});
+  const KanjiGridScreen({required this.level, this.tag});
 
   @override
-  ConsumerState<_KanjiGridScreen> createState() => _KanjiGridScreenState();
+  ConsumerState<KanjiGridScreen> createState() => KanjiGridScreenState();
 }
 
-class _KanjiGridScreenState extends ConsumerState<_KanjiGridScreen> {
+class KanjiGridScreenState extends ConsumerState<KanjiGridScreen> {
   final Map<int, String> _localStatus = {};
   bool _addLearnedMode = false;
 
@@ -143,21 +144,43 @@ class _KanjiGridScreenState extends ConsumerState<_KanjiGridScreen> {
   }
 
   Future<void> _selectAll(List<(Kanji, String)> items) async {
-    final selectable = items
-        .where((item) => _statusFor(item.$1, items) != 'learned')
-        .map((item) => item.$1)
-        .toList();
-    if (selectable.isEmpty) return;
-    final allTargeted = selectable.every((k) => _statusFor(k, items) == 'target');
-    final ids = selectable.map((k) => k.id).toList();
-    setState(() {
-      for (final k in selectable) {
-        _localStatus[k.id] = allTargeted ? 'unlearned' : 'target';
-      }
-    });
-    if (allTargeted) {
-      await progressRepo.markAllUnlearned(ids);
+    final hasUnlearned = items.any((item) => _statusFor(item.$1, items) == 'unlearned');
+
+    if (!hasUnlearned) {
+      // All are learned or targeted — ask to reset all to unlearned
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Reset all to unlearned?'),
+          content: const Text(
+            'All kanji are already learned or targeted. Set all to unlearned?',
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+            TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Reset')),
+          ],
+        ),
+      );
+      if (confirm != true) return;
+      final allIds = items.map((item) => item.$1.id).toList();
+      setState(() {
+        for (final (k, _) in items) {
+          _localStatus[k.id] = 'unlearned';
+        }
+      });
+      await progressRepo.markAllUnlearned(allIds);
     } else {
+      // Set unlearned → target; leave learned untouched
+      final unlearnedItems = items
+          .where((item) => _statusFor(item.$1, items) == 'unlearned')
+          .map((item) => item.$1)
+          .toList();
+      final ids = unlearnedItems.map((k) => k.id).toList();
+      setState(() {
+        for (final k in unlearnedItems) {
+          _localStatus[k.id] = 'target';
+        }
+      });
       await progressRepo.markAllTarget(ids);
     }
   }
@@ -215,11 +238,8 @@ class _KanjiGridScreenState extends ConsumerState<_KanjiGridScreen> {
   }
 
   Widget _buildBody(List<(Kanji, String)> items) {
-    final selectable = items
-        .where((item) => _statusFor(item.$1, items) != 'learned')
-        .toList();
-    final allTargeted = selectable.isNotEmpty &&
-        selectable.every((item) => _statusFor(item.$1, items) == 'target');
+    final allSelected = items.isNotEmpty &&
+        items.every((item) => _statusFor(item.$1, items) != 'unlearned');
     final targetedCount = items
         .where((item) => _statusFor(item.$1, items) == 'target')
         .length;
@@ -231,13 +251,13 @@ class _KanjiGridScreenState extends ConsumerState<_KanjiGridScreen> {
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            color: allTargeted
+            color: allSelected
                 ? AppColors.accent.withValues(alpha: 0.15)
                 : AppColors.surface,
             child: Row(children: [
               Icon(
-                allTargeted ? Icons.check_box : Icons.check_box_outline_blank,
-                color: allTargeted ? AppColors.accent : AppColors.muted,
+                allSelected ? Icons.check_box : Icons.check_box_outline_blank,
+                color: allSelected ? AppColors.accent : AppColors.muted,
                 size: 22,
               ),
               const SizedBox(width: 12),
@@ -246,7 +266,7 @@ class _KanjiGridScreenState extends ConsumerState<_KanjiGridScreen> {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: allTargeted ? AppColors.accent : AppColors.fg,
+                  color: allSelected ? AppColors.accent : AppColors.fg,
                 ),
               ),
               const Spacer(),
@@ -272,6 +292,7 @@ class _KanjiGridScreenState extends ConsumerState<_KanjiGridScreen> {
               final status = _statusFor(kanji, items);
               return GestureDetector(
                 onTap: () => _toggleTarget(kanji, status, items),
+                onLongPress: () => showKanjiInfoSheet(context, kanji),
                 child: Container(
                   decoration: BoxDecoration(
                     color: _tileColor(status),
