@@ -1,6 +1,6 @@
 # Kanji App Dev Notes
 
-## Current State (2026-06-09 — Auto-progression, onboarding redesign, home screen fixes, global difficulty setting)
+## Current State (2026-06-09 — Item info sheets, practice preview, practice identification tracker)
 
 **App**: Flutter 3.44.0, offline-first kanji + vocabulary study app  
 **Data**: 2230 kanji (davidluzgouveia/kanji-data `jlpt_new`); 1023 sentences (103 N4 + 181 N3 + 739 N2); 8,254 JLPT vocab (N5–N1)  
@@ -14,6 +14,9 @@
 **UI**: Hub-and-spoke redesign complete for all hub/config/practice/session screens. 9 orphaned screens pending deletion. `Clear User Data` in Settings resets all tables + SharedPrefs and returns to onboarding. DB index: `tools/export_db_index.py` → `tools/data/kanji_index.csv` + `kanji_index.json`.  
 **Repo**: `.gitignore` kept local only (`.git/info/exclude`). `tools/dev_artifacts/` holds generation scripts + batch outputs locally, excluded from git. N1–N5 question JSONs tracked in `tools/data/`.
 **Kana**: 223 kana characters (hiragana + katakana, full + dakuten + handakuten + combos + extended katakana) + 131 kana words in DB. `kana_progress` is a runtime table (created by `_runMigrations`). N4+ onboarding calls `kanaRepo.setAllLearned()` directly (no settings flag). Asset DB version bumped to 2. Test mode: fixed 2-per-char format (kana→romaji MC + romaji→kana MC per targeted char). `setStatus` uses `ON CONFLICT DO UPDATE SET status` to preserve `consecutive_correct`. Targets screen: ⋮ menu → "Set all to learned" (confirm dialog) or "Select to mark learned" (selection mode with bottom bar).
+**Practice tracker**: `practice_correct_count INTEGER DEFAULT 0` added to `user_progress`, `vocabulary_progress`, `kana_progress` via `_runMigrations` try/catch ALTER TABLE. Incremented fire-and-forget on correct answer in practice sessions (not JLPT tests). Reset to 0 in `markLearned`. Shown in results screens. Kanji/kana test mode selects highest-count items first (`ORDER BY COALESCE(p.practice_correct_count, 0) DESC`).
+**Item info sheets**: `lib/widgets/item_info_sheet.dart` — `KanjiInfoContent`, `VocabInfoContent`, `KanaInfoContent` + `showKanjiInfoSheet` / `showVocabInfoSheet` / `showKanaInfoSheet` helpers. All use `showModalBottomSheet(isScrollControlled: true)` + `DraggableScrollableSheet`. Long-press on selection grid tiles; tap in vocab dictionary; kanji detail screen is now a full rewrite using `KanjiInfoContent`.
+**Practice preview**: `lib/screens/practice_preview_screen.dart` — sealed `PreviewItems` (Kanji/Vocab/Kana). Inserted between config and session for all 3 practice types. `onBegin: void Function(BuildContext)` receives preview screen's context to avoid stale context in push. Kanji config fetches list via `SentenceRepository.pickKanjiForSession` then passes `fixedKanjiIds` to `SessionScreen`/`QuizController` to bypass filter queries.
 
 ## Data Pipeline
 

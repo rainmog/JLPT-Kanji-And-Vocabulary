@@ -1,9 +1,18 @@
 # Next Step: Delete orphaned screens + redesign remaining ⬜ screens
 
+## Recent work (2026-06-09)
+- **Bug fix**: Auto-progression now staged: hiragana first (15) → katakana+vocab → kanji+vocab. Fresh/clean-start users progress through kana before kanji.
+- **Bug fix**: Unlearn tap added for kana and vocab (confirm dialog). Previously learned kana/vocab were non-interactive.
+- **Select All logic**: now targets only unlearned items; if all are learned/targeted, shows popup to reset all to unlearned. Applies to kanji, vocab, and kana per-row.
+- **JLPT Practice screen**: swipe left reveals test history (filtered to JLPT by default). `TestHistoryScreen` now reachable.
+- **Item Info Sheets**: long-press on any kanji/vocab/kana tile shows modal bottom sheet with readings, meanings, example sentences/related words. Tap in vocab dictionary also opens sheet. `kanji_detail_screen` rewritten to use `KanjiInfoContent`.
+- **Practice Preview Screen**: inserted between config and session for all 3 practice types. Shows grid of items; tap opens info sheet. Kanji config uses `pickKanjiForSession` (ordered by practice count for test selection).
+- **Practice Identification Tracker**: per-item correct-answer counter persisted in `practice_correct_count` column. Shown in session/vocab/kana results. Resets to 0 on item learned. Kanji/kana test modes select highest-count items first.
+
 Exercise/session screens redesigned (2026-06-08). Remaining work:
 
 - **Delete 9 orphaned screens** (❌ in DEVNOTES.md): `about_screen.dart`, `filter_screen.dart`, `review_screen.dart`, `result_screen.dart`, `test_intro_screen.dart`, `vocab_test_intro_screen.dart`, `untargeted_practice_screen.dart`, `word_session_screen.dart`, `session_config_screen.dart`
-- **Remaining ⬜ screens** (~10): `select_target_kanji_screen`, `vocab_list_screen`, `select_target_kana_screen`, `word_result_screen`, `matching_game_config_screen`, `speed_read_config_screen`, `jlpt_test_session_screen`, `vocab_test_session_screen`, `vocab_test_result_screen`, `kanji_detail_screen`, `kanji_data_license_screen`, `stats_screen`, `onboarding_n5_screen`, `onboarding_welcome_back_screen`
+- **Remaining ⬜ screens** (~10): `select_target_kanji_screen`, `vocab_list_screen`, `select_target_kana_screen`, `word_result_screen`, `matching_game_config_screen`, `speed_read_config_screen`, `jlpt_test_session_screen`, `vocab_test_session_screen`, `vocab_test_result_screen`, `kanji_data_license_screen`, `stats_screen`, `onboarding_n5_screen`, `onboarding_welcome_back_screen`
 - **Design patterns**: tokens in `theme.dart` → `KDesign`, shared widgets in `widgets/k_setup.dart`, nav = hub-and-spoke push/pop with `AppRoute.to()`, no bottom bar
 - **Current `AppSettings` fields**: `difficultyMin/Max`, `sessionSize`, `autoNextDelaySeconds`, `ambientSfx`, `ambientVolume`, `sfxVolume`, `sfxEnabled`, `ambientEnabled`, `animationsEnabled`, `showTrackerPicker`, `englishFont`, `japaneseFont`, `homeTrackers: List<String>`, `dailyGoal`, `autoProgressionEnabled: bool`, `autoProgressionKanjiQuota: int`, `autoProgressionVocabQuota: int`, `completedKanjiLevels: List<int>`, `completedVocabLevels: List<int>`
 - **Tracker ID format**: `kanji:all`, `vocab:all`, `hiragana:all`, `katakana:all`, `kanji:N5`–`kanji:N1`, `vocab:N5`–`vocab:N1`, `kanji:tag:<tag>`, `vocab:tag:<tag>`
