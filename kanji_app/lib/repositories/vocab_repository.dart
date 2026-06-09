@@ -151,10 +151,22 @@ class VocabRepository {
   Future<void> markLearned(int vocabId) async {
     final now = DateTime.now().millisecondsSinceEpoch;
     await dbService.execute(
-      '''INSERT INTO vocabulary_progress (vocab_id, word_to_meaning, meaning_to_word, learned_at)
-         VALUES (?, 1, 1, ?)
-         ON CONFLICT(vocab_id) DO UPDATE SET word_to_meaning=1, meaning_to_word=1, learned_at=?''',
+      '''INSERT INTO vocabulary_progress (vocab_id, word_to_meaning, meaning_to_word, learned_at, practice_correct_count)
+         VALUES (?, 1, 1, ?, 0)
+         ON CONFLICT(vocab_id) DO UPDATE SET word_to_meaning=1, meaning_to_word=1, learned_at=?, practice_correct_count=0''',
       [vocabId, now, now],
+    );
+  }
+
+  Future<void> markUnlearned(int vocabId) async {
+    await dbService.execute(
+      'DELETE FROM vocabulary_targets WHERE vocab_id = ?', [vocabId],
+    );
+    await dbService.execute(
+      '''INSERT INTO vocabulary_progress (vocab_id, word_to_meaning, meaning_to_word, learned_at)
+         VALUES (?, 0, 0, NULL)
+         ON CONFLICT(vocab_id) DO UPDATE SET word_to_meaning=0, meaning_to_word=0, learned_at=NULL''',
+      [vocabId],
     );
   }
 
@@ -186,6 +198,24 @@ class VocabRepository {
       'SELECT vocab_id FROM vocabulary_progress WHERE word_to_meaning = 1',
     );
     return rows.map((r) => r['vocab_id'] as int).toSet();
+  }
+
+  Future<void> incrementPracticeCount(int vocabId) async {
+    await dbService.execute('''
+      INSERT INTO vocabulary_progress (vocab_id, practice_correct_count)
+      VALUES (?, 1)
+      ON CONFLICT(vocab_id) DO UPDATE SET practice_correct_count = practice_correct_count + 1
+    ''', [vocabId]);
+  }
+
+  Future<Map<int, int>> getPracticeCountsForIds(List<int> ids) async {
+    if (ids.isEmpty) return {};
+    final placeholders = List.filled(ids.length, '?').join(',');
+    final rows = await dbService.query(
+      'SELECT vocab_id, COALESCE(practice_correct_count, 0) AS cnt FROM vocabulary_progress WHERE vocab_id IN ($placeholders)',
+      ids,
+    );
+    return {for (final r in rows) r['vocab_id'] as int: r['cnt'] as int};
   }
 
   Future<Map<int, ({int learned, int total})>> getProgressByLevel() async {
