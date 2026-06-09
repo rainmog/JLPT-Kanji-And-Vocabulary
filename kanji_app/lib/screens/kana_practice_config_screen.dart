@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/kana_repository.dart';
-import '../theme.dart';
+import '../services/sound_service.dart';
+import '../theme_provider.dart';
 import '../utils/app_route.dart';
-import '../widgets/scale_on_press.dart';
+import '../widgets/k_setup.dart';
 import 'kana_practice_screen.dart';
 import 'matching_game_config_screen.dart';
+import 'practice_preview_screen.dart';
 import 'speed_read_config_screen.dart';
 
-class KanaPracticeConfigScreen extends StatefulWidget {
+class KanaPracticeConfigScreen extends ConsumerStatefulWidget {
   final String type; // 'hiragana' | 'katakana'
   const KanaPracticeConfigScreen({super.key, required this.type});
 
   @override
-  State<KanaPracticeConfigScreen> createState() => _KanaPracticeConfigScreenState();
+  ConsumerState<KanaPracticeConfigScreen> createState() => _KanaPracticeConfigScreenState();
 }
 
-class _KanaPracticeConfigScreenState extends State<KanaPracticeConfigScreen> {
-  KanaQuizType _quizType = KanaQuizType.kanaToRomajiMC;
+class _KanaPracticeConfigScreenState extends ConsumerState<KanaPracticeConfigScreen> {
+  // 'hira' | 'kata' | 'both'
+  String _script = 'hira';
+  // 'k2r' = Kana→Rōmaji, 'r2k' = Rōmaji→Kana
+  String _dir = 'k2r';
+  // 'mc' | 'type'
+  String _answerMode = 'mc';
   int _count = 20;
   int _targetCount = 0;
   bool _loading = true;
@@ -24,6 +32,7 @@ class _KanaPracticeConfigScreenState extends State<KanaPracticeConfigScreen> {
   @override
   void initState() {
     super.initState();
+    _script = widget.type == 'katakana' ? 'kata' : 'hira';
     _load();
   }
 
@@ -33,23 +42,21 @@ class _KanaPracticeConfigScreenState extends State<KanaPracticeConfigScreen> {
     setState(() { _targetCount = targeted.length; _loading = false; });
   }
 
-  List<KanaQuizType> get _availableTypes => widget.type == 'katakana'
-    ? KanaQuizType.values
-    : KanaQuizType.values.where((t) => t != KanaQuizType.hiraToKataMC && t != KanaQuizType.kataToHiraMC).toList();
-
-  String _typeLabel(KanaQuizType t) {
-    switch (t) {
-      case KanaQuizType.kanaToRomajiMC: return 'Kana → Romaji (choice)';
-      case KanaQuizType.romajiToKanaMC: return 'Romaji → Kana (choice)';
-      case KanaQuizType.kanaToRomajiType: return 'Kana → Type romaji';
-      case KanaQuizType.wordToRomajiType: return 'Word → Type romaji';
-      case KanaQuizType.hiraToKataMC: return 'Hiragana → Katakana (choice)';
-      case KanaQuizType.kataToHiraMC: return 'Katakana → Hiragana (choice)';
-    }
+  String get _activeType {
+    if (_script == 'both') return widget.type;
+    return _script == 'kata' ? 'katakana' : 'hiragana';
   }
 
-  Future<void> _start({bool testMode = false}) async {
-    final targeted = await kanaRepo.getTargeted(type: widget.type);
+  KanaQuizType get _quizType {
+    if (_dir == 'k2r') {
+      return _answerMode == 'mc' ? KanaQuizType.kanaToRomajiMC : KanaQuizType.kanaToRomajiType;
+    }
+    return KanaQuizType.romajiToKanaMC;
+  }
+
+  Future<void> _start() async {
+    final type = _activeType;
+    final targeted = await kanaRepo.getTargeted(type: type);
     if (!mounted) return;
     if (targeted.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -61,7 +68,7 @@ class _KanaPracticeConfigScreenState extends State<KanaPracticeConfigScreen> {
     List<KanaWord> words = [];
     if (_quizType == KanaQuizType.wordToRomajiType) {
       final rows = targeted.map((c) => c.row).toSet().toList();
-      words = await kanaRepo.getWordsForTargetedRows(type: widget.type, targetedRows: rows);
+      words = await kanaRepo.getWordsForTargetedRows(type: type, targetedRows: rows);
       if (!mounted) return;
       if (words.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,150 +78,129 @@ class _KanaPracticeConfigScreenState extends State<KanaPracticeConfigScreen> {
       }
     }
 
-    final allChars = await kanaRepo.getAll(type: widget.type);
+    final allChars = await kanaRepo.getAll(type: type);
     if (!mounted) return;
-    Navigator.push(context, AppRoute.to(KanaPracticeScreen(
-      chars: targeted,
-      allChars: allChars,
-      words: words,
-      quizType: _quizType,
-      count: _count,
-      testMode: testMode,
+    soundService.playSelectButton();
+    Navigator.push(context, AppRoute.to(PracticePreviewScreen(
+      items: KanaPreviewItems(targeted),
+      onBegin: (ctx) {
+        Navigator.push(ctx, AppRoute.to(KanaPracticeScreen(
+          chars: targeted,
+          allChars: allChars,
+          words: words,
+          quizType: _quizType,
+          count: _count,
+          testMode: false,
+        )));
+      },
     )));
   }
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.type == 'hiragana' ? 'Hiragana Practice' : 'Katakana Practice';
+    final colors = ref.watch(themeColorsProvider);
+    final badge = widget.type == 'hiragana' ? 'あ' : 'ア';
+
     return Scaffold(
-      backgroundColor: AppColors.bg,
-      appBar: AppBar(
-        backgroundColor: AppColors.bg,
-        title: Text(title, style: TextStyle(color: AppColors.fg)),
-        iconTheme: IconThemeData(color: AppColors.fg),
-      ),
-      body: _loading
-        ? const Center(child: CircularProgressIndicator())
-        : SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('$_targetCount characters targeted',
-                style: TextStyle(color: AppColors.muted, fontSize: 14)),
-              const SizedBox(height: 24),
-              Text('Quiz type', style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.fg)),
-              const SizedBox(height: 12),
-              ..._availableTypes.map((t) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: ScaleOnPress(
-                  child: GestureDetector(
-                    onTap: () => setState(() => _quizType = t),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: _quizType == t
-                          ? AppColors.accent.withValues(alpha: 0.15)
-                          : AppColors.btnBg,
-                        borderRadius: BorderRadius.circular(AppColors.buttonRadius),
-                        border: Border.all(
-                          color: _quizType == t
-                            ? AppColors.accent.withValues(alpha: 0.6)
-                            : AppColors.pillBg,
+      backgroundColor: colors.bg,
+      body: SafeArea(
+        child: Column(children: [
+          KSetupHeader(badge: badge, title: 'Practice Kana', colors: colors),
+
+          Expanded(
+            child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    if (_targetCount > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8, top: 4),
+                        child: Text(
+                          '$_targetCount ${widget.type} characters targeted',
+                          style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: Color(0xFF9A7E86)),
                         ),
                       ),
-                      child: Row(children: [
-                        Icon(
-                          _quizType == t ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                          color: _quizType == t ? AppColors.accent : AppColors.muted,
-                          size: 18,
+                    KSetupField(
+                      label: 'Script',
+                      child: KSeg(
+                        options: const [
+                          KSegOption(id: 'hira', label: 'Hiragana'),
+                          KSegOption(id: 'kata', label: 'Katakana'),
+                          KSegOption(id: 'both', label: 'Both'),
+                        ],
+                        value: _script,
+                        onChanged: (v) => setState(() => _script = v),
+                        colors: colors,
+                      ),
+                    ),
+                    KSetupField(
+                      label: 'Direction',
+                      child: KSeg(
+                        options: const [
+                          KSegOption(id: 'k2r', label: 'Kana → Rōmaji'),
+                          KSegOption(id: 'r2k', label: 'Rōmaji → Kana'),
+                        ],
+                        value: _dir,
+                        onChanged: (v) => setState(() => _dir = v),
+                        colors: colors,
+                      ),
+                    ),
+                    KSetupField(
+                      label: 'Answer mode',
+                      child: KSeg(
+                        options: const [
+                          KSegOption(id: 'mc', label: 'Multiple choice'),
+                          KSegOption(id: 'type', label: 'Type the answer'),
+                        ],
+                        value: _answerMode,
+                        onChanged: (v) => setState(() => _answerMode = v),
+                        colors: colors,
+                      ),
+                    ),
+                    KSetupField(
+                      label: 'Questions',
+                      child: KCountChips(
+                        options: const [10, 20, 30, 40],
+                        value: _count,
+                        onChanged: (v) => setState(() => _count = v),
+                        colors: colors,
+                      ),
+                    ),
+                    KSetupField(
+                      label: 'Or try a game mode',
+                      child: Column(children: [
+                        KGameButton(
+                          icon: Icons.auto_awesome_rounded,
+                          label: 'Matching game',
+                          sub: 'Pair kana with romaji against the clock',
+                          colors: colors,
+                          onTap: () => Navigator.push(context, AppRoute.to(
+                            MatchingGameConfigScreen(matchContext: MatchContext.kana, kanaType: widget.type),
+                          )),
                         ),
-                        const SizedBox(width: 12),
-                        Text(_typeLabel(t), style: TextStyle(
-                          color: _quizType == t ? AppColors.fg : AppColors.muted,
-                          fontSize: 14,
-                        )),
+                        const SizedBox(height: 9),
+                        KGameButton(
+                          icon: Icons.bolt_rounded,
+                          label: 'Speed reading',
+                          sub: 'Read as many as you can in 60 seconds',
+                          colors: colors,
+                          onTap: () => Navigator.push(context, AppRoute.to(
+                            SpeedReadConfigScreen(speedContext: SpeedReadContext.kana, kanaType: widget.type),
+                          )),
+                        ),
                       ]),
                     ),
-                  ),
+                  ]),
                 ),
-              )),
-              const SizedBox(height: 24),
-              Text('Session size', style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.fg)),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                children: [10, 20, 30, 50].map((n) => ScaleOnPress(
-                  child: GestureDetector(
-                    onTap: () => setState(() => _count = n),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: _count == n ? AppColors.accent.withValues(alpha: 0.15) : AppColors.btnBg,
-                        borderRadius: BorderRadius.circular(AppColors.buttonRadius),
-                        border: Border.all(
-                          color: _count == n ? AppColors.accent.withValues(alpha: 0.6) : AppColors.pillBg,
-                        ),
-                      ),
-                      child: Text('$n', style: TextStyle(
-                        color: _count == n ? AppColors.accent : AppColors.muted,
-                        fontWeight: FontWeight.bold,
-                      )),
-                    ),
-                  ),
-                )).toList(),
-              ),
-              const SizedBox(height: 32),
-              ScaleOnPress(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => _start(),
-                    child: const Text('Start Practice'),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              ScaleOnPress(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.pillBg,
-                    ),
-                    onPressed: () => _start(testMode: true),
-                    child: Text('Start Test', style: TextStyle(color: AppColors.fg)),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              ScaleOnPress(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.pillBg),
-                    onPressed: () => Navigator.push(context, AppRoute.to(
-                      MatchingGameConfigScreen(matchContext: MatchContext.kana, kanaType: widget.type),
-                    )),
-                    child: Text('Matching Game', style: TextStyle(color: AppColors.fg)),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              ScaleOnPress(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.pillBg),
-                    onPressed: () => Navigator.push(context, AppRoute.to(
-                      SpeedReadConfigScreen(speedContext: SpeedReadContext.kana, kanaType: widget.type),
-                    )),
-                    child: Text('Speed Reading', style: TextStyle(color: AppColors.fg)),
-                  ),
-                ),
-              ),
-            ]),
           ),
+
+          KStickyFooter(
+            colors: colors,
+            child: KStartButton(label: 'Start practice', colors: colors, onTap: _start),
+          ),
+        ]),
+      ),
     );
   }
 }

@@ -6,6 +6,7 @@ import '../theme_provider.dart';
 import '../utils/app_route.dart';
 import '../widgets/k_setup.dart';
 import 'matching_game_config_screen.dart';
+import 'practice_preview_screen.dart';
 import 'vocab_practice_screen.dart';
 
 class VocabPracticeConfigScreen extends ConsumerStatefulWidget {
@@ -50,11 +51,16 @@ class _VocabPracticeConfigScreenState extends ConsumerState<VocabPracticeConfigS
         ? (List<VocabWord>.from(allWords)..shuffle()).sublist(0, _count)
         : allWords;
     soundService.playSelectButton();
-    Navigator.push(context, AppRoute.to(VocabPracticeScreen(
-      words: words,
-      multipleChoice: _answerMode == 'mc',
-      suppressFurigana: _suppressFurigana,
-      reverseMode: _dir == 'en2jp',
+    Navigator.push(context, AppRoute.to(PracticePreviewScreen(
+      items: VocabPreviewItems(words),
+      onBegin: (ctx) {
+        Navigator.push(ctx, AppRoute.to(VocabPracticeScreen(
+          words: words,
+          multipleChoice: _answerMode == 'mc',
+          suppressFurigana: _suppressFurigana,
+          reverseMode: _dir == 'en2jp',
+        )));
+      },
     )));
   }
 
