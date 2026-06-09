@@ -404,41 +404,69 @@ class SentenceRepository {
     required int count,
     bool targetOnly = false,
     bool reviewOnly = false,
+    List<int>? kanjiIds,
   }) async {
-    final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
-    final args = <dynamic>[...jlptLevels];
-    String tagJoin = '';
-    if (tags.isNotEmpty) {
-      tagJoin = 'JOIN kanji_tags kt ON k.id = kt.kanji_id AND kt.tag IN (${List.filled(tags.length, '?').join(',')})';
-      args.addAll(tags);
-    }
-    args.add(count);
+    late List<Map<String, dynamic>> rows;
 
-    final rows = await db.query('''
-      SELECT DISTINCT k.id, k.character, k.jlpt_level, k.on_reading, k.kun_reading, k.meaning
-      FROM kanji k
-      JOIN user_progress p ON k.id = p.kanji_id
-      $tagJoin
-      WHERE k.jlpt_level IN ($levelPlaceholders)
-        ${targetOnly ? "AND p.status = 'target'" : reviewOnly ? "AND p.status = 'learned'" : "AND p.status != 'learned'"}
-      ORDER BY RANDOM()
-      LIMIT ?
-    ''', args);
+    if (kanjiIds != null && kanjiIds.isNotEmpty) {
+      final placeholders = List.filled(kanjiIds.length, '?').join(',');
+      rows = await db.query('''
+        SELECT DISTINCT k.id, k.character, k.jlpt_level, k.on_reading, k.kun_reading, k.meaning
+        FROM kanji k
+        JOIN user_progress p ON k.id = p.kanji_id
+        WHERE k.id IN ($placeholders)
+        LIMIT ?
+      ''', [...kanjiIds, count]);
+    } else {
+      final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
+      final args = <dynamic>[...jlptLevels];
+      String tagJoin = '';
+      if (tags.isNotEmpty) {
+        tagJoin = 'JOIN kanji_tags kt ON k.id = kt.kanji_id AND kt.tag IN (${List.filled(tags.length, '?').join(',')})';
+        args.addAll(tags);
+      }
+      args.add(count);
+
+      rows = await db.query('''
+        SELECT DISTINCT k.id, k.character, k.jlpt_level, k.on_reading, k.kun_reading, k.meaning
+        FROM kanji k
+        JOIN user_progress p ON k.id = p.kanji_id
+        $tagJoin
+        WHERE k.jlpt_level IN ($levelPlaceholders)
+          ${targetOnly ? "AND p.status = 'target'" : reviewOnly ? "AND p.status = 'learned'" : "AND p.status != 'learned'"}
+        ORDER BY RANDOM()
+        LIMIT ?
+      ''', args);
+    }
 
     // Fetch wrong-reading pool upfront (both on + kun)
-    final wrongReadingRows = await db.query(
-      'SELECT DISTINCT on_reading, kun_reading FROM kanji WHERE id NOT IN (${List.filled(rows.length, '?').join(',')}) AND jlpt_level IN ($levelPlaceholders) ORDER BY RANDOM() LIMIT 60',
-      [...rows.map((r) => r['id'] as int), ...jlptLevels],
-    );
+    final List<Map<String, dynamic>> wrongReadingRows;
+    final List<Map<String, dynamic>> wrongMeaningRows;
+    if (kanjiIds != null && kanjiIds.isNotEmpty) {
+      wrongReadingRows = await db.query(
+        'SELECT DISTINCT on_reading, kun_reading FROM kanji WHERE id NOT IN (${List.filled(rows.length, '?').join(',')}) ORDER BY RANDOM() LIMIT 60',
+        rows.map((r) => r['id'] as int).toList(),
+      );
+      wrongMeaningRows = await db.query(
+        'SELECT DISTINCT meaning FROM kanji WHERE id NOT IN (${List.filled(rows.length, '?').join(',')}) ORDER BY RANDOM() LIMIT 60',
+        rows.map((r) => r['id'] as int).toList(),
+      );
+    } else {
+      final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
+      wrongReadingRows = await db.query(
+        'SELECT DISTINCT on_reading, kun_reading FROM kanji WHERE id NOT IN (${List.filled(rows.length, '?').join(',')}) AND jlpt_level IN ($levelPlaceholders) ORDER BY RANDOM() LIMIT 60',
+        [...rows.map((r) => r['id'] as int), ...jlptLevels],
+      );
+      wrongMeaningRows = await db.query(
+        'SELECT DISTINCT meaning FROM kanji WHERE id NOT IN (${List.filled(rows.length, '?').join(',')}) AND jlpt_level IN ($levelPlaceholders) ORDER BY RANDOM() LIMIT 60',
+        [...rows.map((r) => r['id'] as int), ...jlptLevels],
+      );
+    }
     final allWrongLabels = wrongReadingRows
       .map((r) => _readingLabel(r['on_reading'] as String?, r['kun_reading'] as String?))
       .where((r) => r.isNotEmpty)
       .toList();
 
-    final wrongMeaningRows = await db.query(
-      'SELECT DISTINCT meaning FROM kanji WHERE id NOT IN (${List.filled(rows.length, '?').join(',')}) AND jlpt_level IN ($levelPlaceholders) ORDER BY RANDOM() LIMIT 60',
-      [...rows.map((r) => r['id'] as int), ...jlptLevels],
-    );
     final allWrongMeanings = wrongMeaningRows
         .map((r) => ((r['meaning'] as String? ?? '').split(',')[0]).trim())
         .where((m) => m.isNotEmpty)
@@ -504,45 +532,73 @@ class SentenceRepository {
     bool multipleChoice = false,
     bool targetOnly = false,
     bool reviewOnly = false,
+    List<int>? kanjiIds,
   }) async {
-    final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
-    final args = <dynamic>[...jlptLevels];
-    String tagJoin = '';
-    if (tags.isNotEmpty) {
-      tagJoin = 'JOIN kanji_tags kt ON k.id = kt.kanji_id AND kt.tag IN (${List.filled(tags.length, '?').join(',')})';
-      args.addAll(tags);
+    final List<Map<String, dynamic>> rows;
+
+    if (kanjiIds != null && kanjiIds.isNotEmpty) {
+      final placeholders = List.filled(kanjiIds.length, '?').join(',');
+      rows = await db.query('''
+        SELECT DISTINCT
+          k.id, k.character, k.meaning,
+          s.text_kanji, s.text_structured, s.valid_readings
+        FROM kanji k
+        JOIN sentences s ON k.id = s.kanji_id
+        JOIN user_progress p ON k.id = p.kanji_id
+        WHERE k.id IN ($placeholders)
+          AND s.difficulty BETWEEN ? AND ?
+        ORDER BY RANDOM()
+        LIMIT ?
+      ''', [...kanjiIds, minDifficulty, maxDifficulty, count * 3]);
+    } else {
+      final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
+      final args = <dynamic>[...jlptLevels];
+      String tagJoin = '';
+      if (tags.isNotEmpty) {
+        tagJoin = 'JOIN kanji_tags kt ON k.id = kt.kanji_id AND kt.tag IN (${List.filled(tags.length, '?').join(',')})';
+        args.addAll(tags);
+      }
+      args.addAll([minDifficulty, maxDifficulty]);
+      args.add(count * 3); // fetch extra to account for skipped standalone kanji
+
+      rows = await db.query('''
+        SELECT DISTINCT
+          k.id, k.character, k.meaning,
+          s.text_kanji, s.text_structured, s.valid_readings
+        FROM kanji k
+        JOIN sentences s ON k.id = s.kanji_id
+        JOIN user_progress p ON k.id = p.kanji_id
+        $tagJoin
+        WHERE k.jlpt_level IN ($levelPlaceholders)
+          AND s.difficulty BETWEEN ? AND ?
+          ${targetOnly ? "AND p.status = 'target'" : reviewOnly ? "AND p.status = 'learned'" : "AND p.status != 'learned'"}
+        ORDER BY RANDOM()
+        LIMIT ?
+      ''', args);
     }
-    args.addAll([minDifficulty, maxDifficulty]);
-    args.add(count * 3); // fetch extra to account for skipped standalone kanji
-
-    final query = '''
-      SELECT DISTINCT
-        k.id, k.character, k.meaning,
-        s.text_kanji, s.text_structured, s.valid_readings
-      FROM kanji k
-      JOIN sentences s ON k.id = s.kanji_id
-      JOIN user_progress p ON k.id = p.kanji_id
-      $tagJoin
-      WHERE k.jlpt_level IN ($levelPlaceholders)
-        AND s.difficulty BETWEEN ? AND ?
-        ${targetOnly ? "AND p.status = 'target'" : reviewOnly ? "AND p.status = 'learned'" : "AND p.status != 'learned'"}
-      ORDER BY RANDOM()
-      LIMIT ?
-    ''';
-
-    final rows = await db.query(query, args);
 
     // Wrong-reading pool for MC — use other compound word readings, not on/kun labels
     List<String> wrongPool = [];
     if (multipleChoice) {
-      final wrongRows = await db.query(
-        '''SELECT DISTINCT s.text_structured
-           FROM sentences s
-           JOIN kanji k ON k.id = s.kanji_id
-           WHERE k.jlpt_level IN ($levelPlaceholders)
-           ORDER BY RANDOM() LIMIT 120''',
-        jlptLevels,
-      );
+      final List<Map<String, dynamic>> wrongRows;
+      if (kanjiIds != null && kanjiIds.isNotEmpty) {
+        wrongRows = await db.query(
+          '''SELECT DISTINCT s.text_structured
+             FROM sentences s
+             ORDER BY RANDOM() LIMIT 120''',
+          [],
+        );
+      } else {
+        final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
+        wrongRows = await db.query(
+          '''SELECT DISTINCT s.text_structured
+             FROM sentences s
+             JOIN kanji k ON k.id = s.kanji_id
+             WHERE k.jlpt_level IN ($levelPlaceholders)
+             ORDER BY RANDOM() LIMIT 120''',
+          jlptLevels,
+        );
+      }
       final seen = <String>{};
       for (final row in wrongRows) {
         try {
@@ -634,33 +690,50 @@ class SentenceRepository {
     required bool multipleChoice,
     bool targetOnly = false,
     bool reviewOnly = false,
+    List<int>? kanjiIds,
   }) async {
-    final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
-    final args = <dynamic>[...jlptLevels];
-    String tagJoin = '';
-    if (tags.isNotEmpty) {
-      tagJoin = 'JOIN kanji_tags kt ON k.id = kt.kanji_id AND kt.tag IN (${List.filled(tags.length, '?').join(',')})';
-      args.addAll(tags);
+    final List<Map<String, dynamic>> rows;
+
+    if (kanjiIds != null && kanjiIds.isNotEmpty) {
+      final placeholders = List.filled(kanjiIds.length, '?').join(',');
+      rows = await db.query('''
+        SELECT DISTINCT
+          k.id, k.character, k.meaning,
+          s.text_kanji, s.text_structured, s.english_translation, s.valid_readings, s.difficulty
+        FROM kanji k
+        JOIN sentences s ON k.id = s.kanji_id
+        JOIN user_progress p ON k.id = p.kanji_id
+        WHERE k.id IN ($placeholders)
+          AND s.difficulty BETWEEN ? AND ?
+        ORDER BY RANDOM()
+        LIMIT ?
+      ''', [...kanjiIds, minDifficulty, maxDifficulty, count]);
+    } else {
+      final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
+      final args = <dynamic>[...jlptLevels];
+      String tagJoin = '';
+      if (tags.isNotEmpty) {
+        tagJoin = 'JOIN kanji_tags kt ON k.id = kt.kanji_id AND kt.tag IN (${List.filled(tags.length, '?').join(',')})';
+        args.addAll(tags);
+      }
+      args.addAll([minDifficulty, maxDifficulty]);
+      args.add(count);
+
+      rows = await db.query('''
+        SELECT DISTINCT
+          k.id, k.character, k.meaning,
+          s.text_kanji, s.text_structured, s.english_translation, s.valid_readings, s.difficulty
+        FROM kanji k
+        JOIN sentences s ON k.id = s.kanji_id
+        JOIN user_progress p ON k.id = p.kanji_id
+        $tagJoin
+        WHERE k.jlpt_level IN ($levelPlaceholders)
+          AND s.difficulty BETWEEN ? AND ?
+          ${targetOnly ? "AND p.status = 'target'" : reviewOnly ? "AND p.status = 'learned'" : "AND p.status != 'learned'"}
+        ORDER BY RANDOM()
+        LIMIT ?
+      ''', args);
     }
-    args.addAll([minDifficulty, maxDifficulty]);
-    args.add(count);
-
-    final query = '''
-      SELECT DISTINCT
-        k.id, k.character, k.meaning,
-        s.text_kanji, s.text_structured, s.english_translation, s.valid_readings, s.difficulty
-      FROM kanji k
-      JOIN sentences s ON k.id = s.kanji_id
-      JOIN user_progress p ON k.id = p.kanji_id
-      $tagJoin
-      WHERE k.jlpt_level IN ($levelPlaceholders)
-        AND s.difficulty BETWEEN ? AND ?
-        ${targetOnly ? "AND p.status = 'target'" : reviewOnly ? "AND p.status = 'learned'" : "AND p.status != 'learned'"}
-      ORDER BY RANDOM()
-      LIMIT ?
-    ''';
-
-    final rows = await db.query(query, args);
     final questions = <SentenceQuestion>[];
 
     for (final row in rows) {
@@ -710,6 +783,41 @@ class SentenceRepository {
     }
 
     return questions;
+  }
+
+  Future<List<Kanji>> pickKanjiForSession({
+    required List<int> jlptLevels,
+    required List<String> tags,
+    required int count,
+    required bool targetOnly,
+    required bool reviewOnly,
+    bool orderByPracticeCount = false,
+  }) async {
+    final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
+    final args = <dynamic>[...jlptLevels];
+    String tagJoin = '';
+    if (tags.isNotEmpty) {
+      tagJoin = 'JOIN kanji_tags kt ON k.id = kt.kanji_id AND kt.tag IN (${List.filled(tags.length, '?').join(',')})';
+      args.addAll(tags);
+    }
+    args.add(count);
+
+    final orderBy = orderByPracticeCount
+        ? 'ORDER BY COALESCE(p.practice_correct_count, 0) DESC'
+        : 'ORDER BY RANDOM()';
+
+    final rows = await db.query('''
+      SELECT DISTINCT k.id, k.character, k.jlpt_level, k.on_reading, k.kun_reading, k.meaning, k.stroke_count
+      FROM kanji k
+      JOIN user_progress p ON k.id = p.kanji_id
+      $tagJoin
+      WHERE k.jlpt_level IN ($levelPlaceholders)
+        ${targetOnly ? "AND p.status = 'target'" : reviewOnly ? "AND p.status = 'learned'" : "AND p.status != 'learned'"}
+      $orderBy
+      LIMIT ?
+    ''', args);
+
+    return rows.map(Kanji.fromMap).toList();
   }
 }
 
