@@ -124,6 +124,17 @@ class DatabaseService {
         total_correct INTEGER NOT NULL DEFAULT 0
       )
     ''');
+
+    // practice_correct_count — guarded by try/catch (ALTER TABLE fails if column already exists)
+    for (final migration in [
+      'ALTER TABLE user_progress ADD COLUMN practice_correct_count INTEGER DEFAULT 0',
+      'ALTER TABLE vocabulary_progress ADD COLUMN practice_correct_count INTEGER DEFAULT 0',
+      'ALTER TABLE kana_progress ADD COLUMN practice_correct_count INTEGER DEFAULT 0',
+    ]) {
+      try {
+        await db.execute(migration);
+      } catch (_) {}
+    }
   }
 
   Future<List<Map<String, dynamic>>> query(
