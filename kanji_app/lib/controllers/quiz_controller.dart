@@ -77,6 +77,7 @@ class QuizController extends Notifier<QuizState> {
     bool multipleChoice = true,
     bool targetOnly = false,
     bool reviewOnly = false,
+    List<int>? fixedKanjiIds,
   }) async {
     state = state.copyWith(loading: true, error: null);
 
@@ -90,6 +91,7 @@ class QuizController extends Notifier<QuizState> {
           count: questionCount,
           targetOnly: targetOnly,
           reviewOnly: reviewOnly,
+          kanjiIds: fixedKanjiIds,
         );
       } else if (mode == 'word') {
         questions = await _sentenceRepo.buildWordQuestions(
@@ -101,6 +103,7 @@ class QuizController extends Notifier<QuizState> {
           multipleChoice: multipleChoice,
           targetOnly: targetOnly,
           reviewOnly: reviewOnly,
+          kanjiIds: fixedKanjiIds,
         );
       } else if (mode == 'sentence') {
         questions = await _sentenceRepo.buildSentenceQuestions(
@@ -112,6 +115,7 @@ class QuizController extends Notifier<QuizState> {
           multipleChoice: multipleChoice,
           targetOnly: targetOnly,
           reviewOnly: reviewOnly,
+          kanjiIds: fixedKanjiIds,
         );
       }
 
@@ -153,6 +157,7 @@ class QuizController extends Notifier<QuizState> {
   Future<void> _persistAnswer(int kanjiId, bool isCorrect) async {
     if (isCorrect) {
       await progressRepo.recordCorrect(kanjiId);
+      progressRepo.incrementPracticeCount(kanjiId); // fire-and-forget
     } else {
       await progressRepo.recordIncorrect(kanjiId);
     }
