@@ -20,7 +20,7 @@ class KanjiInfoContent extends StatelessWidget {
           child: Text(
             kanji.character,
             style: TextStyle(
-              fontSize: 64,
+              fontSize: 48,
               color: AppColors.kanjiColor,
               fontFamily: AppFonts.japaneseFont,
               fontFamilyFallback: AppFonts.japaneseFallback,
@@ -215,7 +215,7 @@ class KanaInfoContent extends StatelessWidget {
           child: Text(
             char.character,
             style: TextStyle(
-              fontSize: 80,
+              fontSize: 48,
               color: AppColors.kanjiColor,
               fontFamily: AppFonts.japaneseFont,
               fontFamilyFallback: AppFonts.japaneseFallback,
