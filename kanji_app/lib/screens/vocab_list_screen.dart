@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/vocab_repository.dart';
 import '../theme.dart';
+import '../theme_provider.dart';
 import '../widgets/item_info_sheet.dart';
+import '../widgets/k_setup.dart';
 
 sealed class VocabFilter {
   const VocabFilter();
@@ -12,7 +14,7 @@ sealed class VocabFilter {
 
   String get title => switch (this) {
     _AllFilter() => 'All Vocabulary',
-    _LevelFilter(level: final l) => 'N$l Vocabulary',
+    _LevelFilter(level: final l) => l == 0 ? 'Other Vocabulary' : 'N$l Vocabulary',
     _TagFilter(tag: final t) => t,
   };
 
@@ -80,16 +82,19 @@ class _VocabListScreenState extends ConsumerState<VocabListScreen> {
     if (_busy) return;
 
     if (_learnedIds.contains(word.id)) {
+      final colors = ref.read(themeColorsProvider);
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Already Learned'),
+          backgroundColor: colors.surface,
+          title: Text('Already Learned', style: TextStyle(color: colors.fg)),
           content: Text(
             '"${word.word}" is already learned. Set it back to unlearned?',
+            style: TextStyle(color: colors.muted),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-            TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Yes')),
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancel', style: TextStyle(color: colors.muted))),
+            TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text('Yes', style: TextStyle(color: colors.accent))),
           ],
         ),
       );
@@ -118,17 +123,19 @@ class _VocabListScreenState extends ConsumerState<VocabListScreen> {
     final hasUnlearned = ids.any((id) => !_targetIds.contains(id) && !_learnedIds.contains(id));
 
     if (!hasUnlearned) {
-      // All are learned or targeted — ask to reset all to unlearned
+      final colors = ref.read(themeColorsProvider);
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Reset all to unlearned?'),
-          content: const Text(
+          backgroundColor: colors.surface,
+          title: Text('Reset all to unlearned?', style: TextStyle(color: colors.fg)),
+          content: Text(
             'All words are already learned or targeted. Set all to unlearned?',
+            style: TextStyle(color: colors.muted),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-            TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Reset')),
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancel', style: TextStyle(color: colors.muted))),
+            TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text('Reset', style: TextStyle(color: colors.accent))),
           ],
         ),
       );
@@ -140,7 +147,6 @@ class _VocabListScreenState extends ConsumerState<VocabListScreen> {
       }
       _busy = false;
     } else {
-      // Set unlearned → target; leave learned untouched
       _busy = true;
       final toTarget = ids.where((id) => !_targetIds.contains(id) && !_learnedIds.contains(id)).toList();
       setState(() => _targetIds.addAll(toTarget));
@@ -162,119 +168,117 @@ class _VocabListScreenState extends ConsumerState<VocabListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return Scaffold(
-        appBar: AppBar(title: Text(widget.filter.title)),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    final ids = _words.map((w) => w.id).toList();
-    final allSelected = ids.isNotEmpty &&
-        ids.every((id) => _targetIds.contains(id) || _learnedIds.contains(id));
+    final colors = ref.watch(themeColorsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.filter.title),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _addLearnedMode ? Icons.school : Icons.school_outlined,
-              color: _addLearnedMode ? AppColors.accent : AppColors.fg,
-            ),
-            tooltip: 'Mark as Learned',
-            onPressed: () => setState(() => _addLearnedMode = !_addLearnedMode),
-          ),
-        ],
-      ),
-      body: _words.isEmpty
-        ? Center(child: Text('No words found.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.muted)))
-        : Column(children: [
-            InkWell(
-              onTap: _selectAll,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                color: allSelected
-                  ? AppColors.accent.withValues(alpha: 0.15)
-                  : AppColors.surface,
-                child: Row(children: [
-                  Icon(
-                    allSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                    color: allSelected ? AppColors.accent : AppColors.muted,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 12),
-                  Text('Select All',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600,
-                      color: allSelected ? AppColors.accent : AppColors.fg)),
-                  const Spacer(),
-                  Text('${_targetIds.intersection(ids.toSet()).length} / ${ids.length}',
-                    style: TextStyle(fontSize: 13, color: AppColors.muted)),
-                ]),
-              ),
-            ),
-            Divider(height: 1, color: AppColors.pillBg),
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(10),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 1.4,
+      backgroundColor: colors.bg,
+      body: SafeArea(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+            child: KBackHeader(
+              title: widget.filter.title,
+              colors: colors,
+              trailing: IconButton(
+                icon: Icon(
+                  _addLearnedMode ? Icons.school : Icons.school_outlined,
+                  color: _addLearnedMode ? colors.accent : KDesign.ink(colors),
                 ),
-                itemCount: _words.length,
-                itemBuilder: (context, i) {
-                  final word = _words[i];
-                  final showReading = word.word != word.reading;
-                  return GestureDetector(
-                    onTap: () => _toggle(word),
-                    onLongPress: () => showVocabInfoSheet(context, word),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: _tileColor(word),
-                        borderRadius: BorderRadius.circular(AppColors.buttonRadius),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            word.word,
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: _tileTextColor(word),
-                              fontWeight: FontWeight.w600,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          if (showReading) ...[
-                            const SizedBox(height: 2),
-                            Text(
-                              word.reading,
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: _tileTextColor(word).withValues(alpha: 0.75),
-                              ),
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                onPressed: () => setState(() => _addLearnedMode = !_addLearnedMode),
               ),
             ),
-          ]),
+          ),
+          if (_loading)
+            const Expanded(child: Center(child: CircularProgressIndicator()))
+          else if (_words.isEmpty)
+            Expanded(child: Center(child: Text('No words found.',
+              style: TextStyle(color: colors.muted), textAlign: TextAlign.center)))
+          else
+            Expanded(child: Builder(builder: (context) {
+              final ids = _words.map((w) => w.id).toList();
+              final allSelected = ids.isNotEmpty &&
+                  ids.every((id) => _targetIds.contains(id) || _learnedIds.contains(id));
+              return Column(children: [
+                InkWell(
+                  onTap: _selectAll,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    color: allSelected ? colors.accent.withValues(alpha: 0.15) : colors.surface,
+                    child: Row(children: [
+                      Icon(allSelected ? Icons.check_box : Icons.check_box_outline_blank,
+                        color: allSelected ? colors.accent : colors.muted, size: 22),
+                      const SizedBox(width: 12),
+                      Text('Select All', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600,
+                        color: allSelected ? colors.accent : colors.fg)),
+                      const Spacer(),
+                      Text('${_targetIds.intersection(ids.toSet()).length} / ${ids.length}',
+                        style: TextStyle(fontSize: 13, color: colors.muted)),
+                    ]),
+                  ),
+                ),
+                Divider(height: 1, color: colors.pillBg),
+                Expanded(
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(10),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 1.4,
+                    ),
+                    itemCount: _words.length,
+                    itemBuilder: (context, i) {
+                      final word = _words[i];
+                      final showReading = word.word != word.reading;
+                      return GestureDetector(
+                        onTap: () => _toggle(word),
+                        onLongPress: () => showVocabInfoSheet(context, word),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: _tileColor(word),
+                            borderRadius: BorderRadius.circular(AppColors.buttonRadius),
+                          ),
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                word.word,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: _tileTextColor(word),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              if (showReading) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  word.reading,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: _tileTextColor(word).withValues(alpha: 0.75),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ]);
+            })),
+        ]),
+      ),
     );
   }
 }

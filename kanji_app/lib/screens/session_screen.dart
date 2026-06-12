@@ -76,8 +76,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
     final quizState = ref.watch(quizControllerProvider);
     final quizController = ref.read(quizControllerProvider.notifier);
 
-    if (quizState.session.questions.isEmpty &&
-        !quizState.loading &&
+    if (!quizState.loading &&
         quizState.error == null &&
         !_initialized) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -318,6 +317,14 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
               maxLines: 2,
             ),
           ),
+          if (_showingFeedback) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Tap anywhere to continue',
+              style: TextStyle(fontSize: 13, color: AppColors.muted),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
       ),
     );
@@ -354,6 +361,10 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
             ),
           ),
         ),
+        if (_showingFeedback) ...[
+          _MeaningCard(meaning: q.wordMeaning, translation: ''),
+          const SizedBox(height: 12),
+        ],
         if (isMC)
           _mcButtonList(
             options: q.mcOptions,
@@ -377,7 +388,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
 
   Widget _buildSentenceQuestion(SentenceQuestion q, bool multipleChoice, Set<String> learnedKanji) {
     final combined = q.tokens.where((t) => t.isTarget).map((t) => t.surface).join();
-    final targetSurface = combined.isEmpty ? q.character : combined;
+    final targetSurface = q.targetWord ?? (combined.isEmpty ? q.character : combined);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -408,6 +419,10 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
             ]),
           ),
         ),
+        if (_showingFeedback && q.englishTranslation.isNotEmpty) ...[
+          _MeaningCard(meaning: '', translation: q.englishTranslation),
+          const SizedBox(height: 12),
+        ],
         if (multipleChoice)
           _mcButtonList(
             options: q.mcOptions,
@@ -471,8 +486,8 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
     required String correctAnswer,
     required void Function(String) onSelect,
   }) {
-    return Column(
-      children: options.map((opt) {
+    return Column(children: [
+      ...options.map((opt) {
         final state = _mcState(opt, selected, correctAnswer);
         return Padding(
           padding: const EdgeInsets.only(bottom: 10),
@@ -482,8 +497,17 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
             onTap: () => onSelect(opt),
           ),
         );
-      }).toList(),
-    );
+      }),
+      if (_showingFeedback)
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            'Tap anywhere to continue',
+            style: TextStyle(fontSize: 13, color: AppColors.muted),
+            textAlign: TextAlign.center,
+          ),
+        ),
+    ]);
   }
 
   // ── Options grid (2×2, for KanjiQuestion) ────────────────────────────────────
@@ -526,7 +550,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
   // ── MC button state helper ────────────────────────────────────────────────────
 
   String _mcState(String opt, String? selected, String correctAnswer) {
-    if (!_showingFeedback) return 'idle';
+    if (!_showingFeedback) return opt == selected ? 'selected' : 'idle';
     if (opt == correctAnswer) return 'correct';
     if (opt == selected) return 'wrong';
     return 'dim';
@@ -697,17 +721,6 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
     } else {
       soundService.playWrong();
     }
-    // Auto-advance
-    _autoNextTimer?.cancel();
-    _autoNextTimer = Timer(
-      Duration(milliseconds: isCorrect ? 800 : 1200),
-      () {
-        if (!mounted) return;
-        _handleNext(context,
-          ref.read(quizControllerProvider.notifier),
-          ref.read(quizControllerProvider));
-      },
-    );
   }
 
   // ── Next question / session end ───────────────────────────────────────────────
@@ -735,6 +748,13 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
         }
       }
       practiceCounts.sort((a, b) => b.count.compareTo(a.count));
+
+      progressRepo.logSession(
+        mode: session.mode,
+        kanjiIds: ids,
+        score: session.score,
+        questionCount: session.answers.length,
+      );
 
       if (!mounted) return;
       Navigator.pushReplacement(
@@ -799,6 +819,11 @@ class _MCButton extends StatelessWidget {
         textColor = Colors.white;
         borderColor = AppColors.incorrect;
         break;
+      case 'selected':
+        bg = AppColors.accent.withValues(alpha: 0.12);
+        textColor = AppColors.accent;
+        borderColor = AppColors.accent;
+        break;
       case 'dim':
         bg = AppColors.surface;
         textColor = AppColors.muted.withValues(alpha: 0.5);
@@ -815,7 +840,7 @@ class _MCButton extends StatelessWidget {
     }
 
     return GestureDetector(
-      onTap: state == 'idle' ? onTap : null,
+      onTap: (state == 'idle' || state == 'selected') ? onTap : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         width: double.infinity,
@@ -848,6 +873,53 @@ class _MCButton extends StatelessWidget {
             const Icon(Icons.check, size: 15, color: Colors.white),
           ],
         ]),
+      ),
+    );
+  }
+}
+
+// ── Meaning/translation feedback card ────────────────────────────────────────
+
+class _MeaningCard extends StatelessWidget {
+  final String meaning;
+  final String translation;
+  const _MeaningCard({required this.meaning, required this.translation});
+
+  @override
+  Widget build(BuildContext context) {
+    if (meaning.isEmpty && translation.isEmpty) return const SizedBox.shrink();
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.pillBg),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (meaning.isNotEmpty)
+            Text(
+              meaning,
+              style: TextStyle(
+                fontSize: 15, fontWeight: FontWeight.w700,
+                color: AppColors.fg,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          if (meaning.isNotEmpty && translation.isNotEmpty)
+            const SizedBox(height: 4),
+          if (translation.isNotEmpty)
+            Text(
+              translation,
+              style: TextStyle(
+                fontSize: 12.5, fontWeight: FontWeight.w500,
+                color: AppColors.muted,
+              ),
+              textAlign: TextAlign.center,
+            ),
+        ],
       ),
     );
   }

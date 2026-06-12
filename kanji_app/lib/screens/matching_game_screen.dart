@@ -1,11 +1,18 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/match_card.dart';
 import '../services/sound_service.dart';
 import '../theme.dart';
+import '../theme/app_theme_backgrounds.dart';
+import '../theme_provider.dart';
+import '../widgets/falling_blocks_overlay.dart';
+import '../widgets/sakura_overlay.dart';
+import '../widgets/snow_overlay.dart';
+import '../widgets/space_age_overlay.dart';
 
-class MatchingGameScreen extends StatefulWidget {
+class MatchingGameScreen extends ConsumerStatefulWidget {
   final List<MatchCard> cards;
   final int groupSize;
   final int columns;
@@ -21,10 +28,10 @@ class MatchingGameScreen extends StatefulWidget {
   static final List<({String time, int turns})> history = [];
 
   @override
-  State<MatchingGameScreen> createState() => _MatchingGameScreenState();
+  ConsumerState<MatchingGameScreen> createState() => _MatchingGameScreenState();
 }
 
-class _MatchingGameScreenState extends State<MatchingGameScreen> {
+class _MatchingGameScreenState extends ConsumerState<MatchingGameScreen> {
   late List<MatchCard> _cards;
   late List<bool> _faceUp;
   late List<bool> _matched;
@@ -143,7 +150,7 @@ class _MatchingGameScreenState extends State<MatchingGameScreen> {
     final quit = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: AppColors.bg,
+        backgroundColor: AppColors.surface,
         title: Text('Quit game?', style: TextStyle(color: AppColors.fg)),
         content: Text('Progress will be lost.', style: TextStyle(color: AppColors.muted)),
         actions: [
@@ -177,47 +184,82 @@ class _MatchingGameScreenState extends State<MatchingGameScreen> {
         if (quit) navigator.pop();
       },
       child: Scaffold(
-        backgroundColor: AppColors.bg,
-        appBar: AppBar(
-          backgroundColor: AppColors.bg,
-          automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        backgroundColor: const {
+          AppTheme.galaxy, AppTheme.loveLetter,
+          AppTheme.lily, AppTheme.totoro, AppTheme.midnightCity,
+        }.contains(ref.watch(themeNotifier)) ? Colors.transparent : AppColors.bg,
+        body: Stack(children: [
+          const Positioned.fill(child: HomeBgLayer()),
+          const Positioned.fill(child: SakuraPetalsOverlay()),
+          const Positioned.fill(child: SpaceAgeStarsOverlay()),
+          const Positioned.fill(child: SnowOverlay()),
+          const Positioned.fill(child: FallingBlocksOverlay()),
+          SafeArea(
+          child: Column(
             children: [
-              Text(_timeString, style: TextStyle(color: AppColors.fg, fontSize: 16)),
-              Text('Turns: $_turns', style: TextStyle(color: AppColors.muted, fontSize: 14)),
-            ],
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.close, color: AppColors.fg),
-              onPressed: () async {
-                if (_gameComplete) {
-                  Navigator.pop(context);
-                  return;
-                }
-                final navigator = Navigator.of(context);
-                final quit = await _confirmQuit();
-                if (quit) navigator.pop();
-              },
-            ),
-          ],
-        ),
-        body: SafeArea(
-          child: Stack(
-            children: [
-              LayoutBuilder(builder: (ctx, constraints) => _buildGrid(constraints)),
-              if (_gameComplete)
-                _ResultOverlay(
-                  timeString: _timeString,
-                  turns: _turns,
-                  history: MatchingGameScreen.history,
-                  onPlayAgain: _playAgain,
-                  onBack: () => Navigator.pop(context),
+              // Custom header
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _timeString,
+                      style: TextStyle(
+                        color: AppColors.fg,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Turns: $_turns',
+                          style: TextStyle(
+                            color: AppColors.muted,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        GestureDetector(
+                          onTap: () async {
+                            if (_gameComplete) {
+                              Navigator.pop(context);
+                              return;
+                            }
+                            final navigator = Navigator.of(context);
+                            final quit = await _confirmQuit();
+                            if (quit) navigator.pop();
+                          },
+                          child: Icon(Icons.close, size: 24, color: AppColors.fg),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
+              ),
+              // Grid area
+              Expanded(
+                child: Stack(
+                  children: [
+                    LayoutBuilder(builder: (ctx, constraints) => _buildGrid(constraints)),
+                    if (_gameComplete)
+                      _ResultOverlay(
+                        timeString: _timeString,
+                        turns: _turns,
+                        history: MatchingGameScreen.history,
+                        onPlayAgain: _playAgain,
+                        onBack: () => Navigator.pop(context),
+                      ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
+        ]),
       ),
     );
   }
@@ -277,33 +319,59 @@ class _CardTile extends StatelessWidget {
   });
 
   Color _bgColor() {
-    if (matched) return Colors.transparent;
-    if (wrong) return Colors.red.withValues(alpha: 0.15);
-    if (faceUp) return AppColors.accent.withValues(alpha: 0.15);
-    return AppColors.btnBg;
+    if (matched) return AppColors.correctBg;
+    if (wrong) return AppColors.incorrectBg;
+    if (faceUp) return AppColors.accent.withValues(alpha: 0.13);
+    return AppColors.surface;
   }
 
   Color _borderColor() {
-    if (matched) return AppColors.pillBg.withValues(alpha: 0.3);
-    if (wrong) return Colors.red.withValues(alpha: 0.7);
-    if (faceUp) return AppColors.accent.withValues(alpha: 0.7);
+    if (matched) return AppColors.correct;
+    if (wrong) return AppColors.incorrect;
+    if (faceUp) return AppColors.accent;
     return AppColors.pillBg;
   }
 
   @override
   Widget build(BuildContext context) {
+    final decoration = BoxDecoration(
+      color: _bgColor(),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: _borderColor(), width: 1.5),
+      boxShadow: (matched || faceUp || wrong)
+          ? null
+          : [
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.07),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+    );
+
+    if (matched) {
+      return Opacity(
+        opacity: 0.55,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          decoration: decoration,
+          child: _matchedFace(),
+        ),
+      );
+    }
+
     return GestureDetector(
-      onTap: matched ? null : onTap,
+      onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        decoration: BoxDecoration(
-          color: _bgColor(),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: _borderColor(), width: matched ? 1.5 : 2),
-        ),
-        child: matched ? const SizedBox.shrink() : _face(),
+        decoration: decoration,
+        child: _face(),
       ),
     );
+  }
+
+  Widget _matchedFace() {
+    return _buildCardText(AppColors.correct);
   }
 
   Widget _face() {
@@ -312,9 +380,9 @@ class _CardTile extends StatelessWidget {
         child: Text(
           '?',
           style: TextStyle(
-            color: AppColors.muted,
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
+            color: AppColors.muted.withValues(alpha: 0.4),
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
           ),
         ),
       );
@@ -322,14 +390,18 @@ class _CardTile extends StatelessWidget {
     return _cardContent();
   }
 
-  Widget _cardContent() {
-    final textColor = wrong ? Colors.red.shade300 : AppColors.fg;
+  Widget _buildCardText(Color textColor) {
     switch (card.type) {
       case MatchCardType.compoundKanji:
         return Center(
           child: Text(
             card.displayText,
-            style: TextStyle(color: textColor, fontSize: 23, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: textColor,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'NotoSerifCJKjp',
+            ),
             textAlign: TextAlign.center,
           ),
         );
@@ -337,7 +409,7 @@ class _CardTile extends StatelessWidget {
         return Center(
           child: Text(
             card.displayText,
-            style: TextStyle(color: textColor, fontSize: 19),
+            style: TextStyle(color: textColor, fontSize: 16),
             textAlign: TextAlign.center,
           ),
         );
@@ -348,7 +420,7 @@ class _CardTile extends StatelessWidget {
             padding: const EdgeInsets.all(4),
             child: Text(
               card.displayText,
-              style: TextStyle(color: textColor, fontSize: 16),
+              style: TextStyle(color: textColor, fontSize: 14),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 3,
@@ -361,14 +433,19 @@ class _CardTile extends StatelessWidget {
           children: [
             Text(
               card.displayText,
-              style: TextStyle(color: textColor, fontSize: 21, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: textColor,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'NotoSerifCJKjp',
+              ),
               textAlign: TextAlign.center,
             ),
             if (card.subText != null)
               Text(
                 card.subText!,
                 style: TextStyle(
-                  color: wrong ? Colors.red.shade200 : AppColors.muted,
+                  color: textColor.withValues(alpha: 0.7),
                   fontSize: 14,
                 ),
                 textAlign: TextAlign.center,
@@ -379,17 +456,149 @@ class _CardTile extends StatelessWidget {
         return Center(
           child: Text(
             card.displayText,
-            style: TextStyle(color: textColor, fontSize: 31, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: textColor,
+              fontSize: 31,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'NotoSerifCJKjp',
+            ),
           ),
         );
       case MatchCardType.romaji:
         return Center(
           child: Text(
             card.displayText,
-            style: TextStyle(color: textColor, fontSize: 23),
+            style: TextStyle(color: textColor, fontSize: 16),
           ),
         );
     }
+  }
+
+  Widget _cardContent() {
+    final textColor = wrong ? AppColors.incorrect : AppColors.fg;
+    switch (card.type) {
+      case MatchCardType.compoundKanji:
+        return Center(
+          child: Text(
+            card.displayText,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'NotoSerifCJKjp',
+            ),
+            textAlign: TextAlign.center,
+          ),
+        );
+      case MatchCardType.reading:
+        return Center(
+          child: Text(
+            card.displayText,
+            style: TextStyle(color: textColor, fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+        );
+      case MatchCardType.meaning:
+      case MatchCardType.english:
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Text(
+              card.displayText,
+              style: TextStyle(color: textColor, fontSize: 14),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 3,
+            ),
+          ),
+        );
+      case MatchCardType.japanese:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              card.displayText,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'NotoSerifCJKjp',
+              ),
+              textAlign: TextAlign.center,
+            ),
+            if (card.subText != null)
+              Text(
+                card.subText!,
+                style: TextStyle(
+                  color: wrong ? AppColors.incorrect.withValues(alpha: 0.7) : AppColors.muted,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+          ],
+        );
+      case MatchCardType.kana:
+        return Center(
+          child: Text(
+            card.displayText,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 31,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'NotoSerifCJKjp',
+            ),
+          ),
+        );
+      case MatchCardType.romaji:
+        return Center(
+          child: Text(
+            card.displayText,
+            style: TextStyle(color: textColor, fontSize: 16),
+          ),
+        );
+    }
+  }
+}
+
+class _StatPill extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  const _StatPill(this.icon, this.label, this.color);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.pillBg),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accent.withValues(alpha: 0.07),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: AppColors.fg,
+              fontSize: 13.5,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -414,125 +623,100 @@ class _ResultOverlay extends StatelessWidget {
     final previous = history.length > 1 ? history.sublist(1) : <({String time, int turns})>[];
 
     return Container(
-      color: AppColors.bg.withValues(alpha: 0.92),
+      color: AppColors.bg.withValues(alpha: 0.95),
       child: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-          child: Container(
-            padding: const EdgeInsets.all(28),
-            decoration: BoxDecoration(
-              color: AppColors.btnBg,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.pillBg),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Complete!',
-                  style: TextStyle(
-                    color: AppColors.fg,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Complete!',
+                style: TextStyle(
+                  color: AppColors.fg,
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'All pairs matched',
-                  style: TextStyle(color: AppColors.muted, fontSize: 13),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _Stat(label: 'Time', value: timeString),
-                    const SizedBox(width: 40),
-                    _Stat(label: 'Turns', value: '$turns'),
-                  ],
-                ),
-
-                // History
-                if (previous.isNotEmpty) ...[
-                  const SizedBox(height: 20),
-                  Divider(color: AppColors.pillBg),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Previous games',
-                    style: TextStyle(color: AppColors.muted, fontSize: 12),
-                  ),
-                  const SizedBox(height: 8),
-                  ...previous.map((e) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 3),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 60,
-                          child: Text(
-                            e.time,
-                            style: TextStyle(color: AppColors.fg, fontSize: 13),
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        SizedBox(
-                          width: 60,
-                          child: Text(
-                            '${e.turns} turns',
-                            style: TextStyle(color: AppColors.muted, fontSize: 13),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'All pairs matched',
+                style: TextStyle(color: AppColors.muted, fontSize: 15),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _StatPill(Icons.timer_outlined, timeString, AppColors.accent),
+                  const SizedBox(width: 10),
+                  _StatPill(Icons.repeat, '$turns turns', AppColors.muted),
                 ],
+              ),
 
-                const SizedBox(height: 28),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: onPlayAgain,
-                    child: const Text('Play Again'),
+              // History
+              if (previous.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Text(
+                  'Previous games',
+                  style: TextStyle(
+                    color: AppColors.muted,
+                    fontSize: 12,
                   ),
                 ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.pillBg),
-                    onPressed: onBack,
-                    child: Text('Back', style: TextStyle(color: AppColors.muted)),
+                const SizedBox(height: 8),
+                ...previous.map((e) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 60,
+                        child: Text(
+                          e.time,
+                          style: TextStyle(color: AppColors.fg, fontSize: 13),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      SizedBox(
+                        width: 60,
+                        child: Text(
+                          '${e.turns} turns',
+                          style: TextStyle(color: AppColors.muted, fontSize: 13),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                )),
               ],
-            ),
+
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(17),
+                    ),
+                  ),
+                  onPressed: onPlayAgain,
+                  child: const Text('Play Again'),
+                ),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: onBack,
+                  child: Text('Back', style: TextStyle(color: AppColors.muted)),
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class _Stat extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _Stat({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            color: AppColors.accent,
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(label, style: TextStyle(color: AppColors.muted, fontSize: 12)),
-      ],
     );
   }
 }

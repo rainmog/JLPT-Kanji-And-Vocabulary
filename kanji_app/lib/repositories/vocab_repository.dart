@@ -20,6 +20,9 @@ class VocabWord {
     required this.tags,
   });
 
+  bool get isUsuallyKana => tags.contains('usually_kana');
+  String get levelLabel => jlptLevel == 0 ? 'Other' : 'N$jlptLevel';
+
   factory VocabWord.fromMap(Map<String, dynamic> m) {
     List<String> parseJsonList(String? raw) {
       if (raw == null || raw.isEmpty) return [];
@@ -308,6 +311,18 @@ class VocabRepository {
       args,
     );
     return rows.map(VocabWord.fromMap).toList();
+  }
+
+  Future<int> getHighPracticeTargetCount(int threshold) async {
+    final rows = await dbService.query(
+      '''SELECT COUNT(*) as cnt
+         FROM vocabulary_progress vp
+         JOIN vocabulary_targets vt ON vp.vocab_id = vt.vocab_id
+         WHERE COALESCE(vp.practice_correct_count, 0) > ?
+           AND vp.learned_at IS NULL''',
+      [threshold],
+    );
+    return rows.first['cnt'] as int? ?? 0;
   }
 }
 

@@ -129,6 +129,7 @@ class QuizController extends Notifier<QuizState> {
           maxDifficulty: maxDifficulty,
           questions: questions,
         ),
+        currentIndex: 0,
         loading: false,
       );
     } catch (e) {

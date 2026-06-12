@@ -110,7 +110,9 @@ def build(out_path: Path | str = None):
         option_2_display TEXT,
         option_3_display TEXT,
         option_4_display TEXT,
-        correct_order TEXT
+        correct_order TEXT,
+        question_translation TEXT,
+        passage_translation TEXT
     );
     CREATE INDEX idx_jlpt_level_section ON jlpt_questions(level, section);
     CREATE INDEX idx_jlpt_passage_id ON jlpt_questions(passage_id);
@@ -180,12 +182,43 @@ def build(out_path: Path | str = None):
         vocab_pos_tags = json.loads(vocab_pos_path.read_text())
         print(f'Loaded POS tags for {len(vocab_pos_tags)} vocab entries')
 
+    # Waller JLPT level overrides — only applied when they move a word to an EASIER level
+    # (higher number = easier: 5=N5, 1=N1). Source: tanos.co.uk via Bluskyo/JLPT_Vocabulary
+    waller_levels: dict[tuple[str, str], int] = {}  # (word, reading) -> level
+    waller_reading_levels: dict[str, int] = {}       # reading -> best (easiest) level
+    waller_path = BASE / 'data' / 'jlpt_vocab_waller.json'
+    if waller_path.exists():
+        waller_raw = json.loads(waller_path.read_text())
+        for word, entries in waller_raw.items():
+            for e in entries:
+                r, lv = e['reading'], e['level']
+                waller_levels[(word, r)] = lv
+                if r not in waller_reading_levels or lv < waller_reading_levels[r]:
+                    waller_reading_levels[r] = lv
+        print(f'Loaded Waller JLPT overrides: {len(waller_levels)} word+reading entries')
+
+    def _waller_level(word: str, reading: str) -> int | None:
+        if (word, reading) in waller_levels:
+            return waller_levels[(word, reading)]
+        if word in waller_raw:
+            return min(e['level'] for e in waller_raw[word])
+        if reading in waller_reading_levels:
+            return waller_reading_levels[reading]
+        return None
+
     vocab_path = BASE / 'data' / 'vocab.json'
     if vocab_path.exists():
         vocab_data = json.loads(vocab_path.read_text())
+        waller_updates = 0
         for entry in vocab_data:
             pos_tags = vocab_pos_tags.get(f"{entry['word']}|{entry['reading']}", [])
             computed_tags = sorted(set(compute_vocab_tags(entry['word'])) | set(pos_tags))
+            level = entry['jlpt_level']
+            if level != 0:  # level 0 = "other/non-standard" — Waller must not override
+                w_level = _waller_level(entry['word'], entry['reading'])
+                if w_level is not None and w_level > level:
+                    level = w_level
+                    waller_updates += 1
             c.execute(
                 'INSERT OR IGNORE INTO vocabulary (word, reading, meanings, acceptable_answers, jlpt_level, tags) VALUES (?,?,?,?,?,?)',
                 (
@@ -193,7 +226,7 @@ def build(out_path: Path | str = None):
                     entry['reading'],
                     entry['meanings'],
                     json.dumps(entry['acceptable_answers'], ensure_ascii=False),
-                    entry['jlpt_level'],
+                    level,
                     json.dumps(computed_tags, ensure_ascii=False),
                 )
             )
@@ -209,7 +242,7 @@ def build(out_path: Path | str = None):
                         'INSERT OR IGNORE INTO vocabulary_tags (vocab_id, tag) VALUES (?,?)',
                         (vocab_id, tag)
                     )
-        print(f'Inserted {len(vocab_data)} vocabulary entries')
+        print(f'Inserted {len(vocab_data)} vocabulary entries ({waller_updates} level overrides from Waller list)')
     else:
         print('WARNING: tools/data/vocab.json not found — vocabulary table will be empty')
 
@@ -226,8 +259,8 @@ def build(out_path: Path | str = None):
                  question_stem, option_1, option_2, option_3, option_4, correct_option,
                  passage_display, passage_title_display, question_stem_display,
                  option_1_display, option_2_display, option_3_display, option_4_display,
-                 correct_order)
-                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                 correct_order, question_translation, passage_translation)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             ''', (
                 q['level'], q['section'], q['question_type'],
                 q.get('passage_id'), q.get('passage'), q.get('passage_title'),
@@ -239,6 +272,7 @@ def build(out_path: Path | str = None):
                 q.get('option_1_display'), q.get('option_2_display'),
                 q.get('option_3_display'), q.get('option_4_display'),
                 q.get('correct_order'),
+                q.get('question_translation'), q.get('passage_translation'),
             ))
         print(f'Inserted {len(qs)} N{level} JLPT questions')
 

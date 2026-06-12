@@ -4,15 +4,12 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'package:share_plus/share_plus.dart';
 import 'database_service.dart';
 import 'settings_service.dart';
 
-Future<Directory> _exportDirectory() async {
-  if (Platform.isAndroid) {
-    final ext = await getExternalStorageDirectory();
-    if (ext != null) return ext;
-  }
-  if (Platform.isIOS || Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
+Future<Directory> _desktopExportDirectory() async {
+  if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
     final dl = await getDownloadsDirectory();
     if (dl != null) return dl;
   }
@@ -20,9 +17,16 @@ Future<Directory> _exportDirectory() async {
 }
 
 class ExportService {
-  /// Exports all user data to Documents.
-  /// [filename] defaults to 'kanji_userdata.json'; pass a custom name for backups.
-  Future<String?> exportProgress(AppSettings settings, {String? filename}) async {
+  /// Exports all user data.
+  ///
+  /// On Android/iOS: writes a temp file then opens the OS share sheet so the
+  /// user can save to Downloads, Drive, email, etc. Returns null.
+  ///
+  /// On desktop: saves directly to the Downloads folder and returns the path.
+  ///
+  /// [filename] defaults to 'kanji_userdata.json'.
+  /// [context] required on Android/iOS to anchor the share sheet (iPad).
+  Future<String?> exportProgress(AppSettings settings, {String? filename, BuildContext? context}) async {
     final kanjiProgress = await dbService.query('SELECT * FROM user_progress');
     final vocabTargets = await dbService.query('SELECT * FROM vocabulary_targets');
     final vocabProgress = await dbService.query('SELECT * FROM vocabulary_progress');
@@ -36,8 +40,24 @@ class ExportService {
       'vocab_progress': vocabProgress,
     });
 
-    final dir = await _exportDirectory();
     final name = filename ?? 'kanji_userdata.json';
+
+    if (Platform.isAndroid || Platform.isIOS) {
+      // Write to temp dir then share — lets users pick Downloads, Drive, etc.
+      final tmp = await getTemporaryDirectory();
+      final tmpFile = File(join(tmp.path, name));
+      await tmpFile.writeAsString(payload);
+      final box = context?.findRenderObject() as RenderBox?;
+      await Share.shareXFiles(
+        [XFile(tmpFile.path, mimeType: 'application/json', name: name)],
+        subject: 'Kanji App Backup',
+        sharePositionOrigin: box == null ? null : box.localToGlobal(Offset.zero) & box.size,
+      );
+      return null;
+    }
+
+    // Desktop: save directly to Downloads.
+    final dir = await _desktopExportDirectory();
     final file = File(join(dir.path, name));
     await file.writeAsString(payload);
     return file.path;

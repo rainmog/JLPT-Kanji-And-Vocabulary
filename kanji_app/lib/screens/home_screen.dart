@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/kana_repository.dart';
 import '../repositories/kanji_repository.dart';
+import '../repositories/progress_repository.dart';
 import '../repositories/vocab_repository.dart';
 import '../services/auto_progression_service.dart';
 import '../services/settings_service.dart';
@@ -11,14 +12,15 @@ import '../theme.dart';
 import '../theme/app_theme_backgrounds.dart';
 import '../theme_provider.dart';
 import '../utils/app_route.dart';
+import '../widgets/falling_blocks_overlay.dart';
 import '../widgets/sakura_overlay.dart';
+import '../widgets/snow_overlay.dart';
+import '../widgets/space_age_overlay.dart';
 import 'credits_screen.dart';
-import 'jlpt_test_intro_screen.dart';
 import 'settings_screen.dart';
 import 'study_picker_screen.dart';
-import 'target_practice_config_screen.dart';
 import 'targets_screen.dart';
-import 'vocabulary_dictionary_screen.dart';
+import 'test_hub_screen.dart';
 
 // All progress data needed for home trackers, fetched in one go
 final _allProgressProvider = FutureProvider.autoDispose<_ProgressData>((ref) async {
@@ -52,6 +54,24 @@ final _kanjiTagsProvider = FutureProvider.autoDispose<List<String>>(
 final _vocabTagsProvider = FutureProvider.autoDispose<List<String>>(
   (_) => vocabRepo.getAllTags(),
 );
+
+final _todayGoalProvider = FutureProvider.autoDispose<int>(
+  (_) => progressRepo.getTodaySessionCount(),
+);
+
+final _graduationCandidatesProvider = FutureProvider.autoDispose<({
+  bool hasKanji, bool hasVocab, bool hasKana
+})>((_) async {
+  const threshold = 10;
+  final kanjiCount = await kanjiRepo.getHighPracticeTargetCount(threshold);
+  final vocabCount = await vocabRepo.getHighPracticeTargetCount(threshold);
+  final kanaCount = await kanaRepo.getHighPracticeTargetCount(threshold);
+  return (
+    hasKanji: kanjiCount >= 10,
+    hasVocab: vocabCount >= 10,
+    hasKana: kanaCount >= 10,
+  );
+});
 
 final _targetCountProvider = FutureProvider.autoDispose<({int kanji, int vocab, int kana})>((ref) async {
   final kanjiCount = await kanjiRepo.getTargetKanjiList().then((l) => l.length);
@@ -87,14 +107,14 @@ class _ProgressData {
     if (id.startsWith('kanji:N')) {
       final lvl = int.tryParse(id.substring(7));
       if (lvl != null) {
-        final p = kanjiByLevel[6 - lvl]; // jlpt_level: 5=N5..1=N1
+        final p = kanjiByLevel[lvl]; // jlpt_level: 5=N5..1=N1
         if (p != null) return (label: 'Kanji N${lvl}', learned: p.learned, total: p.total);
       }
     }
     if (id.startsWith('vocab:N')) {
       final lvl = int.tryParse(id.substring(7));
       if (lvl != null) {
-        final p = vocabByLevel[6 - lvl];
+        final p = vocabByLevel[lvl];
         if (p != null) return (label: 'Vocab N${lvl}', learned: p.learned, total: p.total);
       }
     }
@@ -135,6 +155,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (!mounted) return;
     if (result.addedKanji > 0 || result.addedVocab > 0 || result.addedKana > 0) {
       ref.invalidate(_targetCountProvider);
+      ref.invalidate(_allProgressProvider);
     }
     if (result.hasCompletions && mounted) {
       _showCompletionDialog(result);
@@ -170,6 +191,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final settingsNotifier = ref.read(settingsProvider.notifier);
     final progressAsync = ref.watch(_allProgressProvider);
     final targetAsync = ref.watch(_targetCountProvider);
+    final todayDone = ref.watch(_todayGoalProvider).asData?.value ?? 0;
+    final gradAsync = ref.watch(_graduationCandidatesProvider);
     final goal = settings.dailyGoal;
 
     final line = KDesign.line(colors);
@@ -177,17 +200,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final appTheme = ref.watch(themeNotifier);
     final hasAnimatedBg = const {
-      AppTheme.galaxy, AppTheme.tetris, AppTheme.loveLetter,
+      AppTheme.galaxy, AppTheme.loveLetter,
       AppTheme.lily, AppTheme.totoro, AppTheme.midnightCity,
     }.contains(appTheme);
 
     final bumper = MediaQuery.of(context).size.height * 0.05;
+    final heroGap = MediaQuery.of(context).size.height * 0.044;
 
     return Scaffold(
       backgroundColor: hasAnimatedBg ? Colors.transparent : colors.bg,
       body: Stack(children: [
         const Positioned.fill(child: HomeBgLayer()),
         const Positioned.fill(child: SakuraPetalsOverlay()),
+        const Positioned.fill(child: SpaceAgeStarsOverlay()),
+        const Positioned.fill(child: SnowOverlay()),
+        const Positioned.fill(child: FallingBlocksOverlay()),
         SafeArea(child: Column(children: [
           SizedBox(height: bumper),
 
@@ -241,67 +268,62 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
 
-          const SizedBox(height: 14),
+          const SizedBox(height: 25),
 
           // ── Configurable progress card ────────────────────────────
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Stack(clipBehavior: Clip.none, children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: KDesign.heroRadius,
-                  border: Border.all(color: line),
-                  boxShadow: KDesign.shadowSm(colors),
-                ),
-                padding: const EdgeInsets.fromLTRB(18, 17, 18, 18),
-                child: progressAsync.when(
-                  data: (data) {
-                    final trackers = settings.homeTrackers;
-                    if (trackers.isEmpty) {
-                      return Text('No trackers — tap + to add',
-                        style: TextStyle(fontSize: 13, color: KDesign.inkSoft(colors)));
-                    }
-                    final resolved = trackers
-                        .map((id) => data.resolve(id))
-                        .whereType<({String label, int learned, int total})>()
-                        .toList();
-                    return Column(children: [
-                      for (int i = 0; i < resolved.length; i++) ...[
-                        if (i > 0) const SizedBox(height: 15),
-                        _ProgressBar(
-                          label: resolved[i].label,
-                          learned: resolved[i].learned,
-                          total: resolved[i].total,
-                          colors: colors,
-                        ),
-                      ],
-                    ]);
-                  },
-                  loading: () => const _ProgressBarSkeleton(label: 'Loading…'),
-                  error: (_, __) => const SizedBox.shrink(),
-                ),
-              ),
-              if (settings.showTrackerPicker)
-                Positioned(
-                  bottom: -7, right: 8,
-                  child: GestureDetector(
-                    onTap: () => _showTrackerPicker(context, ref, settings, settingsNotifier, colors),
-                    child: Container(
-                      width: 14, height: 14,
-                      decoration: BoxDecoration(
-                        color: colors.accent,
-                        shape: BoxShape.circle,
-                        boxShadow: KDesign.shadowSm(colors),
-                      ),
-                      child: const Icon(Icons.add_rounded, size: 10, color: Colors.white),
-                    ),
+          if (settings.showTrackerPicker)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: GestureDetector(
+                onTap: () => _showTrackerPicker(context, ref, settings, settingsNotifier, colors),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: KDesign.heroRadius,
+                    border: Border.all(color: line),
+                    boxShadow: KDesign.shadowSm(colors),
+                  ),
+                  height: 175,
+                  padding: const EdgeInsets.fromLTRB(18, 17, 18, 18),
+                  child: progressAsync.when(
+                    data: (data) {
+                      final trackers = settings.homeTrackers;
+                      if (trackers.isEmpty) {
+                        return Center(child: Text('Tap to add trackers',
+                          style: TextStyle(fontSize: 13, color: KDesign.inkSoft(colors))));
+                      }
+                      final resolved = trackers
+                          .map((id) => data.resolve(id))
+                          .whereType<({String label, int learned, int total})>()
+                          .toList();
+                      final bars = [
+                        for (int i = 0; i < resolved.length; i++) ...[
+                          if (i > 0) const SizedBox(height: 15),
+                          _ProgressBar(
+                            label: resolved[i].label,
+                            learned: resolved[i].learned,
+                            total: resolved[i].total,
+                            colors: colors,
+                          ),
+                        ],
+                      ];
+                      return resolved.length >= 3
+                          ? SingleChildScrollView(
+                              physics: const ClampingScrollPhysics(),
+                              child: Column(children: bars),
+                            )
+                          : Center(
+                              child: Column(mainAxisSize: MainAxisSize.min, children: bars),
+                            );
+                    },
+                    loading: () => const Center(child: _ProgressBarSkeleton(label: 'Loading…')),
+                    error: (_, __) => const SizedBox.shrink(),
                   ),
                 ),
-            ]),
-          ),
+              ),
+            ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: heroGap),
 
           // ── Hero session block — expands to fill remaining space ───
           Expanded(
@@ -309,210 +331,214 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 width: double.infinity,
-                clipBehavior: Clip.hardEdge,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [colors.accent, deep],
-                  ),
+                  color: colors.surface,
                   borderRadius: KDesign.heroRadius,
-                  boxShadow: KDesign.shadowAccent(colors),
+                  border: Border.all(color: KDesign.line(colors), width: 1.5),
+                  boxShadow: KDesign.shadowSm(colors),
                 ),
                 padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
-                child: Stack(children: [
-                  // Decorative circles
-                  Positioned(
-                    right: -34, top: -36,
-                    child: Container(
-                      width: 150, height: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.10),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 38, bottom: -52,
-                    child: Container(
-                      width: 120, height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.07),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Expanded(
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(
-                            "CURRENT TARGETS",
-                            style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w700,
-                              letterSpacing: 1.4, color: Colors.white.withValues(alpha: 0.82),
-                            ),
-                          ),
-                          const SizedBox(height: 11),
-                          targetAsync.when(
-                            data: (t) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Row(children: [
-                                Text('${t.kanji}', style: const TextStyle(
-                                  fontSize: 27, fontWeight: FontWeight.w800,
-                                  color: Colors.white, letterSpacing: -0.4, height: 1.05,
-                                )),
-                                const SizedBox(width: 8),
-                                Text('target kanji', style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w700,
-                                  color: Colors.white.withValues(alpha: 0.85),
-                                )),
-                              ]),
-                              const SizedBox(height: 4),
-                              Row(children: [
-                                Text('${t.vocab}', style: const TextStyle(
-                                  fontSize: 27, fontWeight: FontWeight.w800,
-                                  color: Colors.white, letterSpacing: -0.4, height: 1.05,
-                                )),
-                                const SizedBox(width: 8),
-                                Text('target vocab', style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w700,
-                                  color: Colors.white.withValues(alpha: 0.85),
-                                )),
-                              ]),
-                              if (t.kana > 0) ...[
-                                const SizedBox(height: 4),
-                                Row(children: [
-                                  Text('${t.kana}', style: const TextStyle(
-                                    fontSize: 27, fontWeight: FontWeight.w800,
-                                    color: Colors.white, letterSpacing: -0.4, height: 1.05,
-                                  )),
-                                  const SizedBox(width: 8),
-                                  Text('target kana', style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w700,
-                                    color: Colors.white.withValues(alpha: 0.85),
-                                  )),
-                                ]),
-                              ],
-                            ]),
-                            loading: () => const SizedBox(height: 70),
-                            error: (_, __) => const SizedBox(height: 70),
-                          ),
-                        ]),
-                      ),
-                      Column(children: [
-                        _GoalRing(done: 0, goal: goal),
-                        const SizedBox(height: 4),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Expanded(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text(
-                          "TODAY'S GOAL",
+                          "TODAY'S SESSION",
                           style: TextStyle(
-                            fontSize: 9, fontWeight: FontWeight.w700,
-                            letterSpacing: 0.8,
-                            color: Colors.white.withValues(alpha: 0.7),
+                            fontSize: 12, fontWeight: FontWeight.w700,
+                            letterSpacing: 1.4, color: KDesign.inkSoft(colors),
                           ),
+                        ),
+                        const SizedBox(height: 11),
+                        targetAsync.when(
+                          data: (t) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Row(crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic, children: [
+                              Text('${t.kanji}', style: TextStyle(
+                                fontSize: 32, fontWeight: FontWeight.w800,
+                                color: colors.accent, letterSpacing: -0.4, height: 1.05,
+                              )),
+                              const SizedBox(width: 8),
+                              Text('target kanji', style: TextStyle(
+                                fontSize: 19, fontWeight: FontWeight.w700,
+                                color: KDesign.inkSoft(colors),
+                              )),
+                            ]),
+                            const SizedBox(height: 4),
+                            Row(crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic, children: [
+                              Text('${t.vocab}', style: TextStyle(
+                                fontSize: 32, fontWeight: FontWeight.w800,
+                                color: colors.accent, letterSpacing: -0.4, height: 1.05,
+                              )),
+                              const SizedBox(width: 8),
+                              Text('target vocabulary', style: TextStyle(
+                                fontSize: 19, fontWeight: FontWeight.w700,
+                                color: KDesign.inkSoft(colors),
+                              )),
+                            ]),
+                            if (t.kana > 0) ...[
+                              const SizedBox(height: 4),
+                              Row(crossAxisAlignment: CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic, children: [
+                                Text('${t.kana}', style: TextStyle(
+                                  fontSize: 32, fontWeight: FontWeight.w800,
+                                  color: colors.accent, letterSpacing: -0.4, height: 1.05,
+                                )),
+                                const SizedBox(width: 8),
+                                Text('target kana', style: TextStyle(
+                                  fontSize: 19, fontWeight: FontWeight.w700,
+                                  color: KDesign.inkSoft(colors),
+                                )),
+                              ]),
+                            ],
+                          ]),
+                          loading: () => const SizedBox(height: 70),
+                          error: (_, __) => const SizedBox(height: 70),
                         ),
                       ]),
+                    ),
+                    Column(children: [
+                      _GoalRing(done: todayDone, goal: goal, colors: colors),
+                      const SizedBox(height: 4),
+                      Text(
+                        "TODAY'S GOAL",
+                        style: TextStyle(
+                          fontSize: 9, fontWeight: FontWeight.w700,
+                          letterSpacing: 0.8,
+                          color: KDesign.inkSoft(colors),
+                        ),
+                      ),
                     ]),
-                    const Spacer(),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 46,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(color: Colors.white38, width: 1.5),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                        ),
-                        onPressed: () {
-                          soundService.playSelectButton();
-                          Navigator.push(context, AppRoute.to(const TargetPracticeConfigScreen()))
-                              .then((_) { if (mounted) ref.invalidate(_targetCountProvider); });
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.quiz_rounded, size: 18, color: Colors.white.withValues(alpha: 0.9)),
-                            const SizedBox(width: 8),
-                            const Text('Test Targets', style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white,
-                            )),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 54,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: deep,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(17),
-                          ),
-                          shadowColor: Colors.black26,
-                        ),
-                        onPressed: () {
-                          soundService.playSelectButton();
-                          Navigator.push(context, AppRoute.to(const StudyPickerScreen()));
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.play_arrow_rounded, size: 20, color: deep),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Start studying',
-                              style: TextStyle(
-                                fontSize: 16.5, fontWeight: FontWeight.w800, color: deep,
-                                height: 1.0,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ]),
+                  const SizedBox(height: 22),
+                  Container(height: 1, color: KDesign.line(colors)),
+                  const SizedBox(height: 22),
+                  gradAsync.when(
+                    data: (g) {
+                      if (!g.hasKanji && !g.hasVocab && !g.hasKana) return const SizedBox.shrink();
+                      final types = [
+                        if (g.hasKana) 'kana',
+                        if (g.hasKanji) 'kanji',
+                        if (g.hasVocab) 'vocabulary',
+                      ].join(', ');
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Text(
+                          "You've correctly identified some of the $types a lot recently! Want to take a test and graduate them to learned?",
+                          style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w600,
+                            color: KDesign.inkSoft(colors),
+                            height: 1.4,
+                          ),
+                        ),
+                      );
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  const Spacer(),
+                  _ShimmerButton(
+                    shimmer: gradAsync.maybeWhen(
+                      data: (g) => g.hasKanji || g.hasVocab || g.hasKana,
+                      orElse: () => false,
+                    ),
+                    colors: colors,
+                    onPressed: () {
+                      soundService.playSelectButton();
+                      Navigator.push(context, AppRoute.to(const TestHubScreen()))
+                          .then((_) {
+                        if (mounted) {
+                          ref.invalidate(_allProgressProvider);
+                          ref.invalidate(_targetCountProvider);
+                          ref.invalidate(_graduationCandidatesProvider);
+                          ref.invalidate(_todayGoalProvider);
+                        }
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                  GestureDetector(
+                    onTap: () {
+                      soundService.playSelectButton();
+                      Navigator.push(context, AppRoute.to(const StudyPickerScreen()))
+                          .then((_) {
+                        if (mounted) {
+                          ref.invalidate(_todayGoalProvider);
+                          ref.invalidate(_targetCountProvider);
+                        }
+                      });
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 65,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [colors.accent, deep],
+                        ),
+                        borderRadius: BorderRadius.circular(17),
+                        boxShadow: KDesign.shadowAccent(colors),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.play_arrow_rounded, size: 18, color: Colors.white),
+                          SizedBox(width: 9),
+                          Text(
+                            'Start Studying',
+                            style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white,
+                              height: 1.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  GestureDetector(
+                    onTap: () {
+                      soundService.playSelectButton();
+                      Navigator.push(context, AppRoute.to(const TargetsScreen()))
+                          .then((_) {
+                        if (mounted) {
+                          ref.invalidate(_allProgressProvider);
+                          ref.invalidate(_targetCountProvider);
+                          ref.invalidate(_graduationCandidatesProvider);
+                        }
+                      });
+                    },
+                    child: Container(
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: KDesign.tint(colors),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.adjust_rounded, size: 15, color: colors.accent),
+                          const SizedBox(width: 7),
+                          Text(
+                            'Set Targets',
+                            style: TextStyle(
+                              fontSize: 13.5, fontWeight: FontWeight.w700,
+                              color: colors.accent,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ]),
               ),
             ),
           ),
 
-          const SizedBox(height: 12),
-
-          // ── Quick tiles ───────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(children: [
-              _QuickTile(
-                icon: Icons.adjust_rounded,
-                label: 'Set targets',
-                accent: true,
-                colors: colors,
-                onTap: () => Navigator.push(context, AppRoute.to(const TargetsScreen()))
-                    .then((_) { if (mounted) ref.invalidate(_targetCountProvider); }),
-              ),
-              const SizedBox(width: 12),
-              _QuickTile(
-                icon: Icons.menu_book_rounded,
-                label: 'Dictionary',
-                accent: false,
-                colors: colors,
-                onTap: () => Navigator.push(context, AppRoute.to(const VocabularyDictionaryScreen())),
-              ),
-              const SizedBox(width: 12),
-              _QuickTile(
-                icon: Icons.school_rounded,
-                label: 'JLPT',
-                accent: false,
-                colors: colors,
-                onTap: () => Navigator.push(context, AppRoute.to(const JlptTestScreen())),
-              ),
-            ]),
-          ),
-
-          SizedBox(height: bumper),
+          SizedBox(height: heroGap),
         ])),
       ]),
     );
@@ -530,7 +556,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       builder: (_) => _TrackerPickerSheet(
         colors: colors,
         selected: List<String>.from(settings.homeTrackers),
-        onChanged: (updated) => notifier.update(settings.copyWith(homeTrackers: updated)),
+        onChanged: (updated) {
+          notifier.update(settings.copyWith(homeTrackers: updated));
+          ref.invalidate(_allProgressProvider);
+        },
       ),
     );
   }
@@ -628,7 +657,8 @@ class _ProgressBarSkeleton extends StatelessWidget {
 
 class _GoalRing extends StatelessWidget {
   final int done, goal;
-  const _GoalRing({required this.done, required this.goal});
+  final ThemeColors colors;
+  const _GoalRing({required this.done, required this.goal, required this.colors});
 
   @override
   Widget build(BuildContext context) {
@@ -642,15 +672,15 @@ class _GoalRing extends StatelessWidget {
       child: Stack(alignment: Alignment.center, children: [
         CustomPaint(
           size: const Size(size, size),
-          painter: _RingPainter(pct: pct, stroke: stroke, r: r, circ: circ),
+          painter: _RingPainter(pct: pct, stroke: stroke, r: r, circ: circ, colors: colors),
         ),
         Column(mainAxisSize: MainAxisSize.min, children: [
-          Text('$done', style: const TextStyle(
-            fontSize: 19, fontWeight: FontWeight.w800, color: Colors.white, height: 1,
+          Text('$done', style: TextStyle(
+            fontSize: 19, fontWeight: FontWeight.w800, color: colors.accent, height: 1,
           )),
           Text('/ $goal', style: TextStyle(
             fontSize: 11, fontWeight: FontWeight.w700,
-            color: Colors.white.withValues(alpha: 0.8),
+            color: KDesign.inkSoft(colors),
           )),
         ]),
       ]),
@@ -660,18 +690,19 @@ class _GoalRing extends StatelessWidget {
 
 class _RingPainter extends CustomPainter {
   final double pct, stroke, r, circ;
-  const _RingPainter({required this.pct, required this.stroke, required this.r, required this.circ});
+  final ThemeColors colors;
+  const _RingPainter({required this.pct, required this.stroke, required this.r, required this.circ, required this.colors});
 
   @override
   void paint(Canvas canvas, Size size) {
     final cx = size.width / 2, cy = size.height / 2;
     final trackPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.25)
+      ..color = KDesign.soft(colors)
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round;
     final fillPaint = Paint()
-      ..color = Colors.white
+      ..color = colors.accent
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round;
@@ -684,52 +715,6 @@ class _RingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_RingPainter old) => old.pct != pct;
-}
-
-class _QuickTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool accent;
-  final ThemeColors colors;
-  final VoidCallback onTap;
-  const _QuickTile({required this.icon, required this.label, required this.accent, required this.colors, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () { soundService.playSelectButton(); onTap(); },
-        child: Container(
-          decoration: BoxDecoration(
-            color: colors.surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: accent ? colors.accent : KDesign.line(colors)),
-            boxShadow: KDesign.shadowSm(colors),
-          ),
-          padding: const EdgeInsets.fromLTRB(8, 16, 8, 14),
-          child: Column(children: [
-            Container(
-              width: 44, height: 44,
-              decoration: BoxDecoration(
-                color: accent ? colors.accent : KDesign.tint(colors),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(icon, size: 22, color: accent ? Colors.white : colors.accent),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.w700,
-                color: KDesign.ink(colors), height: 1.25,
-              ),
-            ),
-          ]),
-        ),
-      ),
-    );
-  }
 }
 
 // ── Tracker picker sheet ──────────────────────────────────────────────────────
@@ -995,6 +980,111 @@ class _TrackerRow extends StatelessWidget {
           )),
         ]),
       ),
+    );
+  }
+}
+
+// ── Shimmer-capable Test Targets button ───────────────────────────────────────
+
+class _ShimmerButton extends StatefulWidget {
+  final bool shimmer;
+  final VoidCallback onPressed;
+  final ThemeColors colors;
+  const _ShimmerButton({required this.shimmer, required this.onPressed, required this.colors});
+
+  @override
+  State<_ShimmerButton> createState() => _ShimmerButtonState();
+}
+
+class _ShimmerButtonState extends State<_ShimmerButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    );
+    if (widget.shimmer) _ctrl.repeat();
+  }
+
+  @override
+  void didUpdateWidget(_ShimmerButton old) {
+    super.didUpdateWidget(old);
+    if (widget.shimmer && !old.shimmer) {
+      _ctrl.repeat();
+    } else if (!widget.shimmer && old.shimmer) {
+      _ctrl.stop();
+      _ctrl.value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final button = SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: widget.colors.accent,
+          side: BorderSide(color: KDesign.line(widget.colors), width: 1.5),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        ),
+        onPressed: widget.onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.quiz_rounded, size: 18, color: widget.colors.accent),
+            const SizedBox(width: 8),
+            Text('Test', style: TextStyle(
+              fontSize: 15, fontWeight: FontWeight.w700, color: widget.colors.accent,
+            )),
+          ],
+        ),
+      ),
+    );
+
+    if (!widget.shimmer) return button;
+
+    return Stack(
+      children: [
+        button,
+        Positioned.fill(
+          child: IgnorePointer(
+            child: AnimatedBuilder(
+              animation: _ctrl,
+              builder: (context, _) {
+                final pos = _ctrl.value;
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment(pos * 4 - 2.5, -0.5),
+                        end: Alignment(pos * 4 - 1.5, 0.5),
+                        colors: [
+                          widget.colors.accent.withValues(alpha: 0.0),
+                          widget.colors.accent.withValues(alpha: 0.18),
+                          widget.colors.accent.withValues(alpha: 0.0),
+                        ],
+                      ),
+                    ),
+                    child: const SizedBox.expand(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -7,7 +7,7 @@ import '../theme.dart';
 import '../theme_provider.dart';
 import '../utils/app_route.dart';
 import '../widgets/k_setup.dart';
-import 'home_screen.dart';
+import 'main_shell.dart';
 
 class OnboardingAutoProgressionScreen extends ConsumerStatefulWidget {
   final int? level; // 5=N5 … 1=N1, null=clean start
@@ -70,7 +70,7 @@ class _OnboardingAutoProgressionScreenState
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(
         context,
-        AppRoute.to(const HomeScreen()),
+        AppRoute.to(const MainShell()),
         (_) => false,
       );
     } finally {

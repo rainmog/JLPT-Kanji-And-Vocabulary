@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/kana_repository.dart';
 import '../theme.dart';
+import '../theme_provider.dart';
+import '../widgets/k_setup.dart';
 import '../widgets/scale_on_press.dart';
 import '../widgets/item_info_sheet.dart';
 
-class SelectTargetKanaScreen extends StatefulWidget {
+class SelectTargetKanaScreen extends ConsumerStatefulWidget {
   final String type; // 'hiragana' | 'katakana'
   const SelectTargetKanaScreen({super.key, required this.type});
 
   @override
-  State<SelectTargetKanaScreen> createState() => _SelectTargetKanaScreenState();
+  ConsumerState<SelectTargetKanaScreen> createState() => _SelectTargetKanaScreenState();
 }
 
-class _SelectTargetKanaScreenState extends State<SelectTargetKanaScreen> {
+class _SelectTargetKanaScreenState extends ConsumerState<SelectTargetKanaScreen> {
   List<KanaCharacter> _chars = [];
   List<String> _rows = [];
   bool _loading = true;
@@ -45,20 +48,20 @@ class _SelectTargetKanaScreenState extends State<SelectTargetKanaScreen> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          backgroundColor: AppColors.surface,
-          title: Text('Mark as unlearned?', style: TextStyle(color: AppColors.fg)),
+          backgroundColor: ref.read(themeColorsProvider).surface,
+          title: Text('Mark as unlearned?', style: TextStyle(color: ref.read(themeColorsProvider).fg)),
           content: Text(
             '${ch.character} (${ch.romaji}) is already learned. Set it back to unlearned?',
-            style: TextStyle(color: AppColors.muted),
+            style: TextStyle(color: ref.read(themeColorsProvider).muted),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: Text('Cancel', style: TextStyle(color: AppColors.muted)),
+              child: Text('Cancel', style: TextStyle(color: ref.read(themeColorsProvider).muted)),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: Text('Yes', style: TextStyle(color: AppColors.accent)),
+              child: Text('Yes', style: TextStyle(color: ref.read(themeColorsProvider).accent)),
             ),
           ],
         ),
@@ -81,20 +84,20 @@ class _SelectTargetKanaScreenState extends State<SelectTargetKanaScreen> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          backgroundColor: AppColors.surface,
-          title: Text('Reset row to unlearned?', style: TextStyle(color: AppColors.fg)),
+          backgroundColor: ref.read(themeColorsProvider).surface,
+          title: Text('Reset row to unlearned?', style: TextStyle(color: ref.read(themeColorsProvider).fg)),
           content: Text(
             'All characters in "$row" are already learned or targeted. Set all to unlearned?',
-            style: TextStyle(color: AppColors.muted),
+            style: TextStyle(color: ref.read(themeColorsProvider).muted),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: Text('Cancel', style: TextStyle(color: AppColors.muted)),
+              child: Text('Cancel', style: TextStyle(color: ref.read(themeColorsProvider).muted)),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: Text('Reset', style: TextStyle(color: AppColors.accent)),
+              child: Text('Reset', style: TextStyle(color: ref.read(themeColorsProvider).accent)),
             ),
           ],
         ),
@@ -118,20 +121,20 @@ class _SelectTargetKanaScreenState extends State<SelectTargetKanaScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: Text('Set all to learned?', style: TextStyle(color: AppColors.fg)),
+        backgroundColor: ref.read(themeColorsProvider).surface,
+        title: Text('Set all to learned?', style: TextStyle(color: ref.read(themeColorsProvider).fg)),
         content: Text(
           'All ${widget.type} characters will be marked as learned.',
-          style: TextStyle(color: AppColors.muted),
+          style: TextStyle(color: ref.read(themeColorsProvider).muted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel', style: TextStyle(color: AppColors.muted)),
+            child: Text('Cancel', style: TextStyle(color: ref.read(themeColorsProvider).muted)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Confirm', style: TextStyle(color: AppColors.accent)),
+            child: Text('Confirm', style: TextStyle(color: ref.read(themeColorsProvider).accent)),
           ),
         ],
       ),
@@ -163,182 +166,178 @@ class _SelectTargetKanaScreenState extends State<SelectTargetKanaScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ref.watch(themeColorsProvider);
     final title = widget.type == 'hiragana' ? 'Hiragana Targets' : 'Katakana Targets';
     return Scaffold(
-      backgroundColor: AppColors.bg,
-      appBar: AppBar(
-        backgroundColor: AppColors.bg,
-        title: Text(title, style: TextStyle(color: AppColors.fg)),
-        iconTheme: IconThemeData(color: AppColors.fg),
-        actions: [
-          if (_selectLearnedMode)
-            TextButton(
-              onPressed: () => setState(() {
-                _selectLearnedMode = false;
-                _selectedForLearned.clear();
-              }),
-              child: Text('Cancel', style: TextStyle(color: AppColors.muted)),
-            )
-          else
-            PopupMenuButton<String>(
-              color: AppColors.surface,
-              icon: Icon(Icons.more_vert, color: AppColors.fg),
-              onSelected: (val) {
-                if (val == 'set_all') _setAllLearned();
-                if (val == 'select') setState(() => _selectLearnedMode = true);
-              },
-              itemBuilder: (_) => [
-                PopupMenuItem(
-                  value: 'set_all',
-                  child: Text('Set all to learned', style: TextStyle(color: AppColors.fg)),
-                ),
-                PopupMenuItem(
-                  value: 'select',
-                  child: Text('Select to mark learned', style: TextStyle(color: AppColors.fg)),
-                ),
-              ],
+      backgroundColor: colors.bg,
+      body: SafeArea(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+            child: KBackHeader(
+              title: title,
+              colors: colors,
+              trailing: _selectLearnedMode
+                ? TextButton(
+                    onPressed: () => setState(() { _selectLearnedMode = false; _selectedForLearned.clear(); }),
+                    child: Text('Cancel', style: TextStyle(color: colors.muted)),
+                  )
+                : PopupMenuButton<String>(
+                    color: colors.surface,
+                    icon: Icon(Icons.more_vert, color: KDesign.ink(colors)),
+                    onSelected: (val) {
+                      if (val == 'set_all') _setAllLearned();
+                      if (val == 'select') setState(() => _selectLearnedMode = true);
+                    },
+                    itemBuilder: (_) => [
+                      PopupMenuItem(value: 'set_all', child: Text('Set all to learned', style: TextStyle(color: colors.fg))),
+                      PopupMenuItem(value: 'select', child: Text('Select to mark learned', style: TextStyle(color: colors.fg))),
+                    ],
+                  ),
             ),
-        ],
-      ),
-      body: _loading
-        ? const Center(child: CircularProgressIndicator())
-        : Stack(children: [
-            ListView.separated(
-              padding: EdgeInsets.fromLTRB(16, 16, 16, _selectLearnedMode ? 80 : 16),
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemCount: _rows.length,
-              itemBuilder: (context, i) {
-                final row = _rows[i];
-                final chars = _byRow[row] ?? [];
-                final allTargeted = chars.every((c) => c.status == 'target' || c.status == 'learned');
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(children: [
-                      Expanded(
-                        child: Text(row, style: TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.muted,
-                        )),
-                      ),
-                      if (!_selectLearnedMode)
-                        TextButton(
-                          onPressed: () => _toggleRow(row),
-                          child: Text(
-                            allTargeted ? 'Deselect all' : 'Select all',
-                            style: TextStyle(fontSize: 12, color: AppColors.accent),
-                          ),
+          ),
+          if (_loading)
+            const Expanded(child: Center(child: CircularProgressIndicator()))
+          else
+            Expanded(child: Stack(children: [
+              ListView.separated(
+                padding: EdgeInsets.fromLTRB(16, 16, 16, _selectLearnedMode ? 80 : 16),
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemCount: _rows.length,
+                itemBuilder: (context, i) {
+                  final row = _rows[i];
+                  final chars = _byRow[row] ?? [];
+                  final allTargeted = chars.every((c) => c.status == 'target' || c.status == 'learned');
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        Expanded(
+                          child: Text(row, style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold, color: colors.muted,
+                          )),
                         ),
-                    ]),
-                    const SizedBox(height: 6),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: chars.map((ch) {
-                        final color = _chipColor(ch.status);
-                        final selected = ch.status == 'target' || ch.status == 'learned';
-                        final isSelectedForLearned = _selectedForLearned.contains(ch.id);
+                        if (!_selectLearnedMode)
+                          TextButton(
+                            onPressed: () => _toggleRow(row),
+                            child: Text(
+                              allTargeted ? 'Deselect all' : 'Select all',
+                              style: TextStyle(fontSize: 12, color: colors.accent),
+                            ),
+                          ),
+                      ]),
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: chars.map((ch) {
+                          final color = _chipColor(ch.status);
+                          final selected = ch.status == 'target' || ch.status == 'learned';
+                          final isSelectedForLearned = _selectedForLearned.contains(ch.id);
 
-                        if (_selectLearnedMode) {
-                          final canSelect = ch.status != 'learned';
+                          if (_selectLearnedMode) {
+                            final canSelect = ch.status != 'learned';
+                            return ScaleOnPress(
+                              child: GestureDetector(
+                                onTap: canSelect ? () => setState(() {
+                                  if (isSelectedForLearned) {
+                                    _selectedForLearned.remove(ch.id);
+                                  } else {
+                                    _selectedForLearned.add(ch.id);
+                                  }
+                                }) : null,
+                                child: Container(
+                                  width: 60,
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: isSelectedForLearned
+                                      ? AppColors.correct.withValues(alpha: 0.2)
+                                      : (selected ? color.withValues(alpha: 0.15) : colors.btnBg),
+                                    borderRadius: BorderRadius.circular(AppColors.buttonRadius),
+                                    border: Border.all(
+                                      color: isSelectedForLearned
+                                        ? AppColors.correct
+                                        : (selected ? color.withValues(alpha: 0.6) : colors.pillBg),
+                                      width: isSelectedForLearned ? 2 : 1,
+                                    ),
+                                  ),
+                                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                                    Text(ch.character, style: TextStyle(
+                                      fontSize: 20,
+                                      color: isSelectedForLearned ? AppColors.correct
+                                        : (selected ? color : colors.muted),
+                                    )),
+                                    const SizedBox(height: 2),
+                                    Text(ch.romaji, style: TextStyle(
+                                      fontSize: 9,
+                                      color: isSelectedForLearned ? AppColors.correct
+                                        : (selected ? color : colors.muted),
+                                    )),
+                                  ]),
+                                ),
+                              ),
+                            );
+                          }
+
                           return ScaleOnPress(
                             child: GestureDetector(
-                              onTap: canSelect ? () => setState(() {
-                                if (isSelectedForLearned) {
-                                  _selectedForLearned.remove(ch.id);
-                                } else {
-                                  _selectedForLearned.add(ch.id);
-                                }
-                              }) : null,
+                              onTap: () => _toggleChar(ch),
+                              onLongPress: () => showKanaInfoSheet(context, ch),
                               child: Container(
                                 width: 60,
                                 padding: const EdgeInsets.symmetric(vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: isSelectedForLearned
-                                    ? AppColors.correct.withValues(alpha: 0.2)
-                                    : (selected ? color.withValues(alpha: 0.15) : AppColors.btnBg),
+                                  color: selected ? color.withValues(alpha: 0.15) : colors.btnBg,
                                   borderRadius: BorderRadius.circular(AppColors.buttonRadius),
                                   border: Border.all(
-                                    color: isSelectedForLearned
-                                      ? AppColors.correct
-                                      : (selected ? color.withValues(alpha: 0.6) : AppColors.pillBg),
-                                    width: isSelectedForLearned ? 2 : 1,
+                                    color: selected ? color.withValues(alpha: 0.6) : colors.pillBg,
                                   ),
                                 ),
                                 child: Column(mainAxisSize: MainAxisSize.min, children: [
                                   Text(ch.character, style: TextStyle(
-                                    fontSize: 20,
-                                    color: isSelectedForLearned ? AppColors.correct
-                                      : (selected ? color : AppColors.muted),
+                                    fontSize: 20, color: selected ? color : colors.muted,
                                   )),
                                   const SizedBox(height: 2),
                                   Text(ch.romaji, style: TextStyle(
-                                    fontSize: 9,
-                                    color: isSelectedForLearned ? AppColors.correct
-                                      : (selected ? color : AppColors.muted),
+                                    fontSize: 9, color: selected ? color : colors.muted,
                                   )),
                                 ]),
                               ),
                             ),
                           );
-                        }
-
-                        return ScaleOnPress(
-                          child: GestureDetector(
-                            onTap: () => _toggleChar(ch),
-                            onLongPress: () => showKanaInfoSheet(context, ch),
-                            child: Container(
-                              width: 60,
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: selected ? color.withValues(alpha: 0.15) : AppColors.btnBg,
-                                borderRadius: BorderRadius.circular(AppColors.buttonRadius),
-                                border: Border.all(
-                                  color: selected ? color.withValues(alpha: 0.6) : AppColors.pillBg,
-                                ),
-                              ),
-                              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                                Text(ch.character, style: TextStyle(
-                                  fontSize: 20, color: selected ? color : AppColors.muted,
-                                )),
-                                const SizedBox(height: 2),
-                                Text(ch.romaji, style: TextStyle(
-                                  fontSize: 9, color: selected ? color : AppColors.muted,
-                                )),
-                              ]),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                );
-              },
-            ),
-            if (_selectLearnedMode)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: AppColors.bg,
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _selectedForLearned.isEmpty
-                        ? AppColors.pillBg : AppColors.correct,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    onPressed: _selectedForLearned.isEmpty ? null : _confirmMarkSelectedLearned,
-                    child: Text(
-                      _selectedForLearned.isEmpty
-                        ? 'Select characters to mark learned'
-                        : 'Mark ${_selectedForLearned.length} as learned',
-                      style: TextStyle(color: AppColors.bg, fontWeight: FontWeight.bold),
+                        }).toList(),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              if (_selectLearnedMode)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    color: colors.bg,
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _selectedForLearned.isEmpty
+                          ? colors.pillBg : AppColors.correct,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      onPressed: _selectedForLearned.isEmpty ? null : _confirmMarkSelectedLearned,
+                      child: Text(
+                        _selectedForLearned.isEmpty
+                          ? 'Select characters to mark learned'
+                          : 'Mark ${_selectedForLearned.length} as learned',
+                        style: TextStyle(color: colors.bg, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ]),
+            ])),
+        ]),
+      ),
     );
   }
 }

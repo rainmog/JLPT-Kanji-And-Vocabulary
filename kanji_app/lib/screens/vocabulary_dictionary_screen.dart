@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/vocab_repository.dart';
 import '../theme.dart';
+import '../theme/app_theme_backgrounds.dart';
 import '../theme_provider.dart';
 import '../widgets/item_info_sheet.dart';
 import '../widgets/k_setup.dart';
+import '../widgets/sakura_overlay.dart';
+import '../widgets/falling_blocks_overlay.dart';
+import '../widgets/snow_overlay.dart';
+import '../widgets/space_age_overlay.dart';
 
 final _allVocabProvider = FutureProvider<List<VocabWord>>(
   (_) => vocabRepo.getAllVocab(),
@@ -50,10 +55,12 @@ class _VocabularyDictionaryScreenState
   Widget build(BuildContext context) {
     final colors = ref.watch(themeColorsProvider);
     final vocabAsync = ref.watch(_allVocabProvider);
+    final appTheme = ref.watch(themeNotifier);
+    final hasAnimatedBg = const {AppTheme.galaxy, AppTheme.loveLetter, AppTheme.lily, AppTheme.totoro, AppTheme.midnightCity}.contains(appTheme);
 
     return Scaffold(
-      backgroundColor: colors.bg,
-      body: SafeArea(
+      backgroundColor: hasAnimatedBg ? Colors.transparent : colors.bg,
+      body: Stack(children: [const Positioned.fill(child: HomeBgLayer()), const Positioned.fill(child: SakuraPetalsOverlay()), const Positioned.fill(child: SpaceAgeStarsOverlay()), const Positioned.fill(child: SnowOverlay()), const Positioned.fill(child: FallingBlocksOverlay()), SafeArea(
         child: Column(children: [
 
           // Header
@@ -153,6 +160,7 @@ class _VocabularyDictionaryScreenState
           ),
         ]),
       ),
+      ]),
     );
   }
 }
@@ -193,6 +201,14 @@ class _VocabRow extends StatelessWidget {
               ],
             ]),
             const SizedBox(height: 3),
+            if (word.isUsuallyKana)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Text('Usually written in kana', style: TextStyle(
+                  fontSize: 11.5, fontWeight: FontWeight.w600,
+                  color: colors.accent, fontStyle: FontStyle.italic,
+                )),
+              ),
             Text(word.meanings, style: TextStyle(
               fontSize: 13.5, fontWeight: FontWeight.w600,
               color: KDesign.inkSoft(colors),
@@ -205,7 +221,7 @@ class _VocabRow extends StatelessWidget {
             color: KDesign.tint(colors),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Text('N${word.jlptLevel}', style: TextStyle(
+          child: Text(word.levelLabel, style: TextStyle(
             fontSize: 12, fontWeight: FontWeight.w800, color: colors.accent,
           )),
         ),

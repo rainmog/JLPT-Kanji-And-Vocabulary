@@ -268,12 +268,6 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen>
       _showingFeedback = true;
     });
     _onResult(correct);
-    if (correct) {
-      _autoNextTimer = Timer(const Duration(seconds: 1), _next);
-    } else {
-      _autoNextTimer =
-          Timer(const Duration(milliseconds: 1200), _next);
-    }
   }
 
   void _handleTypeSubmit() {
@@ -283,12 +277,6 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen>
       _showingFeedback = true;
     });
     _onResult(correct);
-    if (correct) {
-      _autoNextTimer = Timer(const Duration(seconds: 1), _next);
-    } else {
-      _autoNextTimer =
-          Timer(const Duration(milliseconds: 1200), _next);
-    }
   }
 
   void _onResult(bool correct) {
@@ -541,7 +529,21 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen>
             ),
           ),
         );
-      }).toList(),
+      }).toList()
+        ..add(
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: AnimatedOpacity(
+              opacity: _showingFeedback ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 150),
+              child: Text(
+                'Tap anywhere to continue',
+                style: TextStyle(fontSize: 13, color: AppColors.muted),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
     );
   }
 

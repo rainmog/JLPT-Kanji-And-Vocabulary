@@ -1,13 +1,13 @@
 import 'package:audioplayers/audioplayers.dart';
 
-// Ambient track filename → display label
+// Ambient track display label → filename (matches englishFonts/japaneseFonts pattern)
 const ambientTracks = {
-  'none': 'None',
-  'By The Ocean.mp3': 'By The Ocean',
-  'Chimes and Rain.mp3': 'Chimes and Rain',
-  'Dentist Drill For Peaceful Dreams.mp3': 'Dentist Drill for Peaceful Dreams',
-  'Light Rain.mp3': 'Light Rain',
-  'Storm.mp3': 'Storm',
+  'None': 'none',
+  'By The Ocean': 'By The Ocean.mp3',
+  'Chimes and Rain': 'Chimes and Rain.mp3',
+  'Dentist Drill for Peaceful Dreams': 'Dentist Drill For Peaceful Dreams.mp3',
+  'Light Rain': 'Light Rain.mp3',
+  'Storm': 'Storm.mp3',
 };
 
 class SoundService {
@@ -20,6 +20,11 @@ class SoundService {
   final AudioPlayer _backPlayer = AudioPlayer();
   final AudioPlayer _startPlayer = AudioPlayer();
   final AudioPlayer _completePlayer = AudioPlayer();
+
+  // Some tracks are quieter at the same level — multiply their effective volume.
+  static const _trackVolumeBoost = {
+    'Chimes and Rain.mp3': 2.0,
+  };
 
   String _currentAmbient = 'none';
   double _currentVolume = 0.5;
@@ -124,19 +129,24 @@ class SoundService {
     ]);
   }
 
+  double _effectiveAmbientVolume() {
+    final boost = _trackVolumeBoost[_currentAmbient] ?? 1.0;
+    return (_currentVolume * boost).clamp(0.0, 1.0);
+  }
+
   Future<void> setAmbient(String trackKey) async {
     if (_currentAmbient == trackKey) return;
     _currentAmbient = trackKey;
     await _ambientPlayer.stop();
     if (trackKey != 'none' && ambientEnabled) {
-      await _ambientPlayer.setVolume(_currentVolume);
+      await _ambientPlayer.setVolume(_effectiveAmbientVolume());
       await _ambientPlayer.play(AssetSource('audio/ambience/$trackKey'));
     }
   }
 
   Future<void> setAmbientVolume(double volume) async {
     _currentVolume = volume;
-    await _ambientPlayer.setVolume(volume);
+    await _ambientPlayer.setVolume(_effectiveAmbientVolume());
   }
 
   Future<void> stopAmbient() async {

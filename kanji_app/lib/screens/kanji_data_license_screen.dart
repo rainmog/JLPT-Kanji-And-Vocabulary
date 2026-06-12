@@ -1,33 +1,39 @@
 import 'package:flutter/material.dart';
-import '../theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../theme_provider.dart';
+import '../widgets/k_setup.dart';
 
-class KanjiDataLicenseScreen extends StatelessWidget {
+class KanjiDataLicenseScreen extends ConsumerWidget {
   const KanjiDataLicenseScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = ref.watch(themeColorsProvider);
+
     return Scaffold(
-      backgroundColor: AppColors.bg,
-      appBar: AppBar(
-        backgroundColor: AppColors.bg,
-        title: Text('kanji-data License', style: TextStyle(color: AppColors.fg)),
-        iconTheme: IconThemeData(color: AppColors.fg),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          Text(
-            'kanji-data',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.fg),
+      backgroundColor: colors.bg,
+      body: SafeArea(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+            child: KBackHeader(title: 'kanji-data License', colors: colors),
           ),
-          const SizedBox(height: 4),
-          SelectableText(
-            'https://github.com/davidluzgouveia/kanji-data',
-            style: TextStyle(color: AppColors.accent, fontSize: 13),
-          ),
-          const SizedBox(height: 24),
-          SelectableText(
-            '''MIT License
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+              children: [
+                Text(
+                  'kanji-data',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colors.fg),
+                ),
+                const SizedBox(height: 4),
+                SelectableText(
+                  'https://github.com/davidluzgouveia/kanji-data',
+                  style: TextStyle(color: colors.accent, fontSize: 13),
+                ),
+                const SizedBox(height: 24),
+                SelectableText(
+                  '''MIT License
 
 Copyright (c) 2019 David Gouveia
 
@@ -36,9 +42,12 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.''',
-            style: TextStyle(color: AppColors.muted, fontSize: 13, height: 1.6),
+                  style: TextStyle(color: colors.muted, fontSize: 13, height: 1.6),
+                ),
+              ],
+            ),
           ),
-        ],
+        ]),
       ),
     );
   }

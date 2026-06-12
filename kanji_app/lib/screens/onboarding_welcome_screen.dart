@@ -6,6 +6,8 @@ import '../utils/app_route.dart';
 import '../services/onboarding_service.dart';
 import '../services/export_service.dart';
 import '../services/settings_service.dart';
+import '../theme/app_theme_backgrounds.dart';
+import '../widgets/sakura_overlay.dart';
 import 'onboarding_welcome_back_screen.dart';
 import 'onboarding_auto_progression_screen.dart';
 
@@ -34,8 +36,10 @@ class _OnboardingWelcomeScreenState extends ConsumerState<OnboardingWelcomeScree
 
     return Scaffold(
       backgroundColor: AppColors.bg,
-      body: SafeArea(
-        child: Column(
+      body: Stack(children: [
+        const Positioned.fill(child: HomeBgLayer()),
+        const Positioned.fill(child: SakuraPetalsOverlay()),
+        SafeArea(child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Top bar with Skip button
@@ -140,8 +144,8 @@ class _OnboardingWelcomeScreenState extends ConsumerState<OnboardingWelcomeScree
               ),
             ),
           ],
-        ),
-      ),
+        )),
+      ]),
     );
   }
 }
@@ -438,40 +442,94 @@ class _TutorialPage2 extends StatelessWidget {
   }
 }
 
-class _TutorialPage3 extends StatelessWidget {
+class _TutorialPage3 extends ConsumerWidget {
   const _TutorialPage3();
 
+  static const _themeOptions = [
+    (AppTheme.sakura,      'Spring Sakura',  Color(0xFFD4677E)),
+    (AppTheme.loveLetter,  'Love Letter',    Color(0xFF6F97C4)),
+    (AppTheme.simpleDark,  'Simple Black',   Color(0xFF7D97FF)),
+  ];
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentTheme = ref.watch(themeNotifier);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Themes & Ambient Music',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.fg),
+            'Pick a theme',
+            style: TextStyle(
+              fontSize: 16.5,
+              fontWeight: FontWeight.w800,
+              color: AppColors.fg,
+              letterSpacing: -0.2,
+            ),
           ),
-          const SizedBox(height: 16),
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Icon(Icons.palette_outlined, color: AppColors.accent, size: 30),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Change your theme at any time from the Settings page.',
-                style: TextStyle(fontSize: 15, color: AppColors.fg),
+          const SizedBox(height: 6),
+          Text(
+            'You can change this any time in Settings.',
+            style: TextStyle(fontSize: 13, color: AppColors.muted),
+          ),
+          const SizedBox(height: 18),
+          for (final (theme, label, swatch) in _themeOptions) ...[
+            GestureDetector(
+              onTap: () => ref.read(themeNotifier.notifier).setTheme(theme),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: currentTheme == theme
+                      ? swatch.withValues(alpha: 0.12)
+                      : AppColors.surface,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: currentTheme == theme ? swatch : AppColors.pillBg,
+                    width: currentTheme == theme ? 1.8 : 1.2,
+                  ),
+                ),
+                child: Row(children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: swatch,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.fg,
+                      ),
+                    ),
+                  ),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 180),
+                    opacity: currentTheme == theme ? 1.0 : 0.0,
+                    child: Icon(Icons.check_circle_rounded, size: 20, color: swatch),
+                  ),
+                ]),
               ),
             ),
-          ]),
-          const SizedBox(height: 16),
+            const SizedBox(height: 10),
+          ],
+          const SizedBox(height: 4),
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Icon(Icons.music_note_outlined, color: AppColors.accent, size: 30),
-            const SizedBox(width: 12),
+            Icon(Icons.music_note_outlined, color: AppColors.accent, size: 22),
+            const SizedBox(width: 10),
             Expanded(
               child: Text(
-                'Play ambient background sounds that won\'t interfere with other apps\' audio.',
-                style: TextStyle(fontSize: 14, color: AppColors.fg, height: 1.4),
+                'Ambient background sounds are available too — they won\'t interfere with other apps\' audio.',
+                style: TextStyle(fontSize: 13, color: AppColors.muted, height: 1.45),
               ),
             ),
           ]),
@@ -492,7 +550,10 @@ class OnboardingLevelSelectionScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.bg,
-      body: SafeArea(
+      body: Stack(children: [
+        const Positioned.fill(child: HomeBgLayer()),
+        const Positioned.fill(child: SakuraPetalsOverlay()),
+        SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
           child: Column(
@@ -545,66 +606,39 @@ class OnboardingLevelSelectionScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
 
-              // Clean Start card
-              _LevelCard(
-                onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: null))),
-                leading: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withValues(alpha: 0.13),
-                    borderRadius: BorderRadius.circular(13),
-                  ),
-                  alignment: Alignment.center,
-                  child: Icon(Icons.auto_awesome, size: 20, color: AppColors.accent),
-                ),
-                title: 'Clean start',
-                subtitle: 'Pick targets yourself as you go',
-              ),
-              const SizedBox(height: 24),
-
-              // Section label
-              Padding(
-                padding: const EdgeInsets.only(left: 4, bottom: 10),
-                child: Text(
-                  'OR START FROM A JLPT LEVEL',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.0,
-                    color: AppColors.muted.withValues(alpha: 0.6),
-                  ),
-                ),
-              ),
-
               // Level rows
               _LevelRow(
                 level: 'N5',
-                tag: 'Beginner',
+                title: 'Beginner',
+                desc: 'Start by learning hiragana and katakana (the ABCs of Japanese) and some simple vocabulary. Then move on to easy kanji.',
                 onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: 5))),
               ),
               const SizedBox(height: 9),
               _LevelRow(
                 level: 'N4',
-                tag: 'Elementary',
+                title: 'Elementary',
+                desc: 'You know your basics? Great! Time to build out your kanji repertoire and expand that vocabulary.',
                 onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: 4))),
               ),
               const SizedBox(height: 9),
               _LevelRow(
                 level: 'N3',
-                tag: 'Intermediate',
+                title: 'Intermediate',
+                desc: 'Starting to get comfortable? Take on everyday kanji and vocabulary that bridges beginner and advanced Japanese.',
                 onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: 3))),
               ),
               const SizedBox(height: 9),
               _LevelRow(
                 level: 'N2',
-                tag: 'Upper-int.',
+                title: 'Upper-Intermediate',
+                desc: 'Getting serious! Tackle the breadth of kanji and vocabulary used in business and academic Japanese.',
                 onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: 2))),
               ),
               const SizedBox(height: 9),
               _LevelRow(
                 level: 'N1',
-                tag: 'Advanced',
+                title: 'Advanced',
+                desc: 'The summit! Master the complete set of kanji and advanced vocabulary used in formal written Japanese.',
                 onTap: () => Navigator.push(context, AppRoute.to(OnboardingAutoProgressionScreen(level: 1))),
               ),
 
@@ -670,83 +704,21 @@ class OnboardingLevelSelectionScreen extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _LevelCard extends StatelessWidget {
-  final VoidCallback onTap;
-  final Widget leading;
-  final String title;
-  final String subtitle;
-
-  const _LevelCard({
-    required this.onTap,
-    required this.leading,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.pillBg, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            leading,
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.fg,
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.muted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      ]),
     );
   }
 }
 
 class _LevelRow extends StatelessWidget {
   final String level;
-  final String tag;
+  final String title;
+  final String desc;
   final VoidCallback onTap;
 
   const _LevelRow({
     required this.level,
-    required this.tag,
+    required this.title,
+    required this.desc,
     required this.onTap,
   });
 
@@ -755,7 +727,7 @@ class _LevelRow extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
@@ -769,8 +741,8 @@ class _LevelRow extends StatelessWidget {
           ],
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // N-badge
             Container(
               width: 44,
               height: 44,
@@ -793,32 +765,39 @@ class _LevelRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'JLPT $level',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.fg,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.fg,
+                        ),
+                      ),
+                      Text(
+                        'JLPT $level',
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.muted,
+                        ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 5),
                   Text(
-                    tag,
+                    desc,
                     style: TextStyle(
                       fontSize: 12.5,
-                      fontWeight: FontWeight.w700,
                       color: AppColors.muted,
+                      height: 1.4,
                     ),
                   ),
                 ],
-              ),
-            ),
-            // Empty selection circle
-            Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(99),
-                border: Border.all(color: AppColors.pillBg, width: 2),
               ),
             ),
           ],

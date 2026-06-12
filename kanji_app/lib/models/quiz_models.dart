@@ -63,6 +63,7 @@ class SentenceQuestion extends QuizQuestion {
   final String correctReading;
   final String englishTranslation;
   final int difficulty;                 // 1-9
+  final String? targetWord;            // overrides token-surface join when tokenizer over-merged
 
   SentenceQuestion({
     required super.kanjiId,
@@ -74,6 +75,7 @@ class SentenceQuestion extends QuizQuestion {
     required this.correctReading,
     required this.englishTranslation,
     required this.difficulty,
+    this.targetWord,
   }) {
     assert(difficulty >= 1 && difficulty <= 9, 'difficulty must be 1-9, got $difficulty');
   }

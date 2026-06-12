@@ -4,11 +4,12 @@
 //     if (needsBg) ThemedBackground(theme: theme),
 //     YourContent(),
 //   ]);
-// Use transparentScaffold: true in buildTheme() for galaxy/tetris.
+// Use transparentScaffold: true in buildTheme() for galaxy.
 
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/settings_service.dart';
 import '../theme_provider.dart';
 
 /// Returns the decorative background for themes that need one.
@@ -32,17 +33,6 @@ class ThemedBackground extends StatelessWidget {
           )),
           Positioned.fill(child: _StarfieldLayer(animate: animate)),
         ]),
-      AppTheme.tetris => Stack(children: [
-          const Positioned.fill(child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                colors: [Color(0xFF11142B), Color(0xFF0A0C1C)],
-              ),
-            ),
-          )),
-          Positioned.fill(child: _RetroLayer(animate: animate)),
-        ]),
       AppTheme.loveLetter => Stack(children: [
           const Positioned.fill(child: DecoratedBox(
             decoration: BoxDecoration(
@@ -55,6 +45,7 @@ class ThemedBackground extends StatelessWidget {
           )),
           Positioned.fill(child: IgnorePointer(child: _SnowLayer(animate: animate))),
           Positioned.fill(child: IgnorePointer(child: _SparkleLayer(animate: animate))),
+          Positioned.fill(child: IgnorePointer(child: _SilverTwinkleLayer(animate: animate))),
         ]),
       AppTheme.lily => Stack(children: [
           const Positioned.fill(child: DecoratedBox(
@@ -67,6 +58,7 @@ class ThemedBackground extends StatelessWidget {
             ),
           )),
           Positioned.fill(child: IgnorePointer(child: _HazeLayer(animate: animate))),
+          Positioned.fill(child: IgnorePointer(child: _GentleRainLayer(animate: animate))),
         ]),
       AppTheme.totoro => Stack(children: [
           const Positioned.fill(child: DecoratedBox(
@@ -85,7 +77,7 @@ class ThemedBackground extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                colors: [Color(0xFF070627), Color(0xFF160A3A), Color(0xFF2A1150)],
+                colors: [Color(0xFF000000), Color(0xFF1A2C38), Color(0xFF2F4550)],
                 stops: [0, 0.55, 1],
               ),
             ),
@@ -330,7 +322,7 @@ class _SparklePainter extends CustomPainter {
       final cy = s.y * size.height;
       final r = s.size;
       final rd = r * 0.55;
-      p.color = Colors.white.withValues(alpha: alpha * 0.7);
+      p.color = const Color(0xFFB8D0F0).withValues(alpha: alpha * 0.7);
       p.strokeWidth = 1.2;
       p.maskFilter = const MaskFilter.blur(BlurStyle.normal, 0.6);
       canvas.drawLine(Offset(cx - r, cy), Offset(cx + r, cy), p);
@@ -474,16 +466,10 @@ class _CityPainter extends CustomPainter {
   _CityPainter(this.t);
   @override
   void paint(Canvas canvas, Size size) {
-    final moonC = Offset(size.width * 0.82, size.height * 0.12);
-    canvas.drawCircle(moonC, 32,
-        Paint()..color = const Color(0xFFB4A0FF).withValues(alpha: 0.5)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20));
-    canvas.drawCircle(moonC, 32,
-        Paint()..shader = const RadialGradient(center: Alignment(-0.3, -0.3), colors: [Color(0xFFFDF6FF), Color(0xFFCDBFF0)])
-            .createShader(Rect.fromCircle(center: moonC, radius: 32)));
     final sp = Paint();
     for (final s in _cityStars) {
       final tw = 0.2 + 0.8 * (0.5 + 0.5 * math.sin((t + s[3]) * 6.28));
-      sp.color = Colors.white.withValues(alpha: tw);
+      sp.color = const Color(0xFFF4F4F9).withValues(alpha: tw * 0.7);
       canvas.drawCircle(Offset(s[0] * size.width, s[1] * size.height), s[2] * 0.6, sp);
     }
     final skyTop = size.height * 0.58;
@@ -494,26 +480,306 @@ class _CityPainter extends CustomPainter {
       final rect = Rect.fromLTWH(bx, size.height - bh, bw, bh);
       canvas.drawRect(rect, Paint()
         ..shader = const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            colors: [Color(0xFF120A2E), Color(0xFF0A0620)]).createShader(rect));
+            colors: [Color(0xFF1A2C38), Color(0xFF0A141C)]).createShader(rect));
       final r = math.Random(b.seed * 31 + 3);
       for (int wi = 0; wi < 3; wi++) {
         final wx = rect.left + bw * (0.2 + r.nextDouble() * 0.55);
         final wy = rect.top + bh * (0.1 + r.nextDouble() * 0.7);
         canvas.drawRect(Rect.fromLTWH(wx, wy, 2.5, 2.5),
-            Paint()..color = (r.nextDouble() > 0.5 ? const Color(0xFF35E0FF) : const Color(0xFFFFD66B)));
+            Paint()..color = (r.nextDouble() > 0.5 ? const Color(0xFFB8DBD9) : const Color(0xFFF4F4F9)));
       }
     }
     canvas.drawRRect(
       RRect.fromRectAndRadius(Rect.fromLTWH(size.width * 0.16, size.height * 0.70, 26, 9), const Radius.circular(2)),
-      Paint()..color = const Color(0xFFFF5ED6).withValues(alpha: 0.85)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+      Paint()..color = const Color(0xFFB8DBD9).withValues(alpha: 0.80)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(Rect.fromLTWH(size.width * 0.74, size.height * 0.64, 18, 7), const Radius.circular(2)),
-      Paint()..color = const Color(0xFF35E0FF).withValues(alpha: 0.85)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+      Paint()..color = const Color(0xFFF4F4F9).withValues(alpha: 0.75)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
     );
   }
   @override
   bool shouldRepaint(_CityPainter old) => old.t != t;
+}
+
+// ════ SILVER TWINKLE (Love Letter) — silvery pulsing dots ═══════
+class _SilverTwinkleLayer extends StatelessWidget {
+  final bool animate;
+  const _SilverTwinkleLayer({required this.animate});
+  @override
+  Widget build(BuildContext context) => _Ticking(
+        animate: animate, period: const Duration(seconds: 7),
+        build: (v) => CustomPaint(painter: _SilverTwinklePainter(v), size: Size.infinite),
+      );
+}
+
+class _SilverDot { final double x, y, size, phase, speed; _SilverDot(this.x, this.y, this.size, this.phase, this.speed); }
+final List<_SilverDot> _silverDots = () {
+  final r = math.Random(44);
+  return List.generate(55, (_) => _SilverDot(
+    r.nextDouble(), r.nextDouble(),
+    1.5 + r.nextDouble() * 3.0,
+    r.nextDouble(),
+    0.4 + r.nextDouble() * 0.6,
+  ));
+}();
+
+class _SilverTwinklePainter extends CustomPainter {
+  final double t;
+  _SilverTwinklePainter(this.t);
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.2);
+    for (final d in _silverDots) {
+      final alpha = ((math.sin((t * d.speed + d.phase) * math.pi * 2) + 1) / 2);
+      if (alpha < 0.05) continue;
+      final useGold = d.phase > 0.65;
+      p.color = (useGold
+          ? const Color(0xFFB8C8D8)
+          : const Color(0xFFD0DCE8))
+          .withValues(alpha: alpha * 0.55);
+      canvas.drawCircle(Offset(d.x * size.width, d.y * size.height), d.size * 0.55, p);
+    }
+  }
+  @override
+  bool shouldRepaint(_SilverTwinklePainter old) => old.t != t;
+}
+
+// ════ GENTLE RAIN (Lily / Chou-chou Green) — soft falling streaks ═
+class _GentleRainLayer extends StatelessWidget {
+  final bool animate;
+  const _GentleRainLayer({required this.animate});
+  @override
+  Widget build(BuildContext context) => _Ticking(
+        animate: animate, period: const Duration(seconds: 5),
+        build: (v) => CustomPaint(painter: _GentleRainPainter(v), size: Size.infinite),
+      );
+}
+
+class _RainDrop { final double x, delay, dur, len, peak; _RainDrop(this.x, this.delay, this.dur, this.len, this.peak); }
+final List<_RainDrop> _rainDrops = () {
+  final r = math.Random(88);
+  return List.generate(35, (_) => _RainDrop(
+    r.nextDouble(),
+    r.nextDouble(),
+    0.4 + r.nextDouble() * 0.5,
+    14 + r.nextDouble() * 22,
+    0.18 + r.nextDouble() * 0.18,
+  ));
+}();
+
+class _GentleRainPainter extends CustomPainter {
+  final double t;
+  _GentleRainPainter(this.t);
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()..strokeCap = StrokeCap.round..strokeWidth = 1.5;
+    for (final d in _rainDrops) {
+      final prog = ((t / d.dur) + d.delay) % 1.0;
+      final x = d.x * size.width;
+      final yTop = prog * (size.height + d.len) - d.len;
+      final yBot = yTop + d.len;
+      if (yTop > size.height || yBot < 0) continue;
+      final fadeIn  = (prog * 20).clamp(0.0, 1.0);
+      final fadeOut = (1.0 - (prog - 0.9) * 10).clamp(0.0, 1.0);
+      p.shader = LinearGradient(
+        begin: Alignment.topCenter, end: Alignment.bottomCenter,
+        colors: [
+          const Color(0xFF2858D8).withValues(alpha: d.peak * fadeIn * fadeOut),
+          Colors.transparent,
+        ],
+      ).createShader(Rect.fromLTWH(x - 1, yTop, 2, d.len));
+      canvas.drawLine(Offset(x, yTop), Offset(x, yBot), p);
+    }
+  }
+  @override
+  bool shouldRepaint(_GentleRainPainter old) => old.t != t;
+}
+
+// ════ UNUSED ANIMATIONS — available for future themes ═══════════
+// _AuroraWavesLayer, _FirefliesLayer, _ParticleDustLayer, _ShootingStarsLayer
+// See DEVNOTES.md "Background animations" for usage notes.
+
+class _AuroraWavesLayer extends StatelessWidget {
+  final bool animate;
+  final Color primary, deep, gold;
+  const _AuroraWavesLayer({required this.animate, required this.primary, required this.deep, required this.gold});
+  @override
+  Widget build(BuildContext context) => _Ticking(
+        animate: animate, period: const Duration(seconds: 18),
+        build: (v) => CustomPaint(painter: _AuroraPainter(v, primary, deep, gold), size: Size.infinite),
+      );
+}
+
+class _AuroraPainter extends CustomPainter {
+  final double t; final Color primary, deep, gold;
+  _AuroraPainter(this.t, this.primary, this.deep, this.gold);
+  static const _bands = [
+    [0.15, 0.35, 0.0, 12.0],
+    [0.30, 0.30, 3.0, 15.0],
+    [0.05, 0.40, 6.0, 18.0],
+  ];
+  @override
+  void paint(Canvas canvas, Size size) {
+    final colors = [primary, deep, gold];
+    for (int i = 0; i < _bands.length; i++) {
+      final b = _bands[i];
+      final shift = math.sin((t + b[2] / 18.0) * math.pi * 2) * 0.08;
+      final scaleY = 1.0 + math.sin((t + b[2] / 18.0) * math.pi * 2) * 0.075;
+      final centerY = (b[0] + shift) * size.height;
+      final h = b[1] * size.height * scaleY;
+      final alpha = 0.30 + 0.15 * math.sin((t + b[2] / 18.0) * math.pi * 2);
+      final rect = Rect.fromCenter(center: Offset(size.width / 2, centerY), width: size.width * 1.6, height: h);
+      final paint = Paint()
+        ..shader = RadialGradient(
+          colors: [colors[i].withValues(alpha: alpha * 0.22), Colors.transparent],
+          radius: 0.6,
+        ).createShader(rect)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 30);
+      canvas.drawOval(rect, paint);
+    }
+  }
+  @override
+  bool shouldRepaint(_AuroraPainter old) => old.t != t;
+}
+
+class _FirefliesLayer extends StatelessWidget {
+  final bool animate;
+  final Color gold;
+  const _FirefliesLayer({required this.animate, required this.gold});
+  @override
+  Widget build(BuildContext context) => _Ticking(
+        animate: animate, period: const Duration(seconds: 9),
+        build: (v) => CustomPaint(painter: _FireflyPainter(v, gold), size: Size.infinite),
+      );
+}
+
+class _FireflyData { final double x, y, size, phase, speed, peak; _FireflyData(this.x, this.y, this.size, this.phase, this.speed, this.peak); }
+final List<_FireflyData> _fireflies = () {
+  final r = math.Random(55);
+  return List.generate(20, (_) => _FireflyData(
+    r.nextDouble(), 0.2 + r.nextDouble() * 0.7,
+    3 + r.nextDouble() * 5, r.nextDouble(),
+    0.4 + r.nextDouble() * 0.5,
+    0.5 + r.nextDouble() * 0.4,
+  ));
+}();
+
+class _FireflyPainter extends CustomPainter {
+  final double t; final Color gold;
+  _FireflyPainter(this.t, this.gold);
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+    for (final f in _fireflies) {
+      final cycle = (t * f.speed + f.phase) % 1.0;
+      final alpha = (math.sin(cycle * math.pi * 2) + 1) / 2;
+      if (alpha < 0.05) continue;
+      final dx = math.sin(cycle * math.pi * 4) * 8;
+      final dy = math.cos(cycle * math.pi * 4) * 12;
+      p.color = gold.withValues(alpha: alpha * f.peak);
+      canvas.drawCircle(Offset(f.x * size.width + dx, f.y * size.height + dy), f.size / 2, p);
+    }
+  }
+  @override
+  bool shouldRepaint(_FireflyPainter old) => old.t != t;
+}
+
+class _ParticleDustLayer extends StatelessWidget {
+  final bool animate;
+  final Color primary, gold;
+  const _ParticleDustLayer({required this.animate, required this.primary, required this.gold});
+  @override
+  Widget build(BuildContext context) => _Ticking(
+        animate: animate, period: const Duration(seconds: 14),
+        build: (v) => CustomPaint(painter: _DustPainter(v, primary, gold), size: Size.infinite),
+      );
+}
+
+class _DustMote { final double x, y, size, phase, speed, dx, dy, peak; final bool useGold; _DustMote(this.x, this.y, this.size, this.phase, this.speed, this.dx, this.dy, this.peak, this.useGold); }
+final List<_DustMote> _dustMotes = () {
+  final r = math.Random(66);
+  return List.generate(30, (_) => _DustMote(
+    r.nextDouble(), r.nextDouble(), 2 + r.nextDouble() * 3.5,
+    r.nextDouble(), 0.4 + r.nextDouble() * 0.5,
+    -15 + r.nextDouble() * 30, -20 + r.nextDouble() * 10,
+    0.35 + r.nextDouble() * 0.4, r.nextDouble() > 0.5,
+  ));
+}();
+
+class _DustPainter extends CustomPainter {
+  final double t; final Color primary, gold;
+  _DustPainter(this.t, this.primary, this.gold);
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5);
+    for (final m in _dustMotes) {
+      final cycle = (t * m.speed + m.phase) % 1.0;
+      double alpha;
+      if (cycle < 0.3) alpha = cycle / 0.3;
+      else if (cycle < 0.6) alpha = 1.0;
+      else if (cycle < 0.8) alpha = 0.05;
+      else alpha = (cycle - 0.8) / 0.2;
+      if (alpha < 0.03) continue;
+      final ox = m.dx * cycle;
+      final oy = m.dy * cycle;
+      final c = m.useGold ? gold : primary;
+      p.color = c.withValues(alpha: alpha * m.peak * 0.35);
+      canvas.drawCircle(Offset(m.x * size.width + ox, m.y * size.height + oy), m.size / 2, p);
+    }
+  }
+  @override
+  bool shouldRepaint(_DustPainter old) => old.t != t;
+}
+
+class _ShootingStarsLayer extends StatelessWidget {
+  final bool animate;
+  final Color accent;
+  const _ShootingStarsLayer({required this.animate, required this.accent});
+  @override
+  Widget build(BuildContext context) => _Ticking(
+        animate: animate, period: const Duration(seconds: 10),
+        build: (v) => CustomPaint(painter: _ShootingStarPainter(v, accent), size: Size.infinite),
+      );
+}
+
+class _ShootingStar { final double x, y, angle, len, delay, dur; _ShootingStar(this.x, this.y, this.angle, this.len, this.delay, this.dur); }
+final List<_ShootingStar> _shootingStars = () {
+  final r = math.Random(22);
+  return List.generate(4, (_) => _ShootingStar(
+    0.1 + r.nextDouble() * 0.6, r.nextDouble() * 0.3,
+    (35 + r.nextDouble() * 20) * math.pi / 180,
+    60 + r.nextDouble() * 100,
+    r.nextDouble() * 8, 1.0 + r.nextDouble() * 0.8,
+  ));
+}();
+
+class _ShootingStarPainter extends CustomPainter {
+  final double t; final Color accent;
+  _ShootingStarPainter(this.t, this.accent);
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (final s in _shootingStars) {
+      final cycle = ((t * 10 / s.dur) + s.delay / s.dur) % (10 / s.dur);
+      final prog = (cycle * s.dur / 10).clamp(0.0, 1.0);
+      if (prog > 0.6) continue;
+      final alpha = prog < 0.05 ? prog / 0.05 : (1.0 - prog / 0.6);
+      final ox = math.cos(s.angle) * prog * s.len;
+      final oy = math.sin(s.angle) * prog * s.len;
+      final x0 = s.x * size.width;
+      final y0 = s.y * size.height;
+      final paint = Paint()
+        ..shader = LinearGradient(
+          colors: [Colors.transparent, accent.withValues(alpha: alpha * 0.85)],
+        ).createShader(Rect.fromPoints(Offset(x0, y0), Offset(x0 + ox, y0 + oy)))
+        ..strokeWidth = 1.5..strokeCap = StrokeCap.round..style = PaintingStyle.stroke;
+      canvas.drawLine(Offset(x0, y0), Offset(x0 + ox, y0 + oy), paint);
+      canvas.drawCircle(Offset(x0 + ox, y0 + oy), 2.5,
+          Paint()..color = accent.withValues(alpha: alpha)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+    }
+  }
+  @override
+  bool shouldRepaint(_ShootingStarPainter old) => old.t != t;
 }
 
 // ── Drop inside a Stack as first child to show themed backgrounds ──
@@ -523,6 +789,7 @@ class HomeBgLayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeNotifier);
+    final animate = ref.watch(settingsProvider).animationsEnabled;
     return switch (theme) {
       AppTheme.galaxy => Stack(children: [
           const Positioned.fill(child: DecoratedBox(
@@ -533,18 +800,7 @@ class HomeBgLayer extends ConsumerWidget {
               ),
             ),
           )),
-          Positioned.fill(child: _StarfieldLayer(animate: true)),
-        ]),
-      AppTheme.tetris => Stack(children: [
-          const Positioned.fill(child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                colors: [Color(0xFF11142B), Color(0xFF0A0C1C)],
-              ),
-            ),
-          )),
-          Positioned.fill(child: _RetroLayer(animate: true)),
+          Positioned.fill(child: _StarfieldLayer(animate: animate)),
         ]),
       AppTheme.loveLetter => Stack(children: [
           const Positioned.fill(child: DecoratedBox(
@@ -556,11 +812,12 @@ class HomeBgLayer extends ConsumerWidget {
               ),
             ),
           )),
-          const Positioned.fill(child: IgnorePointer(child: _SnowLayer(animate: true))),
-          const Positioned.fill(child: IgnorePointer(child: _SparkleLayer(animate: true))),
+          Positioned.fill(child: IgnorePointer(child: _SnowLayer(animate: animate))),
+          Positioned.fill(child: IgnorePointer(child: _SparkleLayer(animate: animate))),
+          Positioned.fill(child: IgnorePointer(child: _SilverTwinkleLayer(animate: animate))),
         ]),
-      AppTheme.lily => const Stack(children: [
-          Positioned.fill(child: DecoratedBox(
+      AppTheme.lily => Stack(children: [
+          const Positioned.fill(child: DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter, end: Alignment.bottomCenter,
@@ -569,10 +826,11 @@ class HomeBgLayer extends ConsumerWidget {
               ),
             ),
           )),
-          Positioned.fill(child: IgnorePointer(child: _HazeLayer(animate: true))),
+          Positioned.fill(child: IgnorePointer(child: _HazeLayer(animate: animate))),
+          Positioned.fill(child: IgnorePointer(child: _GentleRainLayer(animate: animate))),
         ]),
-      AppTheme.totoro => const Stack(children: [
-          Positioned.fill(child: DecoratedBox(
+      AppTheme.totoro => Stack(children: [
+          const Positioned.fill(child: DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter, end: Alignment.bottomCenter,
@@ -581,19 +839,19 @@ class HomeBgLayer extends ConsumerWidget {
               ),
             ),
           )),
-          Positioned.fill(child: IgnorePointer(child: _LeavesLayer(animate: true))),
+          Positioned.fill(child: IgnorePointer(child: _LeavesLayer(animate: animate))),
         ]),
-      AppTheme.midnightCity => const Stack(children: [
-          Positioned.fill(child: DecoratedBox(
+      AppTheme.midnightCity => Stack(children: [
+          const Positioned.fill(child: DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                colors: [Color(0xFF070627), Color(0xFF160A3A), Color(0xFF2A1150)],
+                colors: [Color(0xFF000000), Color(0xFF1A2C38), Color(0xFF2F4550)],
                 stops: [0, 0.55, 1],
               ),
             ),
           )),
-          Positioned.fill(child: IgnorePointer(child: _CityLayer(animate: true))),
+          Positioned.fill(child: IgnorePointer(child: _CityLayer(animate: animate))),
         ]),
       _ => const SizedBox.shrink(),
     };

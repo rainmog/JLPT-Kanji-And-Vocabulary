@@ -1,19 +1,21 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/match_card.dart';
 import '../repositories/kanji_repository.dart';
 import '../repositories/kana_repository.dart';
 import '../repositories/vocab_repository.dart';
 import '../theme.dart';
+import '../theme_provider.dart';
 import '../utils/app_route.dart';
-import '../widgets/scale_on_press.dart';
+import '../widgets/k_setup.dart';
 import 'matching_game_screen.dart';
 
 enum MatchContext { kanji, vocab, kana }
 
 enum KanjiMatchMode { compoundReading, compoundMeaning, triple }
 
-class MatchingGameConfigScreen extends StatefulWidget {
+class MatchingGameConfigScreen extends ConsumerStatefulWidget {
   final MatchContext matchContext;
   final String? kanaType; // 'hiragana' | 'katakana'
 
@@ -24,10 +26,10 @@ class MatchingGameConfigScreen extends StatefulWidget {
   });
 
   @override
-  State<MatchingGameConfigScreen> createState() => _MatchingGameConfigScreenState();
+  ConsumerState<MatchingGameConfigScreen> createState() => _MatchingGameConfigScreenState();
 }
 
-class _MatchingGameConfigScreenState extends State<MatchingGameConfigScreen> {
+class _MatchingGameConfigScreenState extends ConsumerState<MatchingGameConfigScreen> {
   bool _loading = true;
 
   KanjiMatchMode _kanjiMode = KanjiMatchMode.compoundReading;
@@ -180,6 +182,12 @@ class _MatchingGameConfigScreenState extends State<MatchingGameConfigScreen> {
     }
   }
 
+  String get _badge => switch (widget.matchContext) {
+    MatchContext.kanji => '字',
+    MatchContext.vocab => '語',
+    MatchContext.kana => widget.kanaType == 'hiragana' ? 'ひ' : 'カ',
+  };
+
   String get _availabilityLabel {
     final p = _availablePairs;
     final needed = _groupsNeeded;
@@ -190,157 +198,105 @@ class _MatchingGameConfigScreenState extends State<MatchingGameConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ref.watch(themeColorsProvider);
+
     return Scaffold(
-      backgroundColor: AppColors.bg,
-      appBar: AppBar(
-        backgroundColor: AppColors.bg,
-        title: Text(_title, style: TextStyle(color: AppColors.fg)),
-        iconTheme: IconThemeData(color: AppColors.fg),
-      ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Kanji mode picker
-                  if (widget.matchContext == MatchContext.kanji) ...[
-                    Text(
-                      'Match mode',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.fg),
-                    ),
-                    const SizedBox(height: 12),
-                    ...[
-                      (KanjiMatchMode.compoundReading, 'Compound + Reading'),
-                      (KanjiMatchMode.compoundMeaning, 'Compound + Meaning'),
-                      (KanjiMatchMode.triple, 'Compound + Reading + Meaning'),
-                    ].map(((KanjiMatchMode, String) entry) {
-                      final (mode, label) = entry;
-                      final selected = _kanjiMode == mode;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: ScaleOnPress(
-                          child: GestureDetector(
-                            onTap: () => setState(() {
-                              _kanjiMode = mode;
-                              _setDefaultGrid();
-                            }),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 14),
-                              decoration: BoxDecoration(
-                                color: selected
-                                    ? AppColors.accent.withValues(alpha: 0.15)
-                                    : AppColors.btnBg,
-                                borderRadius:
-                                    BorderRadius.circular(AppColors.buttonRadius),
-                                border: Border.all(
-                                  color: selected
-                                      ? AppColors.accent.withValues(alpha: 0.6)
-                                      : AppColors.pillBg,
-                                ),
-                              ),
-                              child: Row(children: [
-                                Icon(
-                                  selected
-                                      ? Icons.radio_button_checked
-                                      : Icons.radio_button_unchecked,
-                                  color:
-                                      selected ? AppColors.accent : AppColors.muted,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  label,
-                                  style: TextStyle(
-                                    color: selected ? AppColors.fg : AppColors.muted,
-                                    fontSize: 14,
+      backgroundColor: colors.bg,
+      body: SafeArea(
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(children: [
+                KSetupHeader(badge: _badge, title: _title, colors: colors),
+
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Kanji mode picker
+                        if (widget.matchContext == MatchContext.kanji)
+                          KSetupField(
+                            label: 'Match mode',
+                            child: KChoiceList(
+                              options: const [
+                                KChoiceItem(id: 'reading', label: 'Compound + Reading', icon: Icons.menu_book_rounded),
+                                KChoiceItem(id: 'meaning', label: 'Compound + Meaning', icon: Icons.translate_rounded),
+                                KChoiceItem(id: 'triple', label: 'Compound + Reading + Meaning', icon: Icons.auto_awesome_rounded),
+                              ],
+                              value: switch (_kanjiMode) {
+                                KanjiMatchMode.compoundReading => 'reading',
+                                KanjiMatchMode.compoundMeaning => 'meaning',
+                                KanjiMatchMode.triple => 'triple',
+                              },
+                              onChanged: (v) => setState(() {
+                                _kanjiMode = switch (v) {
+                                  'reading' => KanjiMatchMode.compoundReading,
+                                  'meaning' => KanjiMatchMode.compoundMeaning,
+                                  _ => KanjiMatchMode.triple,
+                                };
+                                _setDefaultGrid();
+                              }),
+                              colors: colors,
+                            ),
+                          ),
+
+                        // Grid size picker
+                        KSetupField(
+                          label: 'Grid size',
+                          hint: _availabilityLabel,
+                          child: Wrap(
+                            spacing: 8,
+                            children: _gridOptions.map((opt) {
+                              final selected = _columns == opt.cols && _rows == opt.rows;
+                              final enabled = _gridEnabled(opt.cols, opt.rows);
+                              return GestureDetector(
+                                onTap: enabled
+                                    ? () => setState(() { _columns = opt.cols; _rows = opt.rows; })
+                                    : null,
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 160),
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: selected
+                                        ? colors.accent.withValues(alpha: 0.15)
+                                        : colors.surface,
+                                    borderRadius: BorderRadius.circular(AppColors.buttonRadius),
+                                    border: Border.all(
+                                      color: selected
+                                          ? colors.accent.withValues(alpha: 0.6)
+                                          : KDesign.line(colors),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    '${opt.cols}×${opt.rows}',
+                                    style: TextStyle(
+                                      color: enabled
+                                          ? (selected ? colors.accent : colors.muted)
+                                          : colors.muted.withValues(alpha: 0.4),
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ]),
-                            ),
+                              );
+                            }).toList(),
                           ),
                         ),
-                      );
-                    }),
-                    const SizedBox(height: 24),
-                  ],
-
-                  // Grid size picker
-                  Text(
-                    'Grid size',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.fg),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    children: _gridOptions.map((opt) {
-                      final selected = _columns == opt.cols && _rows == opt.rows;
-                      final enabled = _gridEnabled(opt.cols, opt.rows);
-                      return ScaleOnPress(
-                        child: GestureDetector(
-                          onTap: enabled
-                              ? () => setState(
-                                  () { _columns = opt.cols; _rows = opt.rows; })
-                              : null,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: selected
-                                  ? AppColors.accent.withValues(alpha: 0.15)
-                                  : AppColors.btnBg,
-                              borderRadius:
-                                  BorderRadius.circular(AppColors.buttonRadius),
-                              border: Border.all(
-                                color: selected
-                                    ? AppColors.accent.withValues(alpha: 0.6)
-                                    : AppColors.pillBg,
-                              ),
-                            ),
-                            child: Text(
-                              '${opt.cols}×${opt.rows}',
-                              style: TextStyle(
-                                color: enabled
-                                    ? (selected
-                                        ? AppColors.accent
-                                        : AppColors.muted)
-                                    : AppColors.muted.withValues(alpha: 0.4),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    _availabilityLabel,
-                    style: TextStyle(color: AppColors.muted, fontSize: 13),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Launch button
-                  ScaleOnPress(
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _gridEnabled(_columns, _rows) ? _launch : null,
-                        child: const Text('Start Matching Game'),
-                      ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+
+                KStickyFooter(
+                  colors: colors,
+                  child: KStartButton(
+                    label: 'Start Matching Game',
+                    colors: colors,
+                    onTap: _launch,
+                  ),
+                ),
+              ]),
+      ),
     );
   }
 }

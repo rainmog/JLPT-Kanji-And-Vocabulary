@@ -44,6 +44,12 @@ class SelectVocabScreen extends ConsumerWidget {
                 ),
               ),
             )).toList()),
+            const SizedBox(height: 8),
+            _FilterButton(
+              label: 'Other',
+              onTap: () => Navigator.push(context,
+                AppRoute.to(const VocabListScreen(filter: VocabFilter.level(0)))),
+            ),
             const SizedBox(height: 24),
 
             Text('By Category',

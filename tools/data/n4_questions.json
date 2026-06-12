@@ -19,7 +19,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "What should be filled in [ 1 ]?",
+    "passage_translation": "Araki\nMorning 8:00 AM–Evening 9:00 PM\n(Phone: 012-34-5678)\nClosed Sundays."
   },
   {
     "level": 4,
@@ -41,7 +43,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "What should be filled in [ 2 ]?",
+    "passage_translation": "Araki\nMorning 8:00 AM–Evening 9:00 PM\n(Phone: 012-34-5678)\nClosed Sundays."
   },
   {
     "level": 4,
@@ -63,7 +67,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "What should be filled in [ 3 ]?",
+    "passage_translation": "Araki\nMorning 8:00 AM–Evening 9:00 PM\n(Phone: 012-34-5678)\nClosed Sundays."
   },
   {
     "level": 4,
@@ -85,7 +91,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "Why did Suzuki-san come to the flower shop?",
+    "passage_translation": "Araki\nMorning 8:00 AM–Evening 9:00 PM\n(Phone: 012-34-5678)\nClosed Sundays."
   },
   {
     "level": 4,
@@ -107,7 +115,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "How many practice rooms are there in total in this building?",
+    "passage_translation": "To Yamada,\nLet's meet in front of the station at 10 AM tomorrow morning. I'll be wearing a blue hat. Thank you.\nFrom Tanaka"
   },
   {
     "level": 4,
@@ -129,7 +139,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "Today, I want to practice guitar with 5 people. What should I do?",
+    "passage_translation": "To Yamada,\nLet's meet in front of the station at 10 AM tomorrow morning. I'll be wearing a blue hat. Thank you.\nFrom Tanaka"
   },
   {
     "level": 4,
@@ -151,7 +163,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "Today (Monday) I will reserve practice room C. What is the earliest day I can use it?",
+    "passage_translation": "To Yamada,\nLet's meet in front of the station at 10 AM tomorrow morning. I'll be wearing a blue hat. Thank you.\nFrom Tanaka"
   },
   {
     "level": 4,
@@ -173,7 +187,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "What should be filled in at [ 1 ]?",
+    "passage_translation": "Sakura Diner Menu\nRamen ¥600\nCurry ¥500\nUdon ¥400\nCoffee ¥200\nJuice ¥150\nLunch is served from 11 AM to 2 PM."
   },
   {
     "level": 4,
@@ -195,7 +211,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "What should be filled in at [ 2 ]?",
+    "passage_translation": "Sakura Diner Menu\nRamen ¥600\nCurry ¥500\nUdon ¥400\nCoffee ¥200\nJuice ¥150\nLunch is served from 11 AM to 2 PM."
   },
   {
     "level": 4,
@@ -217,7 +235,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "What should be filled in at [ 3 ]?",
+    "passage_translation": "Sakura Diner Menu\nRamen ¥600\nCurry ¥500\nUdon ¥400\nCoffee ¥200\nJuice ¥150\nLunch is served from 11 AM to 2 PM."
   },
   {
     "level": 4,
@@ -239,7 +259,9 @@
     "option_1_display": null,
     "option_2_display": null,
     "option_3_display": null,
-    "option_4_display": null
+    "option_4_display": null,
+    "question_translation": "What is the most important thing in Yamamoto-san's advice?",
+    "passage_translation": "Sakura Diner Menu\nRamen ¥600\nCurry ¥500\nUdon ¥400\nCoffee ¥200\nJuice ¥150\nLunch is served from 11 AM to 2 PM."
   },
   {
     "level": 4,
@@ -251,7 +273,8 @@
     "option_3": "あおい",
     "option_4": "あかい",
     "correct_option": 1,
-    "question_stem_display": "わたしの{車|くるま}はあの{白|しろ}いのです。「{白|しろ}い」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "わたしの{車|くるま}はあの{白|しろ}いのです。「{白|しろ}い」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "My car is the white one. What is the reading of \"white\"?"
   },
   {
     "level": 4,
@@ -263,7 +286,8 @@
     "option_3": "さいきん",
     "option_4": "すいしん",
     "correct_option": 3,
-    "question_stem_display": "{最近|さいきん}、とても{忙|いそが}しいです。「{最近|さいきん}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{最近|さいきん}、とても{忙|いそが}しいです。「{最近|さいきん}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Recently, I have been very busy. What is the reading of \"recently\"?"
   },
   {
     "level": 4,
@@ -275,7 +299,8 @@
     "option_3": "とり",
     "option_4": "ほし",
     "correct_option": 1,
-    "question_stem_display": "とてもきれいな{色|いろ}ですね。「{色|いろ}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "とてもきれいな{色|いろ}ですね。「{色|いろ}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "That is a very beautiful color. What is the reading of \"color\"?"
   },
   {
     "level": 4,
@@ -287,7 +312,8 @@
     "option_3": "だりません",
     "option_4": "あじりません",
     "correct_option": 2,
-    "question_stem_display": "{少|すこ}しお{金|かね}が{足|た}りませんでした。「{足|た}りません」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{少|すこ}しお{金|かね}が{足|た}りませんでした。「{足|た}りません」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I was a little short on money. What is the reading of \"not enough\"?"
   },
   {
     "level": 4,
@@ -299,7 +325,8 @@
     "option_3": "とごう",
     "option_4": "とあい",
     "correct_option": 2,
-    "question_stem_display": "あしたはちょっと{都合|つごう}が{悪|わる}いです。「{都合|つごう}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "あしたはちょっと{都合|つごう}が{悪|わる}いです。「{都合|つごう}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Tomorrow is a bit inconvenient for me. What is the reading of \"schedule/availability\"?"
   },
   {
     "level": 4,
@@ -311,7 +338,8 @@
     "option_3": "おきました",
     "option_4": "つきました",
     "correct_option": 4,
-    "question_stem_display": "わたしは８{時|じ}に{着|つ}きました。「{着|つ}きました」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "わたしは８{時|じ}に{着|つ}きました。「{着|つ}きました」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I arrived at 8 o'clock. What is the reading of \"arrived\"?"
   },
   {
     "level": 4,
@@ -323,7 +351,8 @@
     "option_3": "いと",
     "option_4": "さら",
     "correct_option": 3,
-    "question_stem_display": "その{糸|いと}をとってください。「{糸|いと}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "その{糸|いと}をとってください。「{糸|いと}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Please get that thread. What is the reading of \"thread\"?"
   },
   {
     "level": 4,
@@ -335,7 +364,8 @@
     "option_3": "こたい",
     "option_4": "ことえ",
     "correct_option": 1,
-    "question_stem_display": "この{問題|もんだい}の{答|こた}えを{書|か}いてください。「{答|こた}え」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "この{問題|もんだい}の{答|こた}えを{書|か}いてください。「{答|こた}え」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Please write the answer to this problem. What is the reading of \"answer\"?"
   },
   {
     "level": 4,
@@ -347,7 +377,8 @@
     "option_3": "えいわ",
     "option_4": "えいは",
     "correct_option": 2,
-    "question_stem_display": "{週末|しゅうまつ}に{映画|えいが}を{見|み}に{行|い}きました。「{映画|えいが}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{週末|しゅうまつ}に{映画|えいが}を{見|み}に{行|い}きました。「{映画|えいが}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I went to see a movie on the weekend. What is the reading of \"movie\"?"
   },
   {
     "level": 4,
@@ -359,7 +390,8 @@
     "option_3": "おんがく",
     "option_4": "ねいろ",
     "correct_option": 3,
-    "question_stem_display": "{音楽|おんがく}を{聞|き}くのが{大好|だいす}きです。「{音楽|おんがく}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{音楽|おんがく}を{聞|き}くのが{大好|だいす}きです。「{音楽|おんがく}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I love listening to music. What is the reading of \"music\"?"
   },
   {
     "level": 4,
@@ -371,7 +403,8 @@
     "option_3": "がいぎ",
     "option_4": "かいじ",
     "correct_option": 1,
-    "question_stem_display": "{明日|あした}の{会議|かいぎ}は{何時|なんじ}からですか。「{会議|かいぎ}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{明日|あした}の{会議|かいぎ}は{何時|なんじ}からですか。「{会議|かいぎ}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "What time does tomorrow's meeting start? What is the reading of \"meeting\"?"
   },
   {
     "level": 4,
@@ -383,7 +416,8 @@
     "option_3": "かのじょ",
     "option_4": "かれじょ",
     "correct_option": 3,
-    "question_stem_display": "{彼女|かのじょ}は{日本語|にほんご}がとても{上手|じょうず}です。「{彼女|かのじょ}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{彼女|かのじょ}は{日本語|にほんご}がとても{上手|じょうず}です。「{彼女|かのじょ}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "His girlfriend is very good at Japanese. What is the reading of \"girlfriend\"?"
   },
   {
     "level": 4,
@@ -395,7 +429,8 @@
     "option_3": "しんぶん",
     "option_4": "じんぶん",
     "correct_option": 3,
-    "question_stem_display": "{毎朝|まいあさ}{新聞|しんぶん}を{読|よ}んでいます。「{新聞|しんぶん}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{毎朝|まいあさ}{新聞|しんぶん}を{読|よ}んでいます。「{新聞|しんぶん}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I read the newspaper every morning. What is the reading of \"newspaper\"?"
   },
   {
     "level": 4,
@@ -407,7 +442,8 @@
     "option_3": "りょうこう",
     "option_4": "りこう",
     "correct_option": 2,
-    "question_stem_display": "{夏休|なつやす}みに{旅行|りょこう}に{行|い}きたいです。「{旅行|りょこう}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{夏休|なつやす}みに{旅行|りょこう}に{行|い}きたいです。「{旅行|りょこう}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I want to go on a trip during summer vacation. What is the reading of \"trip\"?"
   },
   {
     "level": 4,
@@ -419,7 +455,8 @@
     "option_3": "でんしゃ",
     "option_4": "でんそ",
     "correct_option": 3,
-    "question_stem_display": "{電車|でんしゃ}で{学校|がっこう}に{通|かよ}っています。「{電車|でんしゃ}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{電車|でんしゃ}で{学校|がっこう}に{通|かよ}っています。「{電車|でんしゃ}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I commute to school by train. How do you read \"train\"?"
   },
   {
     "level": 4,
@@ -431,7 +468,8 @@
     "option_3": "けんきょ",
     "option_4": "けんぎゅう",
     "correct_option": 2,
-    "question_stem_display": "{大学|だいがく}で{研究|けんきゅう}をしています。「{研究|けんきゅう}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{大学|だいがく}で{研究|けんきゅう}をしています。「{研究|けんきゅう}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I do research at university. How do you read \"research\"?"
   },
   {
     "level": 4,
@@ -443,7 +481,8 @@
     "option_3": "けつこん",
     "option_4": "けっごん",
     "correct_option": 2,
-    "question_stem_display": "{来年|らいねん}、{結婚|けっこん}する{予定|よてい}です。「{結婚|けっこん}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{来年|らいねん}、{結婚|けっこん}する{予定|よてい}です。「{結婚|けっこん}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I plan to get married next year. How do you read \"marriage\"?"
   },
   {
     "level": 4,
@@ -455,7 +494,8 @@
     "option_3": "はんおん",
     "option_4": "はつのん",
     "correct_option": 2,
-    "question_stem_display": "{日本語|にほんご}の{発音|はつおん}が{難|むずか}しいです。「{発音|はつおん}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{日本語|にほんご}の{発音|はつおん}が{難|むずか}しいです。「{発音|はつおん}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Japanese pronunciation is difficult. How do you read \"pronunciation\"?"
   },
   {
     "level": 4,
@@ -467,7 +507,8 @@
     "option_3": "たべごと",
     "option_4": "しょくこと",
     "correct_option": 1,
-    "question_stem_display": "{食事|しょくじ}の{前|まえ}に{手|て}を{洗|あら}います。「{食事|しょくじ}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{食事|しょくじ}の{前|まえ}に{手|て}を{洗|あら}います。「{食事|しょくじ}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I wash my hands before meals. How do you read \"meal\"?"
   },
   {
     "level": 4,
@@ -479,7 +520,8 @@
     "option_3": "とくべつ",
     "option_4": "とくべっ",
     "correct_option": 3,
-    "question_stem_display": "{今日|きょう}は{特別|とくべつ}な{日|ひ}です。「{特別|とくべつ}」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{今日|きょう}は{特別|とくべつ}な{日|ひ}です。「{特別|とくべつ}」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Today is a special day. How do you read \"special\"?"
   },
   {
     "level": 4,
@@ -494,7 +536,8 @@
     "option_1_display": "{侍|さむらい}って",
     "option_2_display": "{持|も}って",
     "option_3_display": "{特|とく}って",
-    "option_4_display": "{待|ま}って"
+    "option_4_display": "{待|ま}って",
+    "question_translation": "Tanaka is waiting for a friend. What kanji is used for \"wait\"?"
   },
   {
     "level": 4,
@@ -509,7 +552,8 @@
     "option_1_display": "{姉|あね}",
     "option_2_display": "{兄|あに}",
     "option_3_display": "{弟|おとうと}",
-    "option_4_display": "{妹|いもうと}"
+    "option_4_display": "{妹|いもうと}",
+    "question_translation": "The person over there is my older brother. What kanji is used for \"older brother\"?"
   },
   {
     "level": 4,
@@ -524,7 +568,8 @@
     "option_1_display": "{公場|こうじょう}",
     "option_2_display": "{公湯|こうゆ}",
     "option_3_display": "{工湯|こうゆ}",
-    "option_4_display": "{工場|こうじょう}"
+    "option_4_display": "{工場|こうじょう}",
+    "question_translation": "Tomorrow we will visit a factory. What kanji is used for \"factory\"?"
   },
   {
     "level": 4,
@@ -539,7 +584,8 @@
     "option_1_display": "{弱|よわ}く",
     "option_2_display": "{強|つよ}く",
     "option_3_display": "{軽|かる}く",
-    "option_4_display": "{重|おも}く"
+    "option_4_display": "{重|おも}く",
+    "question_translation": "It became a bit weaker than before. What kanji is used for \"weak\"?"
   },
   {
     "level": 4,
@@ -554,7 +600,8 @@
     "option_1_display": "{径験|けいけん}",
     "option_2_display": "{経検|けいけん}",
     "option_3_display": "{経験|けいけん}",
-    "option_4_display": "{径検|けいけん}"
+    "option_4_display": "{径検|けいけん}",
+    "question_translation": "I have no experience working part-time. What kanji is used for \"experience\"?"
   },
   {
     "level": 4,
@@ -569,7 +616,8 @@
     "option_1_display": "{電話|でんわ}",
     "option_2_display": "{電学|でんがく}",
     "option_3_display": "{伝話|でんわ}",
-    "option_4_display": "{電後|でんご}"
+    "option_4_display": "{電後|でんご}",
+    "question_translation": "Please tell me this phone number. What kanji is used for \"telephone\"?"
   },
   {
     "level": 4,
@@ -584,7 +632,8 @@
     "option_1_display": "{病院|びょういん}",
     "option_2_display": "{病員|びょういん}",
     "option_3_display": "{内院|ないいん}",
-    "option_4_display": "{内員|ないいん}"
+    "option_4_display": "{内員|ないいん}",
+    "question_translation": "I went to the hospital yesterday. What kanji is used for \"hospital\"?"
   },
   {
     "level": 4,
@@ -599,7 +648,8 @@
     "option_1_display": "{弁強|べんきょう}",
     "option_2_display": "{勉強|べんきょう}",
     "option_3_display": "{弁球|べんきゅう}",
-    "option_4_display": "{勉球|べんきゅう}"
+    "option_4_display": "{勉球|べんきゅう}",
+    "question_translation": "I study every day. What kanji is used for \"study\"?"
   },
   {
     "level": 4,
@@ -614,7 +664,8 @@
     "option_1_display": "{料理|りょうり}",
     "option_2_display": "{量理|りょうり}",
     "option_3_display": "{量里|りょうり}",
-    "option_4_display": "{料里|りょうり}"
+    "option_4_display": "{料里|りょうり}",
+    "question_translation": "My mother's cooking is delicious. What kanji is used for \"cooking\"?"
   },
   {
     "level": 4,
@@ -629,7 +680,8 @@
     "option_1_display": "{分化|ぶんか}",
     "option_2_display": "{文化|ぶんか}",
     "option_3_display": "{文花|ぶんか}",
-    "option_4_display": "{分花|ぶんか}"
+    "option_4_display": "{分花|ぶんか}",
+    "question_translation": "I am interested in Japanese culture. What kanji is used for \"culture\"?"
   },
   {
     "level": 4,
@@ -644,7 +696,8 @@
     "option_1_display": "{会談|かいだん}",
     "option_2_display": "{海断|かいだん}",
     "option_3_display": "{階段|かいだん}",
-    "option_4_display": "{快段|かいだん}"
+    "option_4_display": "{快段|かいだん}",
+    "question_translation": "Please go up those stairs. What kanji is used for \"stairs\"?"
   },
   {
     "level": 4,
@@ -659,7 +712,8 @@
     "option_1_display": "{連動|れんどう}",
     "option_2_display": "{運動|うんどう}",
     "option_3_display": "{運道|うんどう}",
-    "option_4_display": "{連道|れんどう}"
+    "option_4_display": "{連道|れんどう}",
+    "question_translation": "I exercise every day. What kanji is used for \"exercise\"?"
   },
   {
     "level": 4,
@@ -674,7 +728,8 @@
     "option_1_display": "{地所|ちしょ}",
     "option_2_display": "{字書|じしょ}",
     "option_3_display": "{辞書|じしょ}",
-    "option_4_display": "{事書|じしょ}"
+    "option_4_display": "{事書|じしょ}",
+    "question_translation": "I look up words I don't understand in a dictionary. What kanji is used for \"dictionary\"?"
   },
   {
     "level": 4,
@@ -689,7 +744,8 @@
     "option_1_display": "{手入|てい}れ",
     "option_2_display": "{手書|てが}き",
     "option_3_display": "{手伝|てつだ}い",
-    "option_4_display": "{手紙|てがみ}"
+    "option_4_display": "{手紙|てがみ}",
+    "question_translation": "I wrote a letter to my friend. What kanji is used for \"letter\"?"
   },
   {
     "level": 4,
@@ -704,7 +760,8 @@
     "option_1_display": "{住所|じゅうしょ}",
     "option_2_display": "{宿所|しゅくしょ}",
     "option_3_display": "{住処|すみか}",
-    "option_4_display": "{宿処|しゅくしょ}"
+    "option_4_display": "{宿処|しゅくしょ}",
+    "question_translation": "Please tell me the address. Which kanji is correct for \"address\"?"
   },
   {
     "level": 4,
@@ -715,7 +772,8 @@
     "option_2": "エプロン",
     "option_3": "ペットボトル",
     "option_4": "メニュー",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "I heated up yesterday's curry in the **microwave** and ate it."
   },
   {
     "level": 4,
@@ -727,7 +785,8 @@
     "option_3": "しつもん",
     "option_4": "いけん",
     "correct_option": 4,
-    "question_stem_display": "どこにりょこうに{行|い}くか、クラスのみんなに（　　）を{聞|き}いて、{決|き}めました。"
+    "question_stem_display": "どこにりょこうに{行|い}くか、クラスのみんなに（　　）を{聞|き}いて、{決|き}めました。",
+    "question_translation": "I asked everyone in the class for their **opinions** about where to travel, and decided."
   },
   {
     "level": 4,
@@ -739,7 +798,8 @@
     "option_3": "とどきました",
     "option_4": "よりました",
     "correct_option": 3,
-    "question_stem_display": "{先週|せんしゅう}{買|か}ったベッドが{今日|きょう}いえに（　　）。"
+    "question_stem_display": "{先週|せんしゅう}{買|か}ったベッドが{今日|きょう}いえに（　　）。",
+    "question_translation": "The bed I bought last week **arrived** home today."
   },
   {
     "level": 4,
@@ -750,7 +810,8 @@
     "option_2": "とおった",
     "option_3": "すすんだ",
     "option_4": "すぎた",
-    "correct_option": 4
+    "correct_option": 4,
+    "question_translation": "It has **gone past** 12 o'clock, so let's take a lunch break."
   },
   {
     "level": 4,
@@ -762,7 +823,8 @@
     "option_3": "だいじ",
     "option_4": "ひつよう",
     "correct_option": 2,
-    "question_stem_display": "{今日|きょう}は{人|ひと}が{少|すく}ないので、１０こあれば（　　）です。"
+    "question_stem_display": "{今日|きょう}は{人|ひと}が{少|すく}ないので、１０こあれば（　　）です。",
+    "question_translation": "Since there are few people today, 10 pieces will be **enough**."
   },
   {
     "level": 4,
@@ -774,7 +836,8 @@
     "option_3": "しかられました",
     "option_4": "さそわれました",
     "correct_option": 3,
-    "question_stem_display": "{子|こ}どものころおとうととけんかしてよく{父|ちち}に（　　）。"
+    "question_stem_display": "{子|こ}どものころおとうととけんかしてよく{父|ちち}に（　　）。",
+    "question_translation": "When I was a child, I often fought with my brother and was **scolded** by my father."
   },
   {
     "level": 4,
@@ -786,7 +849,8 @@
     "option_3": "はらって",
     "option_4": "ひきだして",
     "correct_option": 2,
-    "question_stem_display": "たくさん{買|か}い{物|もの}をしたので、さいふに５００{円|えん}しか（　　）いません。"
+    "question_stem_display": "たくさん{買|か}い{物|もの}をしたので、さいふに５００{円|えん}しか（　　）いません。",
+    "question_translation": "I bought a lot, so there is only 500 yen **remaining** in my wallet."
   },
   {
     "level": 4,
@@ -798,7 +862,8 @@
     "option_3": "ようい",
     "option_4": "しゅうかん",
     "correct_option": 1,
-    "question_stem_display": "えさをやったり、さんぽにつれていったり、{毎日|まいにち}{犬|いぬ}の（　　）をしています。"
+    "question_stem_display": "えさをやったり、さんぽにつれていったり、{毎日|まいにち}{犬|いぬ}の（　　）をしています。",
+    "question_translation": "I feed it, take it for walks, and take **care** of my dog every day."
   },
   {
     "level": 4,
@@ -809,7 +874,8 @@
     "option_2": "うんどう",
     "option_3": "れんしゅう",
     "option_4": "けんきゅう",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "I **invited** my friend, and they came to the party."
   },
   {
     "level": 4,
@@ -821,7 +887,8 @@
     "option_3": "いみ",
     "option_4": "かたち",
     "correct_option": 1,
-    "question_stem_display": "{朝|あさ}ごはんを{食|た}べる（　　）がなかったので、{学校|がっこう}に{遅|おく}れました。"
+    "question_stem_display": "{朝|あさ}ごはんを{食|た}べる（　　）がなかったので、{学校|がっこう}に{遅|おく}れました。",
+    "question_translation": "Because I didn't have **time** to eat breakfast, I was late for school."
   },
   {
     "level": 4,
@@ -833,7 +900,8 @@
     "option_3": "かいて",
     "option_4": "かけて",
     "correct_option": 1,
-    "question_stem_display": "この{薬|くすり}は{毎食後|まいしょくご}に（　　）ください。"
+    "question_stem_display": "この{薬|くすり}は{毎食後|まいしょくご}に（　　）ください。",
+    "question_translation": "Please **take** this medicine after every meal."
   },
   {
     "level": 4,
@@ -845,7 +913,8 @@
     "option_3": "うって",
     "option_4": "さわって",
     "correct_option": 2,
-    "question_stem_display": "{電話|でんわ}が（　　）ので、{出|で}てください。"
+    "question_stem_display": "{電話|でんわ}が（　　）ので、{出|で}てください。",
+    "question_translation": "The phone is **ringing**, so please answer it."
   },
   {
     "level": 4,
@@ -857,7 +926,8 @@
     "option_3": "たか",
     "option_4": "いた",
     "correct_option": 2,
-    "question_stem_display": "{荷物|にもつ}が（　　）すぎて、{一人|ひとり}では{持|も}てません。"
+    "question_stem_display": "{荷物|にもつ}が（　　）すぎて、{一人|ひとり}では{持|も}てません。",
+    "question_translation": "The luggage is too **heavy** for one person to carry."
   },
   {
     "level": 4,
@@ -869,7 +939,8 @@
     "option_3": "はんたい",
     "option_4": "えんりょ",
     "correct_option": 1,
-    "question_stem_display": "{先生|せんせい}に（　　）して、{試験|しけん}のことを{相談|そうだん}しました。"
+    "question_stem_display": "{先生|せんせい}に（　　）して、{試験|しけん}のことを{相談|そうだん}しました。",
+    "question_translation": "I **contacted** the teacher and consulted about the exam."
   },
   {
     "level": 4,
@@ -881,7 +952,8 @@
     "option_3": "くもり",
     "option_4": "ゆき",
     "correct_option": 1,
-    "question_stem_display": "{今夜|こんや}は{雨|あめ}が（　　）そうです。"
+    "question_stem_display": "{今夜|こんや}は{雨|あめ}が（　　）そうです。",
+    "question_translation": "It looks like it will **rain** tonight."
   },
   {
     "level": 4,
@@ -893,7 +965,8 @@
     "option_3": "あまり",
     "option_4": "なかなか",
     "correct_option": 1,
-    "question_stem_display": "{毎日|まいにち}{練習|れんしゅう}しているので、（　　）{上手|じょうず}になってきました。"
+    "question_stem_display": "{毎日|まいにち}{練習|れんしゅう}しているので、（　　）{上手|じょうず}になってきました。",
+    "question_translation": "Because I practice every day, I have been getting **gradually** better."
   },
   {
     "level": 4,
@@ -904,7 +977,8 @@
     "option_2": "このテーブルはきたないですね。",
     "option_3": "このテーブルはきれいですね。",
     "option_4": "このテーブルはあたらしいですね。",
-    "correct_option": 2
+    "correct_option": 2,
+    "question_translation": "This table is dirty, isn't it?"
   },
   {
     "level": 4,
@@ -916,7 +990,8 @@
     "option_3": "今日は本を読む時間がありませんでした。",
     "option_4": "今日はごはんを食べる時間がありませんでした。",
     "correct_option": 4,
-    "question_stem_display": "{今日|きょう}はしょくじをする{時間|じかん}がありませんでした。"
+    "question_stem_display": "{今日|きょう}はしょくじをする{時間|じかん}がありませんでした。",
+    "question_translation": "I didn't have time to eat today."
   },
   {
     "level": 4,
@@ -927,7 +1002,8 @@
     "option_2": "それはあまいですよ。",
     "option_3": "それはつめたいですよ。",
     "option_4": "それはからいですよ。",
-    "correct_option": 3
+    "correct_option": 3,
+    "question_translation": "That's cold."
   },
   {
     "level": 4,
@@ -938,7 +1014,8 @@
     "option_2": "アイデアがたくさんあります。",
     "option_3": "チャンスがたくさんあります。",
     "option_4": "アルバイトがたくさんあります。",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "There are many rules."
   },
   {
     "level": 4,
@@ -949,7 +1026,8 @@
     "option_2": "このいすはつかいやすいです。",
     "option_3": "このいすはつかいにくいです。",
     "option_4": "このいすはあたらしいです。",
-    "correct_option": 3
+    "correct_option": 3,
+    "question_translation": "This chair is difficult to sit in."
   },
   {
     "level": 4,
@@ -961,7 +1039,8 @@
     "option_3": "そのかいぎははじまりました。",
     "option_4": "そのかいぎはつづきました。",
     "correct_option": 2,
-    "question_stem_display": "その{会議|かいぎ}はとりやめになりました。"
+    "question_stem_display": "その{会議|かいぎ}はとりやめになりました。",
+    "question_translation": "That meeting has been cancelled."
   },
   {
     "level": 4,
@@ -972,7 +1051,8 @@
     "option_2": "ここではたばこをすわないでください。",
     "option_3": "ここではたばこをすってください。",
     "option_4": "ここではたばこはありません。",
-    "correct_option": 2
+    "correct_option": 2,
+    "question_translation": "You cannot smoke here."
   },
   {
     "level": 4,
@@ -983,7 +1063,8 @@
     "option_2": "かれはよく{泳ぎ|およぎ}ます。",
     "option_3": "かれはよくドライブをします。",
     "option_4": "かれはよく料理をします。",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "He often goes hiking."
   },
   {
     "level": 4,
@@ -994,7 +1075,8 @@
     "option_2": "あさからあたまがいたくて、ねつもあります。",
     "option_3": "今日はさむいので、ねつがあるものを食べたいです。",
     "option_4": "コップはねつがあるので、飲むとき気をつけてください。",
-    "correct_option": 2
+    "correct_option": 2,
+    "question_translation": "What is the correct usage of \"fever\"?"
   },
   {
     "level": 4,
@@ -1005,7 +1087,8 @@
     "option_2": "エアコンをつけて、へやをわかします。",
     "option_3": "みんなでにくや魚をわかして食べました。",
     "option_4": "おゆをわかして、お茶を入れてください。",
-    "correct_option": 4
+    "correct_option": 4,
+    "question_translation": "What is the correct usage of \"boil\" (water)?"
   },
   {
     "level": 4,
@@ -1016,7 +1099,8 @@
     "option_2": "ねこをかぞくにしょうたいしました。",
     "option_3": "すずしいかぜをへやにしょうたいしました。",
     "option_4": "本に書いてあったことをレポートにしょうたいしました。",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "What is the correct usage of \"invitation\"?"
   },
   {
     "level": 4,
@@ -1027,7 +1111,8 @@
     "option_2": "かいぎがやんだら、わたしにしらせてください。",
     "option_3": "雨はおひるごろにやんで、今ははれています。",
     "option_4": "なつやすみがやんだら、すぐにテストがあります。",
-    "correct_option": 3
+    "correct_option": 3,
+    "question_translation": "What is the correct usage of \"cease\" or \"stop\"?"
   },
   {
     "level": 4,
@@ -1038,7 +1123,8 @@
     "option_2": "ずっと使っていたかさが、こわれてしまいました。",
     "option_3": "{風邪|かぜ}をひいたので、体がこわれました。",
     "option_4": "{昨日|きのう}、山でころんでこわれました。",
-    "correct_option": 2
+    "correct_option": 2,
+    "question_translation": "What is the correct usage of \"break\" or \"become broken\"?"
   },
   {
     "level": 4,
@@ -1049,7 +1135,8 @@
     "option_2": "友だちが{遅刻|ちこく}して、きをつけました。",
     "option_3": "先生に質問して、きをつけました。",
     "option_4": "天気がいいので、きをつけましょう。",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "What is the correct usage of \"be careful\"?"
   },
   {
     "level": 4,
@@ -1060,7 +1147,8 @@
     "option_2": "{健康|けんこう}はとてもたいせつです。",
     "option_3": "このバスはたいせつに来ます。",
     "option_4": "先生がたいせつに話してくれました。",
-    "correct_option": 2
+    "correct_option": 2,
+    "question_translation": "What is the correct usage of \"important\"?"
   },
   {
     "level": 4,
@@ -1071,7 +1159,8 @@
     "option_2": "朝ご飯のそうじをしてから、学校に行きます。",
     "option_3": "試験のそうじがとても{難|なん}しかったです。",
     "option_4": "毎日テレビのそうじを見ています。",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "What is the correct usage of \"cleaning\"?"
   },
   {
     "level": 4,
@@ -1083,7 +1172,8 @@
     "option_3": "が",
     "option_4": "を",
     "correct_option": 2,
-    "question_stem_display": "わたしはよく{仕事|しごと}（　　）{飛行機|ひこうき}に{乗|の}ります。"
+    "question_stem_display": "わたしはよく{仕事|しごと}（　　）{飛行機|ひこうき}に{乗|の}ります。",
+    "question_translation": "I often travel **by** airplane for work."
   },
   {
     "level": 4,
@@ -1095,7 +1185,8 @@
     "option_3": "を",
     "option_4": "から",
     "correct_option": 4,
-    "question_stem_display": "{今朝|けさ}、いなかにいる{母|はは}（　　）{荷物|にもつ}がとどきました。"
+    "question_stem_display": "{今朝|けさ}、いなかにいる{母|はは}（　　）{荷物|にもつ}がとどきました。",
+    "question_translation": "This morning, a package arrived **from** my mother in the countryside."
   },
   {
     "level": 4,
@@ -1107,7 +1198,8 @@
     "option_3": "しか",
     "option_4": "も",
     "correct_option": 2,
-    "question_stem_display": "（{教室|きょうしつ}で）{先生|せんせい}「じゃあ、{一人|ひとり}（　　）じこしょうかいをしてください。」"
+    "question_stem_display": "（{教室|きょうしつ}で）{先生|せんせい}「じゃあ、{一人|ひとり}（　　）じこしょうかいをしてください。」",
+    "question_translation": "(In the classroom) Teacher: 'Now, please introduce yourselves one **at a time**.'"
   },
   {
     "level": 4,
@@ -1119,7 +1211,8 @@
     "option_3": "を",
     "option_4": "が",
     "correct_option": 1,
-    "question_stem_display": "{田中|たなか}「え、１{週間|しゅうかん}に３{回|かい}（　　）{食|た}べるんですか。{大好|だいす}きなんですね。」"
+    "question_stem_display": "{田中|たなか}「え、１{週間|しゅうかん}に３{回|かい}（　　）{食|た}べるんですか。{大好|だいす}きなんですね。」",
+    "question_translation": "Tanaka: \"What, you eat it **as many as** 3 times a week? You must really love it.\""
   },
   {
     "level": 4,
@@ -1131,7 +1224,8 @@
     "option_3": "やっと",
     "option_4": "いつか",
     "correct_option": 4,
-    "question_stem_display": "いっしょうけんめい{勉強|べんきょう}して、（　　）{外国|がいこく}の{大学|だいがく}に{行|い}きたいです。"
+    "question_stem_display": "いっしょうけんめい{勉強|べんきょう}して、（　　）{外国|がいこく}の{大学|だいがく}に{行|い}きたいです。",
+    "question_translation": "I study hard and want to go to a foreign university **someday**."
   },
   {
     "level": 4,
@@ -1143,7 +1237,8 @@
     "option_3": "どうやって",
     "option_4": "どのぐらい",
     "correct_option": 3,
-    "question_stem_display": "{青木|あおき}「{林|はやし}さんはいつも{会社|かいしゃ}まで（　　）{行|い}っていますか。」{林|はやし}「バスと{地下鉄|ちかてつ}で{行|い}っています。」"
+    "question_stem_display": "{青木|あおき}「{林|はやし}さんはいつも{会社|かいしゃ}まで（　　）{行|い}っていますか。」{林|はやし}「バスと{地下鉄|ちかてつ}で{行|い}っています。」",
+    "question_translation": "Aoki: \"How do you usually get to the company, Hayashi?\" Hayashi: \"I go by bus and subway.\""
   },
   {
     "level": 4,
@@ -1155,7 +1250,8 @@
     "option_3": "３時間",
     "option_4": "３時間に",
     "correct_option": 1,
-    "question_stem_display": "{毎日|まいにち}じゅぎょうは（　　）ごろ{終|お}わります。"
+    "question_stem_display": "{毎日|まいにち}じゅぎょうは（　　）ごろ{終|お}わります。",
+    "question_translation": "Classes end at around **3 o'clock** every day."
   },
   {
     "level": 4,
@@ -1171,7 +1267,8 @@
     "option_1_display": "{早|はや}く",
     "option_2_display": "{早|はや}い",
     "option_3_display": "{早|はや}くて",
-    "option_4_display": "{早|はや}かった"
+    "option_4_display": "{早|はや}かった",
+    "question_translation": "The cherry blossoms in the garden bloomed **earlier** than last year."
   },
   {
     "level": 4,
@@ -1183,7 +1280,8 @@
     "option_3": "見るなら",
     "option_4": "見るのも",
     "correct_option": 4,
-    "question_stem_display": "わたしは{本当|ほんとう}に{虫|むし}がきらいで、（　　）いやです。"
+    "question_stem_display": "わたしは{本当|ほんとう}に{虫|むし}がきらいで、（　　）いやです。",
+    "question_translation": "I really hate bugs, and I find **even seeing** them unpleasant."
   },
   {
     "level": 4,
@@ -1196,7 +1294,8 @@
     "option_4": "聞く",
     "correct_option": 3,
     "question_stem_display": "れいぞうこから{変|へん}な{音|おと}が（　　）。こしょうしたのかもしれない。",
-    "option_4_display": "{聞|き}く"
+    "option_4_display": "{聞|き}く",
+    "question_translation": "The refrigerator **is making** a strange noise. It might be broken."
   },
   {
     "level": 4,
@@ -1208,7 +1307,8 @@
     "option_3": "かざっておきます",
     "option_4": "かざられています",
     "correct_option": 4,
-    "question_stem_display": "{花|はな}が{好|す}きなそぼのへやには、いつもいろいろな{花|はな}が（　　）。"
+    "question_stem_display": "{花|はな}が{好|す}きなそぼのへやには、いつもいろいろな{花|はな}が（　　）。",
+    "question_translation": "In my grandmother's room, who loves flowers, various flowers are always **on display**."
   },
   {
     "level": 4,
@@ -1220,7 +1320,8 @@
     "option_3": "帰らないことにしました",
     "option_4": "帰ったことがあります",
     "correct_option": 3,
-    "question_stem_display": "{山川|やまかわ}「もうすぐ{夏休|なつやす}みですね。アンさんは、{今年|ことし}の{夏休|なつやす}みも{国|くに}に{帰|かえ}るんですか。」アン「いいえ。{今年|ことし}は{日本|にほん}でアルバイトをするので、（　　）。」"
+    "question_stem_display": "{山川|やまかわ}「もうすぐ{夏休|なつやす}みですね。アンさんは、{今年|ことし}の{夏休|なつやす}みも{国|くに}に{帰|かえ}るんですか。」アン「いいえ。{今年|ことし}は{日本|にほん}でアルバイトをするので、（　　）。」",
+    "question_translation": "Yamakawa: \"Summer vacation is coming soon. Ann, are you going back this summer too?\" Ann: \"No. Since I'll be working part-time in Japan this year, I **decided not to go back**.\""
   },
   {
     "level": 4,
@@ -1236,7 +1337,8 @@
     "option_1_display": "{切|き}ってある",
     "option_2_display": "{切|き}ってもらえる",
     "option_3_display": "{切|き}ってもいい",
-    "option_4_display": "{切|き}ったほうがいい"
+    "option_4_display": "{切|き}ったほうがいい",
+    "question_translation": "(In the kitchen) Brother: \"Sis, I'll help with something.\" Sister: \"Thanks. Then, could you **cut** the tomatoes?\" Brother: \"Sure.\""
   },
   {
     "level": 4,
@@ -1248,7 +1350,8 @@
     "option_3": "のに",
     "option_4": "から",
     "correct_option": 3,
-    "question_stem_display": "{毎日|まいにち}{日本語|にほんご}を{勉強|べんきょう}している（　　）、まだあまり{話|はな}せません。"
+    "question_stem_display": "{毎日|まいにち}{日本語|にほんご}を{勉強|べんきょう}している（　　）、まだあまり{話|はな}せません。",
+    "question_translation": "**Even though** I study Japanese every day, I still can't speak much."
   },
   {
     "level": 4,
@@ -1260,7 +1363,8 @@
     "option_3": "ところで",
     "option_4": "かわりに",
     "correct_option": 2,
-    "question_stem_display": "{卒業|そつぎょう}した（　　）、{仕事|しごと}を{始|はじ}めました。"
+    "question_stem_display": "{卒業|そつぎょう}した（　　）、{仕事|しごと}を{始|はじ}めました。",
+    "question_translation": "**After** graduating, I started working."
   },
   {
     "level": 4,
@@ -1272,7 +1376,8 @@
     "option_3": "やって",
     "option_4": "おいて",
     "correct_option": 1,
-    "question_stem_display": "{先生|せんせい}に{教|おし}えて（　　）、{宿題|しゅくだい}が{分|わ}かりました。"
+    "question_stem_display": "{先生|せんせい}に{教|おし}えて（　　）、{宿題|しゅくだい}が{分|わ}かりました。",
+    "question_translation": "I understood the homework **after having the teacher** explain it to me."
   },
   {
     "level": 4,
@@ -1284,7 +1389,8 @@
     "option_3": "だけ",
     "option_4": "しかも",
     "correct_option": 1,
-    "question_stem_display": "{彼女|かのじょ}はフランス{語|ご}（　　）、スペイン{語|ご}も{話|はな}せます。"
+    "question_stem_display": "{彼女|かのじょ}はフランス{語|ご}（　　）、スペイン{語|ご}も{話|はな}せます。",
+    "question_translation": "She can speak **not only** French **but also** Spanish."
   },
   {
     "level": 4,
@@ -1296,7 +1402,8 @@
     "option_3": "て",
     "option_4": "で",
     "correct_option": 1,
-    "question_stem_display": "{音楽|おんがく}を{聞|き}き（　　）、{料理|りょうり}しています。"
+    "question_stem_display": "{音楽|おんがく}を{聞|き}き（　　）、{料理|りょうり}しています。",
+    "question_translation": "I cook **while** listening to music."
   },
   {
     "level": 4,
@@ -1308,7 +1415,8 @@
     "option_3": "まで",
     "option_4": "ほど",
     "correct_option": 1,
-    "question_stem_display": "この{映画|えいが}は3{回|かい}（　　）{見|み}ました。"
+    "question_stem_display": "この{映画|えいが}は3{回|かい}（　　）{見|み}ました。",
+    "question_translation": "I've watched this movie **as many as** 3 times."
   },
   {
     "level": 4,
@@ -1320,7 +1428,8 @@
     "option_3": "はじめに",
     "option_4": "はじめるに",
     "correct_option": 1,
-    "question_stem_display": "{来週|らいしゅう}から{学校|がっこう}が（　　）なります。"
+    "question_stem_display": "{来週|らいしゅう}から{学校|がっこう}が（　　）なります。",
+    "question_translation": "Starting from next week, school **will begin**."
   },
   {
     "level": 4,
@@ -1335,7 +1444,8 @@
     "correct_order": "3,2,4,1",
     "question_stem_display": "{今日|きょう}は、{一年|いちねん}で〔　　〕〔　　〕〔　　〕〔　　〕です。",
     "option_1_display": "{日|ひ}",
-    "option_4_display": "{最|もっと}も{長|なが}い"
+    "option_4_display": "{最|もっと}も{長|なが}い",
+    "question_translation": "Today is the **longest** day of the year."
   },
   {
     "level": 4,
@@ -1351,7 +1461,8 @@
     "question_stem_display": "{私|わたし}は、{日本|にほん}に〔　　〕〔　　〕〔　　〕〔　　〕{写真|しゃしん}をたくさんとりたいです。",
     "option_1_display": "いろいろな{町|まち}へ",
     "option_2_display": "{行|い}って",
-    "option_3_display": "{間|あいだ}に"
+    "option_3_display": "{間|あいだ}に",
+    "question_translation": "I want to take lots of photos while traveling to **various towns** in Japan."
   },
   {
     "level": 4,
@@ -1367,7 +1478,8 @@
     "question_stem_display": "〔　　〕〔　　〕〔　　〕〔　　〕、{私|わたし}は{小|ちい}さいとき、この{絵本|えほん}が{大好|だいす}きだったそうだ。",
     "option_1_display": "によると",
     "option_2_display": "{話|はなし}",
-    "option_3_display": "{母|はは}"
+    "option_3_display": "{母|はは}",
+    "question_translation": "Apparently, I loved this picture book when I was little, so they tell me the **story**."
   },
   {
     "level": 4,
@@ -1384,7 +1496,8 @@
     "option_1_display": "あんな{色|いろ}",
     "option_2_display": "{木村|きむら}さんが",
     "option_3_display": "{着|き}ていた",
-    "option_4_display": "{私|わたし}も"
+    "option_4_display": "{私|わたし}も",
+    "question_translation": "Today, Kimura-san came wearing a blue shirt. I want the same shirt he was **wearing**."
   },
   {
     "level": 4,
@@ -1398,7 +1511,8 @@
     "correct_option": 3,
     "correct_order": "4,2,3,1",
     "option_2_display": "{一人|ひとり}で",
-    "option_3_display": "{歩|ある}ける"
+    "option_3_display": "{歩|ある}ける",
+    "question_translation": "The child has become able to **walk**."
   },
   {
     "level": 4,
@@ -1413,7 +1527,8 @@
     "correct_order": "2,1,4,3",
     "question_stem_display": "{彼女|かのじょ}は〔　　〕〔　　〕〔　　〕〔　　〕いるようです。",
     "option_3_display": "{話|はな}して",
-    "option_4_display": "{電話|でんわ}で"
+    "option_4_display": "{電話|でんわ}で",
+    "question_translation": "She seems to be talking **on the phone**."
   },
   {
     "level": 4,
@@ -1427,7 +1542,8 @@
     "correct_option": 2,
     "correct_order": "4,1,2,3",
     "option_1_display": "{冷|つめ}たく",
-    "option_4_display": "{冷蔵庫|れいぞうこ}で"
+    "option_4_display": "{冷蔵庫|れいぞうこ}で",
+    "question_translation": "Please eat this cake after **cutting** it."
   },
   {
     "level": 4,
@@ -1443,7 +1559,8 @@
     "question_stem_display": "{田中|たなか}さんは〔　　〕〔　　〕〔　　〕〔　　〕のことを{話|はな}してくれました。",
     "option_1_display": "{大学|だいがく}",
     "option_2_display": "{自分|じぶん}の",
-    "option_3_display": "{時代|じだい}"
+    "option_3_display": "{時代|じだい}",
+    "question_translation": "Tanaka-san talked about the **old days**."
   },
   {
     "level": 4,
@@ -1457,7 +1574,9 @@
     "option_2": "思うことです",
     "option_3": "思ったからです",
     "option_4": "思ったことです",
-    "correct_option": 3
+    "correct_option": 3,
+    "question_translation": "What goes in [18]?",
+    "passage_translation": "When I came to Japan, I brought a camera from my country. I wanted to take many photos in Japan [18].\nRecently, I often take photos of the town scenery. The scenery of Japanese towns and towns in my country is very different. So it's very interesting. [19], I take photos often. I like the scenery of Japanese towns.\nSometimes I go to the sea to take photos [20]. Since there is no sea in my country, I saw the sea in Japan for the first time. Now I can see the sea whenever I want, and I'm very happy.\nSummer break is coming soon. When I go back to my country, I'll [21] the photos I took in Japan to my family. I'm looking forward to hearing what they say."
   },
   {
     "level": 4,
@@ -1471,7 +1590,9 @@
     "option_2": "けれども",
     "option_3": "たとえば",
     "option_4": "まず",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "What goes in [19]?",
+    "passage_translation": "When I came to Japan, I brought a camera from my country. I wanted to take many photos in Japan [18].\nRecently, I often take photos of the town scenery. The scenery of Japanese towns and towns in my country is very different. So it's very interesting. [19], I take photos often. I like the scenery of Japanese towns.\nSometimes I go to the sea to take photos [20]. Since there is no sea in my country, I saw the sea in Japan for the first time. Now I can see the sea whenever I want, and I'm very happy.\nSummer break is coming soon. When I go back to my country, I'll [21] the photos I took in Japan to my family. I'm looking forward to hearing what they say."
   },
   {
     "level": 4,
@@ -1485,7 +1606,9 @@
     "option_2": "にも",
     "option_3": "だけ",
     "option_4": "なら",
-    "correct_option": 2
+    "correct_option": 2,
+    "question_translation": "What goes in [20]?",
+    "passage_translation": "When I came to Japan, I brought a camera from my country. I wanted to take many photos in Japan [18].\nRecently, I often take photos of the town scenery. The scenery of Japanese towns and towns in my country is very different. So it's very interesting. [19], I take photos often. I like the scenery of Japanese towns.\nSometimes I go to the sea to take photos [20]. Since there is no sea in my country, I saw the sea in Japan for the first time. Now I can see the sea whenever I want, and I'm very happy.\nSummer break is coming soon. When I go back to my country, I'll [21] the photos I took in Japan to my family. I'm looking forward to hearing what they say."
   },
   {
     "level": 4,
@@ -1499,7 +1622,9 @@
     "option_2": "見せてくれます",
     "option_3": "見せるそうです",
     "option_4": "見せようと思います",
-    "correct_option": 4
+    "correct_option": 4,
+    "question_translation": "What goes in [21]?",
+    "passage_translation": "When I came to Japan, I brought a camera from my country. I wanted to take many photos in Japan [18].\nRecently, I often take photos of the town scenery. The scenery of Japanese towns and towns in my country is very different. So it's very interesting. [19], I take photos often. I like the scenery of Japanese towns.\nSometimes I go to the sea to take photos [20]. Since there is no sea in my country, I saw the sea in Japan for the first time. Now I can see the sea whenever I want, and I'm very happy.\nSummer break is coming soon. When I go back to my country, I'll [21] the photos I took in Japan to my family. I'm looking forward to hearing what they say."
   },
   {
     "level": 4,
@@ -1513,7 +1638,9 @@
     "option_2": "になりました",
     "option_3": "だったので",
     "option_4": "にしました",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "What goes in [18]?",
+    "passage_translation": "I baked a cake for the first time last week. Since I'm not good at cooking, I was worried it wouldn't turn out well [18]. But with my friend's help [19], I made a beautiful cake. My friend said \"Delicious!\" while eating [20]. Next time I want to [21] by myself."
   },
   {
     "level": 4,
@@ -1527,7 +1654,9 @@
     "option_2": "あげて",
     "option_3": "くれて",
     "option_4": "やって",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "What goes in [19]?",
+    "passage_translation": "I baked a cake for the first time last week. Since I'm not good at cooking, I was worried it wouldn't turn out well [18]. But with my friend's help [19], I made a beautiful cake. My friend said \"Delicious!\" while eating [20]. Next time I want to [21] by myself."
   },
   {
     "level": 4,
@@ -1541,7 +1670,9 @@
     "option_2": "しずかに",
     "option_3": "いそいで",
     "option_4": "まじめに",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "What goes in [20]?",
+    "passage_translation": "I baked a cake for the first time last week. Since I'm not good at cooking, I was worried it wouldn't turn out well [18]. But with my friend's help [19], I made a beautiful cake. My friend said \"Delicious!\" while eating [20]. Next time I want to [21] by myself."
   },
   {
     "level": 4,
@@ -1555,7 +1686,9 @@
     "option_2": "みます",
     "option_3": "みた",
     "option_4": "みよう",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "What goes in [21]?",
+    "passage_translation": "I baked a cake for the first time last week. Since I'm not good at cooking, I was worried it wouldn't turn out well [18]. But with my friend's help [19], I made a beautiful cake. My friend said \"Delicious!\" while eating [20]. Next time I want to [21] by myself."
   },
   {
     "level": 4,
@@ -1570,7 +1703,9 @@
     "option_3": "今はほとんどのアパートでペットといっしょに住めない。",
     "option_4": "今はどんなアパートでもペットといっしょに住める。",
     "correct_option": 1,
-    "question_stem_display": "この{町|まち}のアパートの{説明|せつめい}で{正|ただ}しいものはどれですか。"
+    "question_stem_display": "この{町|まち}のアパートの{説明|せつめい}で{正|ただ}しいものはどれですか。",
+    "question_translation": "Which description of this town's apartment is correct?",
+    "passage_translation": "Recently, apartments where you can live with pets like dogs and cats are increasing. Ten years ago, there were almost no apartments in this town where you could live with pets, but last year more than half of all apartments allowed pets. And they continue to increase even now.\n\nLast month, Mr. and Mrs. Hanada moved to an apartment in this town. Since moving, they have been living with two dogs. Mr. Hanada, who is 65 years old, had been lacking energy since he retired from work, but living with the dogs seems to have brightened his mood. His wife's health improved. Before moving, her legs were bad and she spent most of her time indoors, but now she walks with the dogs every day. They say that even when something unpleasant happens, when they see their two cute dogs, their hearts become gentle, and they can live happily every day.\n\nI had never wanted a pet until now. Taking care of a pet is difficult every day. There is food and litter box care, and when they get sick, you have to take them to the hospital. But after hearing Mr. Hanada's story, I too want to try living with a pet."
   },
   {
     "level": 4,
@@ -1585,7 +1720,9 @@
     "option_3": "10年前から犬2ひきといっしょに住んでいます。",
     "option_4": "この町にひっこしてから前より元気になりました。",
     "correct_option": 4,
-    "question_stem_display": "{花田|はなだ}さんのおくさんの{説明|せつめい}で{正|ただ}しいものはどれですか。"
+    "question_stem_display": "{花田|はなだ}さんのおくさんの{説明|せつめい}で{正|ただ}しいものはどれですか。",
+    "question_translation": "Which description of Hanada-san's wife is correct?",
+    "passage_translation": "Recently, apartments where you can live with pets like dogs and cats are increasing. Ten years ago, there were almost no apartments in this town where you could live with pets, but last year more than half of all apartments allowed pets. And they continue to increase even now.\n\nLast month, Mr. and Mrs. Hanada moved to an apartment in this town. Since moving, they have been living with two dogs. Mr. Hanada, who is 65 years old, had been lacking energy since he retired from work, but living with the dogs seems to have brightened his mood. His wife's health improved. Before moving, her legs were bad and she spent most of her time indoors, but now she walks with the dogs every day. They say that even when something unpleasant happens, when they see their two cute dogs, their hearts become gentle, and they can live happily every day.\n\nI had never wanted a pet until now. Taking care of a pet is difficult every day. There is food and litter box care, and when they get sick, you have to take them to the hospital. But after hearing Mr. Hanada's story, I too want to try living with a pet."
   },
   {
     "level": 4,
@@ -1599,7 +1736,9 @@
     "option_2": "ペットといっしょにせいかつするのは楽しそうだから",
     "option_3": "ペットと住めるアパートがさいきんふえてきたから",
     "option_4": "ペットは食べ物やトイレの世話があるから",
-    "correct_option": 2
+    "correct_option": 2,
+    "question_translation": "Why did you think you'd like to live with a pet?",
+    "passage_translation": "Recently, apartments where you can live with pets like dogs and cats are increasing. Ten years ago, there were almost no apartments in this town where you could live with pets, but last year more than half of all apartments allowed pets. And they continue to increase even now.\n\nLast month, Mr. and Mrs. Hanada moved to an apartment in this town. Since moving, they have been living with two dogs. Mr. Hanada, who is 65 years old, had been lacking energy since he retired from work, but living with the dogs seems to have brightened his mood. His wife's health improved. Before moving, her legs were bad and she spent most of her time indoors, but now she walks with the dogs every day. They say that even when something unpleasant happens, when they see their two cute dogs, their hearts become gentle, and they can live happily every day.\n\nI had never wanted a pet until now. Taking care of a pet is difficult every day. There is food and litter box care, and when they get sick, you have to take them to the hospital. But after hearing Mr. Hanada's story, I too want to try living with a pet."
   },
   {
     "level": 4,
@@ -1613,7 +1752,9 @@
     "option_2": "へやが2つある",
     "option_3": "駅から近い",
     "option_4": "1か月7万円だ",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "What do you put in [ 1 ]?",
+    "passage_translation": "(Suzuki is thinking about moving. He went to an apartment introduction shop.)\nSuzuki: \"Um, I'm looking for an apartment.\"\nShop person: \"What kind of apartment would you like?\"\nSuzuki: \"Well, I guess... something bright would be nice...\"\nShop person: \"How about this one? There's no large building next to it [ 1 ], so it's bright. Here's a photo.\"\nSuzuki: \"Ah, that's nice. How far is this apartment from the station?\"\nShop person: \"It's a five-minute walk.\"\nSuzuki: \"I see. That's convenient. How much is this room per month?\"\nShop person: \"70,000 yen.\"\nSuzuki: \"What? 70,000 yen? The room I live in now is about 40,000 yen, so it's a bit...\"\nShop person: \"[ 2 ]. Well then, how about this room? This apartment is also close to the station...\"\nSuzuki: \"Um, I ride a bicycle [ 3 ] the station. But I don't want it too expensive. Do you have an apartment for about 30,000 yen a month? It can be old.\"\nShop person: \"30,000 yen? I see. Let me search. Um, ah, I found one. It's a bit old, but it has two rooms and large windows. Would you like to go see it now?\"\nSuzuki: \"Yes, I'd like to see it.\""
   },
   {
     "level": 4,
@@ -1627,7 +1768,9 @@
     "option_2": "そうですか、高いですか",
     "option_3": "そうですよ、安いですよ",
     "option_4": "そうですか、安いですか",
-    "correct_option": 2
+    "correct_option": 2,
+    "question_translation": "What do you put in [ 2 ]?",
+    "passage_translation": "(Suzuki is thinking about moving. He went to an apartment introduction shop.)\nSuzuki: \"Um, I'm looking for an apartment.\"\nShop person: \"What kind of apartment would you like?\"\nSuzuki: \"Well, I guess... something bright would be nice...\"\nShop person: \"How about this one? There's no large building next to it [ 1 ], so it's bright. Here's a photo.\"\nSuzuki: \"Ah, that's nice. How far is this apartment from the station?\"\nShop person: \"It's a five-minute walk.\"\nSuzuki: \"I see. That's convenient. How much is this room per month?\"\nShop person: \"70,000 yen.\"\nSuzuki: \"What? 70,000 yen? The room I live in now is about 40,000 yen, so it's a bit...\"\nShop person: \"[ 2 ]. Well then, how about this room? This apartment is also close to the station...\"\nSuzuki: \"Um, I ride a bicycle [ 3 ] the station. But I don't want it too expensive. Do you have an apartment for about 30,000 yen a month? It can be old.\"\nShop person: \"30,000 yen? I see. Let me search. Um, ah, I found one. It's a bit old, but it has two rooms and large windows. Would you like to go see it now?\"\nSuzuki: \"Yes, I'd like to see it.\""
   },
   {
     "level": 4,
@@ -1641,7 +1784,9 @@
     "option_2": "{遠い|とおい}とこまります",
     "option_3": "近いほうがこまりません",
     "option_4": "近くてこまります",
-    "correct_option": 1
+    "correct_option": 1,
+    "question_translation": "What do you put in [ 3 ]?",
+    "passage_translation": "(Suzuki is thinking about moving. He went to an apartment introduction shop.)\nSuzuki: \"Um, I'm looking for an apartment.\"\nShop person: \"What kind of apartment would you like?\"\nSuzuki: \"Well, I guess... something bright would be nice...\"\nShop person: \"How about this one? There's no large building next to it [ 1 ], so it's bright. Here's a photo.\"\nSuzuki: \"Ah, that's nice. How far is this apartment from the station?\"\nShop person: \"It's a five-minute walk.\"\nSuzuki: \"I see. That's convenient. How much is this room per month?\"\nShop person: \"70,000 yen.\"\nSuzuki: \"What? 70,000 yen? The room I live in now is about 40,000 yen, so it's a bit...\"\nShop person: \"[ 2 ]. Well then, how about this room? This apartment is also close to the station...\"\nSuzuki: \"Um, I ride a bicycle [ 3 ] the station. But I don't want it too expensive. Do you have an apartment for about 30,000 yen a month? It can be old.\"\nShop person: \"30,000 yen? I see. Let me search. Um, ah, I found one. It's a bit old, but it has two rooms and large windows. Would you like to go see it now?\"\nSuzuki: \"Yes, I'd like to see it.\""
   },
   {
     "level": 4,
@@ -1655,7 +1800,9 @@
     "option_2": "広くて高いアパート",
     "option_3": "明るくて安いアパート",
     "option_4": "広くて安いアパート",
-    "correct_option": 4
+    "correct_option": 4,
+    "question_translation": "What kind of apartment will Suzuki-san go to see next?",
+    "passage_translation": "(Suzuki is thinking about moving. He went to an apartment introduction shop.)\nSuzuki: \"Um, I'm looking for an apartment.\"\nShop person: \"What kind of apartment would you like?\"\nSuzuki: \"Well, I guess... something bright would be nice...\"\nShop person: \"How about this one? There's no large building next to it [ 1 ], so it's bright. Here's a photo.\"\nSuzuki: \"Ah, that's nice. How far is this apartment from the station?\"\nShop person: \"It's a five-minute walk.\"\nSuzuki: \"I see. That's convenient. How much is this room per month?\"\nShop person: \"70,000 yen.\"\nSuzuki: \"What? 70,000 yen? The room I live in now is about 40,000 yen, so it's a bit...\"\nShop person: \"[ 2 ]. Well then, how about this room? This apartment is also close to the station...\"\nSuzuki: \"Um, I ride a bicycle [ 3 ] the station. But I don't want it too expensive. Do you have an apartment for about 30,000 yen a month? It can be old.\"\nShop person: \"30,000 yen? I see. Let me search. Um, ah, I found one. It's a bit old, but it has two rooms and large windows. Would you like to go see it now?\"\nSuzuki: \"Yes, I'd like to see it.\""
   },
   {
     "level": 4,
@@ -1669,7 +1816,9 @@
     "option_2": "雨がふる日",
     "option_3": "風が強い日",
     "option_4": "風が{弱い|よわい}日",
-    "correct_option": 2
+    "correct_option": 2,
+    "question_translation": "In Japan, what kind of day is usually considered a \"bad weather day\"?",
+    "passage_translation": "In Japan, a rainy day is called a bad weather day. Why does Japan only call rainy days bad weather?\nOf course, when it rains, you have to use an umbrella. Your shoes get dirty and your bag gets wet. But I like rainy days. On rainy days, the green of the trees looks beautiful. It seems like the rain is washing away the dirty air, and it looks cleaner than on sunny days. Also, department stores and movie theaters are less crowded on rainy days. And the supermarket I always go to is cheaper on rainy days. Especially vegetables and fruit become very cheap, so I'm happy.\nI think strong wind is worse weather than rain, not rain itself. On windy days, dirt often gets in my eyes and bothers me. Also, sand gets into the house, and laundry blows away, which is difficult.\nRain is said to be bad weather, but I think ___ [blank]. What do you all think?"
   },
   {
     "level": 4,
@@ -1683,7 +1832,9 @@
     "option_2": "{野菜|やさい}やくだものがおいしいから",
     "option_3": "くつやかばんがきれいになるから",
     "option_4": "いつものけしきがきれいに見えるから",
-    "correct_option": 4
+    "correct_option": 4,
+    "question_translation": "Why do you like rainy days?",
+    "passage_translation": "In Japan, a rainy day is called a bad weather day. Why does Japan only call rainy days bad weather?\nOf course, when it rains, you have to use an umbrella. Your shoes get dirty and your bag gets wet. But I like rainy days. On rainy days, the green of the trees looks beautiful. It seems like the rain is washing away the dirty air, and it looks cleaner than on sunny days. Also, department stores and movie theaters are less crowded on rainy days. And the supermarket I always go to is cheaper on rainy days. Especially vegetables and fruit become very cheap, so I'm happy.\nI think strong wind is worse weather than rain, not rain itself. On windy days, dirt often gets in my eyes and bothers me. Also, sand gets into the house, and laundry blows away, which is difficult.\nRain is said to be bad weather, but I think ___ [blank]. What do you all think?"
   },
   {
     "level": 4,
@@ -1697,7 +1848,9 @@
     "option_2": "雨がふる日より風が強い日のほうが天気がいい",
     "option_3": "天気がいいか悪いかは風の強さではきめられない",
     "option_4": "天気がいいか悪いかは雨だけではきめられない",
-    "correct_option": 4
+    "correct_option": 4,
+    "question_translation": "What do you put in (...............)?",
+    "passage_translation": "In Japan, a rainy day is called a bad weather day. Why does Japan only call rainy days bad weather?\nOf course, when it rains, you have to use an umbrella. Your shoes get dirty and your bag gets wet. But I like rainy days. On rainy days, the green of the trees looks beautiful. It seems like the rain is washing away the dirty air, and it looks cleaner than on sunny days. Also, department stores and movie theaters are less crowded on rainy days. And the supermarket I always go to is cheaper on rainy days. Especially vegetables and fruit become very cheap, so I'm happy.\nI think strong wind is worse weather than rain, not rain itself. On windy days, dirt often gets in my eyes and bothers me. Also, sand gets into the house, and laundry blows away, which is difficult.\nRain is said to be bad weather, but I think ___ [blank]. What do you all think?"
   },
   {
     "level": 4,
@@ -1712,7 +1865,9 @@
     "option_3": "上田さんが持ってきたシャツをもらって、お金を{返|かえ}します。",
     "option_4": "上田さんが持ってきたシャツをチェックします。",
     "correct_option": 2,
-    "question_stem_display": "リナさんは、このメモを{読|よ}んで、{上田|うえだ}さんが{来|き}たら{何|なに}をしなければなりませんか。"
+    "question_stem_display": "リナさんは、このメモを{読|よ}んで、{上田|うえだ}さんが{来|き}たら{何|なに}をしなければなりませんか。",
+    "question_translation": "After Ueda-san reads this memo, what must Rena-san do?",
+    "passage_translation": "My Day\nI wake up at 6 AM every morning. I eat breakfast and leave the house at 7 AM. I take the train to school. School starts at 8 AM. I return home at 4 PM."
   },
   {
     "level": 4,
@@ -1727,7 +1882,9 @@
     "option_3": "{本当|ほんとう}の新聞ではないので、口に入れても安心です。",
     "option_4": "紙でできていますが、{何回|なんかい}でも{洗|あら}えて{便利|べんり}です。",
     "correct_option": 3,
-    "question_stem_display": "「{赤|あか}ちゃん{新聞|しんぶん}」について、{合|あ}っているものはどれですか。"
+    "question_stem_display": "「{赤|あか}ちゃん{新聞|しんぶん}」について、{合|あ}っているものはどれですか。",
+    "question_translation": "Which one is correct about the \"Red Baby Newspaper\"?",
+    "passage_translation": "Babies love to play with newspapers. However, they immediately put them in their mouths, so parents are troubled by this. That's why a toy company created a \"baby newspaper\" toy. Since it's not made of paper, it's safe to put in the mouth, and it can be washed many times, making it convenient."
   },
   {
     "level": 4,
@@ -1742,7 +1899,9 @@
     "option_3": "前川先生と高木先生に{練習|れんしゅう}を見てもらいたいかどうか",
     "option_4": "前川先生と高木先生に「{練習|れんしゅう}を見てください。」と{頼|たの}んだかどうか",
     "correct_option": 3,
-    "question_stem_display": "{卒業式|そつぎょうしき}のあいさつについて、{中西|なかにし}{先生|せんせい}がリムさんに{聞|き}きたいことは{何|なん}ですか。"
+    "question_stem_display": "{卒業式|そつぎょうしき}のあいさつについて、{中西|なかにし}{先生|せんせい}がリムさんに{聞|き}きたいことは{何|なん}ですか。",
+    "question_translation": "Regarding the graduation ceremony speech, what does Nakanishi-sensei want to ask Rim-san?",
+    "passage_translation": "Dear Rim,\nGood evening.\nThe graduation ceremony speech text you sent was really good.\nYou mentioned you were worried about whether you could speak well in front of everyone. Since both Mr. Maekawa and Mr. Takagi said, \"Should we look at your practice?\", let's ask them to help you practice.\nNakanishi"
   },
   {
     "level": 4,
@@ -1757,7 +1916,9 @@
     "option_3": "家の近くに広い{公園|こうえん}がなかったから",
     "option_4": "一人で{生活|せいかつ}がしたかったから",
     "correct_option": 2,
-    "question_stem_display": "どうして「{私|わたし}」は{引|ひ}っ{越|こ}しましたか。"
+    "question_stem_display": "どうして「{私|わたし}」は{引|ひ}っ{越|こ}しましたか。",
+    "question_translation": "Why did \"I\" move?",
+    "passage_translation": "Six months ago, I left the house where I was living with my family and moved to an apartment. After graduating from university and starting work at a company, my workplace was far from home. Since moving, on weekends I've started going for walks in a large park nearby. I enjoy it on my own—looking at seasonal flowers and drinking tea at a café inside the park.\nLast week, while I was taking a walk, I heard music. At first, I thought it was from the park's loudspeaker system, but it was the sound of a man practicing guitar under a tree. The man's guitar playing was very skillful.\nWhen I heard the man's guitar, I remembered my own violin. From childhood until I graduated from university, I played violin at home quite often. But I can't play in my current apartment. If I made loud sounds, the neighbors would think I was being noisy. However, the park seems like a place where I don't have to worry about bothering anyone.\nToday, I took my violin to the park and played it. At first, I was embarrassed to play in a place where people were around. But gradually I got used to it and it stopped bothering me. I was able to play a lot, and it felt wonderful. I've found a good place."
   },
   {
     "level": 4,
@@ -1772,7 +1933,9 @@
     "option_3": "音楽を聞いていました。",
     "option_4": "ギターを{弾|ひ}いていました。",
     "correct_option": 4,
-    "question_stem_display": "「{私|わたし}」が{先週|せんしゅう}、{散歩|さんぽ}をしているとき、{公園|こうえん}で{見|み}た{男|おとこ}の{人|ひと}は{何|なに}をしていましたか。"
+    "question_stem_display": "「{私|わたし}」が{先週|せんしゅう}、{散歩|さんぽ}をしているとき、{公園|こうえん}で{見|み}た{男|おとこ}の{人|ひと}は{何|なに}をしていましたか。",
+    "question_translation": "When \"I\" was taking a walk last week, what was the man I saw in the park doing?",
+    "passage_translation": "Six months ago, I left the house where I was living with my family and moved to an apartment. After graduating from university and starting work at a company, my workplace was far from home. Since moving, on weekends I've started going for walks in a large park nearby. I enjoy it on my own—looking at seasonal flowers and drinking tea at a café inside the park.\nLast week, while I was taking a walk, I heard music. At first, I thought it was from the park's loudspeaker system, but it was the sound of a man practicing guitar under a tree. The man's guitar playing was very skillful.\nWhen I heard the man's guitar, I remembered my own violin. From childhood until I graduated from university, I played violin at home quite often. But I can't play in my current apartment. If I made loud sounds, the neighbors would think I was being noisy. However, the park seems like a place where I don't have to worry about bothering anyone.\nToday, I took my violin to the park and played it. At first, I was embarrassed to play in a place where people were around. But gradually I got used to it and it stopped bothering me. I was able to play a lot, and it felt wonderful. I've found a good place."
   },
   {
     "level": 4,
@@ -1787,7 +1950,9 @@
     "option_3": "{一緒に|いっしょに}バイオリンを{弾|ひ}いてくれる人がいるから",
     "option_4": "{周り|まわり}にいる人が「私」のバイオリンをほめてくれるから",
     "correct_option": 1,
-    "question_stem_display": "「いい{場所|ばしょ}が{見|み}つかりました」とありますが、どうして「{私|わたし}」はいいと{思|おも}っていますか。"
+    "question_stem_display": "「いい{場所|ばしょ}が{見|み}つかりました」とありますが、どうして「{私|わたし}」はいいと{思|おも}っていますか。",
+    "question_translation": "It says \"I found a good location.\" Why does \"I\" think it's good?",
+    "passage_translation": "Six months ago, I left the house where I was living with my family and moved to an apartment. After graduating from university and starting work at a company, my workplace was far from home. Since moving, on weekends I've started going for walks in a large park nearby. I enjoy it on my own—looking at seasonal flowers and drinking tea at a café inside the park.\nLast week, while I was taking a walk, I heard music. At first, I thought it was from the park's loudspeaker system, but it was the sound of a man practicing guitar under a tree. The man's guitar playing was very skillful.\nWhen I heard the man's guitar, I remembered my own violin. From childhood until I graduated from university, I played violin at home quite often. But I can't play in my current apartment. If I made loud sounds, the neighbors would think I was being noisy. However, the park seems like a place where I don't have to worry about bothering anyone.\nToday, I took my violin to the park and played it. At first, I was embarrassed to play in a place where people were around. But gradually I got used to it and it stopped bothering me. I was able to play a lot, and it felt wonderful. I've found a good place."
   },
   {
     "level": 4,
@@ -1802,7 +1967,9 @@
     "option_3": "10,000円",
     "option_4": "12,000円",
     "correct_option": 3,
-    "question_stem_display": "{石川|いしかわ}さんは「8{月|がつ}のみどり{島|しま}{一日|いちにち}{旅行|りょこう}」に{行|い}きたいと{思|おも}っています。{石川|いしかわ}さんは{高校生|こうこうせい}で、{出発|しゅっぱつ}は{今中|いまなか}{駅|えき}がいいです。{石川|いしかわ}さんの{料金|りょうきん}はいくらになりますか。"
+    "question_stem_display": "{石川|いしかわ}さんは「8{月|がつ}のみどり{島|しま}{一日|いちにち}{旅行|りょこう}」に{行|い}きたいと{思|おも}っています。{石川|いしかわ}さんは{高校生|こうこうせい}で、{出発|しゅっぱつ}は{今中|いまなか}{駅|えき}がいいです。{石川|いしかわ}さんの{料金|りょうきん}はいくらになりますか。",
+    "question_translation": "Ishikawa-san wants to go on a one-day trip to Midori Island in August and is a high school student. The departure from Imanaka Station works for Ishikawa-san. How much will Ishikawa-san's fare be?",
+    "passage_translation": "One-Day Trip to Midori Island in August\nWouldn't you like to enjoy the beautiful sea at Midori Island? There are lots of cute fish too!\n<Schedule>\nOutbound: Nishida Station or Imanaka Station (8:00) → Imanaka Port (9:00) → Midori Island (10:00)\nReturn: Midori Island (15:00) → Imanaka Port (16:00) → Nishida Station or Imanaka Station (17:00)\nYou can choose your departure station from Nishida Station or Imanaka Station.\n<Fees>\nNishida Station   Adult 12,000 yen   Child 6,000 yen\nImanaka Station   Adult 10,000 yen   Child 5,000 yen\n※Adult: High school students and older\n※Child: Elementary and middle school students (Children not yet in elementary school are free)\n<Reservations>\n8/5 (Sat) ◎ Available   8/6 (Sun) ×Not available   8/12 (Sat) ×Not available\n8/13 (Sun) △ Filling up soon   8/19 (Sat) ◎ Available\n8/20 (Sun) ◎ Available   8/26 (Sat) ×Not available   8/27 (Sun) ◎ Available\nYuuki Travel"
   },
   {
     "level": 4,
@@ -1817,6 +1984,8 @@
     "option_3": "12日と19日",
     "option_4": "19日",
     "correct_option": 4,
-    "question_stem_display": "ロンさんは{友達|ともだち}と3{人|にん}で{旅行|りょこう}に{行|い}きたいです。3{人|にん}がみんな{空|あ}いている{日|ひ}で{予約|よやく}ができるのはいつですか。ソニアさんは5{日|にち}、12{日|にち}、19{日|にち}。チョウさんは12{日|にち}、13{日|にち}、19{日|にち}、20{日|にち}。ロンさんは5{日|にち}、12{日|にち}、13{日|にち}、19{日|にち}が{空|あ}いています。"
+    "question_stem_display": "ロンさんは{友達|ともだち}と3{人|にん}で{旅行|りょこう}に{行|い}きたいです。3{人|にん}がみんな{空|あ}いている{日|ひ}で{予約|よやく}ができるのはいつですか。ソニアさんは5{日|にち}、12{日|にち}、19{日|にち}。チョウさんは12{日|にち}、13{日|にち}、19{日|にち}、20{日|にち}。ロンさんは5{日|にち}、12{日|にち}、13{日|にち}、19{日|にち}が{空|あ}いています。",
+    "question_translation": "Ron-san wants to go on a trip with two friends. On which day can all three of them make a reservation when they're all free? Sonia-san is free on the 5th, 12th, and 19th. Chou-san is free on the 12th, 13th, 19th, and 20th. Ron-san is free on the 5th, 12th, 13th, and 19th.",
+    "passage_translation": "One-Day Trip to Midori Island in August\nWouldn't you like to enjoy the beautiful sea at Midori Island? There are lots of cute fish too!\n<Schedule>\nOutbound: Nishida Station or Imanaka Station (8:00) → Imanaka Port (9:00) → Midori Island (10:00)\nReturn: Midori Island (15:00) → Imanaka Port (16:00) → Nishida Station or Imanaka Station (17:00)\nYou can choose your departure station from Nishida Station or Imanaka Station.\n<Fees>\nNishida Station   Adult 12,000 yen   Child 6,000 yen\nImanaka Station   Adult 10,000 yen   Child 5,000 yen\n※Adult: High school students and older\n※Child: Elementary and middle school students (Children not yet in elementary school are free)\n<Reservations>\n8/5 (Sat) ◎ Available   8/6 (Sun) ×Not available   8/12 (Sat) ×Not available\n8/13 (Sun) △ Filling up soon   8/19 (Sat) ◎ Available\n8/20 (Sun) ◎ Available   8/26 (Sat) ×Not available   8/27 (Sun) ◎ Available\nYuuki Travel"
   }
 ]

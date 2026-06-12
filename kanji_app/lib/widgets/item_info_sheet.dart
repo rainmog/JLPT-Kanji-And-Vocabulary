@@ -63,7 +63,7 @@ class KanjiInfoContent extends StatelessWidget {
         const SizedBox(height: 10),
         FutureBuilder<List<Map<String, dynamic>>>(
           future: dbService.query(
-            'SELECT text_kanji, english_translation FROM sentences WHERE kanji_id=? AND difficulty<=3 ORDER BY difficulty ASC LIMIT 5',
+            'SELECT text_kanji, english_translation FROM sentences WHERE kanji_id=? ORDER BY RANDOM() LIMIT 5',
             [kanji.id],
           ),
           builder: (context, snapshot) {
@@ -72,7 +72,7 @@ class KanjiInfoContent extends StatelessWidget {
             }
             final rows = snapshot.data ?? [];
             if (rows.isEmpty) {
-              return Text('No example sentences.',
+              return Text('There are no sentences for this kanji.',
                   style: TextStyle(fontSize: 13, color: AppColors.muted));
             }
             return Column(
@@ -157,6 +157,17 @@ class VocabInfoContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
+        if (word.isUsuallyKana)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              'Usually written in kana',
+              style: TextStyle(
+                fontSize: 13, fontWeight: FontWeight.w600,
+                color: AppColors.accent, fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
         ...meanings.map((m) => Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
@@ -173,7 +184,7 @@ class VocabInfoContent extends StatelessWidget {
         const SizedBox(height: 10),
         FutureBuilder<List<Map<String, dynamic>>>(
           future: dbService.query(
-            'SELECT text_kanji, english_translation FROM sentences WHERE text_kanji LIKE ? AND difficulty<=3 ORDER BY difficulty ASC LIMIT 5',
+            'SELECT text_kanji, english_translation FROM sentences WHERE text_kanji LIKE ? ORDER BY RANDOM() LIMIT 5',
             ['%${word.word}%'],
           ),
           builder: (context, snapshot) {
@@ -182,7 +193,7 @@ class VocabInfoContent extends StatelessWidget {
             }
             final rows = snapshot.data ?? [];
             if (rows.isEmpty) {
-              return Text('No example sentences.',
+              return Text('There are no sentences for this word.',
                   style: TextStyle(fontSize: 13, color: AppColors.muted));
             }
             return Column(

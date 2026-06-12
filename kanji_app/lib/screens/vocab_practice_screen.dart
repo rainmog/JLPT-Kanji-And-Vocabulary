@@ -133,7 +133,8 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
     final learned = await progressRepo.getLearnedKanjiCharacters();
     if (!mounted) return;
     setState(() {
-      _queue = widget.words;
+      // Show each word twice; shuffle so repetitions are interleaved.
+      _queue = [...widget.words, ...widget.words]..shuffle();
       _learnedKanji = learned;
       _loading = false;
     });
@@ -191,10 +192,8 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
     });
     if (correct) {
       soundService.playCorrect();
-      _autoNextTimer = Timer(const Duration(seconds: 1), _next);
     } else {
       soundService.playWrong();
-      _autoNextTimer = Timer(const Duration(milliseconds: 1200), _next);
     }
   }
 
@@ -212,10 +211,8 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
     });
     if (correct) {
       soundService.playCorrect();
-      _autoNextTimer = Timer(const Duration(seconds: 1), _next);
     } else {
       soundService.playWrong();
-      _autoNextTimer = Timer(const Duration(milliseconds: 1200), _next);
     }
   }
 
@@ -268,10 +265,10 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
         textAlign: TextAlign.center,
       );
     } else {
-      if (word.word == word.reading) {
-        // Kana-only word
+      if (word.word == word.reading || word.isUsuallyKana) {
+        // Kana-only or usually-written-in-kana word
         return Text(
-          word.word,
+          word.reading,
           style: TextStyle(
             fontSize: 80,
             fontWeight: FontWeight.w600,
@@ -282,7 +279,8 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
           textAlign: TextAlign.center,
         );
       } else {
-        // Has kanji — furigana reading above, then RubyText or plain kanji
+        // Has kanji — when toggle OFF: full reading above, no inline furigana.
+        // When toggle ON: no reading above, inline furigana only for unlearned chars.
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -301,8 +299,8 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
               '{${word.word}|${word.reading}}',
               fontSize: 80,
               color: AppColors.fg,
-              showFurigana: false, // reading shown above separately
-              suppressedKanji: widget.suppressFurigana ? null : _learnedKanji,
+              showFurigana: widget.suppressFurigana,
+              suppressedKanji: widget.suppressFurigana ? _learnedKanji : null,
               centered: true,
             ),
           ],
@@ -546,6 +544,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
           autofocus: true,
           textCapitalization: TextCapitalization.none,
           textAlign: TextAlign.center,
+          inputFormatters: widget.reverseMode ? [RomajiInputFormatter()] : null,
           decoration: InputDecoration(
             hintText: hintText,
             filled: true,

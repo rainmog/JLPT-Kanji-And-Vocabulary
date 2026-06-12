@@ -1,6 +1,47 @@
 import 'package:flutter/material.dart';
 import 'theme_provider.dart';
 
+// ── Design tokens derived from ThemeColors for the redesigned UI ──────────────
+class KDesign {
+  static Color ink(ThemeColors t) => t.kanjiColor;
+  static Color inkSoft(ThemeColors t) => t.muted;
+  static Color inkFaint(ThemeColors t) => Color.lerp(t.muted, t.bg, 0.5)!;
+  static Color line(ThemeColors t) => t.pillBg;
+  static Color tint(ThemeColors t) => t.accent.withValues(alpha: 0.13);
+  static Color soft(ThemeColors t) => t.accent.withValues(alpha: 0.22);
+  static Color deep(ThemeColors t) {
+    final hsl = HSLColor.fromColor(t.accent);
+    return hsl.withLightness((hsl.lightness - 0.12).clamp(0.0, 1.0)).toColor();
+  }
+  static Color bgWarm(ThemeColors t) => t.bg;
+  static Color surface(ThemeColors t) => t.surface;
+  static const Color gold = Color(0xFFE0A23C);
+  static const Color goldSoft = Color(0xFFFDF3E3);
+  static Color green(ThemeColors t) => t.correct;
+  static Color greenSoft(ThemeColors t) => t.correctBg;
+
+  static List<BoxShadow> shadowSm(ThemeColors t) => [
+    BoxShadow(
+      color: t.accent.withValues(alpha: 0.07),
+      blurRadius: 8,
+      offset: const Offset(0, 2),
+    ),
+  ];
+
+  static List<BoxShadow> shadowAccent(ThemeColors t) => [
+    BoxShadow(
+      color: t.accent.withValues(alpha: 0.16),
+      blurRadius: 13,
+      offset: const Offset(0, 5),
+    ),
+  ];
+
+  static BorderRadius get cardRadius => BorderRadius.circular(16);
+  static BorderRadius get heroRadius => BorderRadius.circular(22);
+  static BorderRadius get chipRadius => BorderRadius.circular(12);
+  static BorderRadius get pillRadius => BorderRadius.circular(99);
+}
+
 ThemeColors _currentTheme = simpleLightTheme;
 void setCurrentTheme(ThemeColors t) { _currentTheme = t; }
 

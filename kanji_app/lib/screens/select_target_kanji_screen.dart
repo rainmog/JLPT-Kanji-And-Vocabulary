@@ -4,7 +4,9 @@ import '../repositories/kanji_repository.dart';
 import '../repositories/progress_repository.dart';
 import '../services/sound_service.dart';
 import '../theme.dart';
+import '../theme_provider.dart';
 import '../utils/app_route.dart';
+import '../widgets/k_setup.dart';
 import '../widgets/scale_on_press.dart';
 import '../widgets/item_info_sheet.dart';
 
@@ -27,57 +29,68 @@ class SelectTargetKanjiScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = ref.watch(themeColorsProvider);
     final tagsAsync = ref.watch(_kanjiTagsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Select Target Kanji')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('By Level',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.muted)),
-            const SizedBox(height: 10),
-            _LevelButton(
-              label: 'All Kanji',
-              onTap: () => Navigator.push(context,
-                AppRoute.to(const KanjiGridScreen(level: null))),
-            ),
-            const SizedBox(height: 8),
-            Row(children: [5, 4, 3, 2, 1].map((level) => Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 3),
-                child: _LevelButton(
-                  label: 'N$level',
-                  onTap: () => Navigator.push(context,
-                    AppRoute.to(KanjiGridScreen(level: level))),
-                ),
-              ),
-            )).toList()),
-            const SizedBox(height: 24),
-
-            Text('By Category',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.muted)),
-            const SizedBox(height: 10),
-            tagsAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text('Error: $e', style: TextStyle(color: AppColors.muted)),
-              data: (tags) => tags.isEmpty
-                ? Text('No categories available.',
-                    style: TextStyle(color: AppColors.muted, fontSize: 13))
-                : Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: tags.map((tag) => _TagButton(
-                      tag: tag,
-                      onTap: () => Navigator.push(context,
-                        AppRoute.to(KanjiGridScreen(level: null, tag: tag))),
-                    )).toList(),
+      backgroundColor: colors.bg,
+      body: SafeArea(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+            child: KBackHeader(title: 'Select Target Kanji', colors: colors),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('By Level',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colors.muted)),
+                  const SizedBox(height: 10),
+                  _LevelButton(
+                    label: 'All Kanji',
+                    onTap: () => Navigator.push(context,
+                      AppRoute.to(const KanjiGridScreen(level: null))),
                   ),
+                  const SizedBox(height: 8),
+                  Row(children: [5, 4, 3, 2, 1].map((level) => Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                      child: _LevelButton(
+                        label: 'N$level',
+                        onTap: () => Navigator.push(context,
+                          AppRoute.to(KanjiGridScreen(level: level))),
+                      ),
+                    ),
+                  )).toList()),
+                  const SizedBox(height: 24),
+
+                  Text('By Category',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colors.muted)),
+                  const SizedBox(height: 10),
+                  tagsAsync.when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (e, _) => Text('Error: $e', style: TextStyle(color: colors.muted)),
+                    data: (tags) => tags.isEmpty
+                      ? Text('No categories available.',
+                          style: TextStyle(color: colors.muted, fontSize: 13))
+                      : Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: tags.map((tag) => _TagButton(
+                            tag: tag,
+                            onTap: () => Navigator.push(context,
+                              AppRoute.to(KanjiGridScreen(level: null, tag: tag))),
+                          )).toList(),
+                        ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ]),
       ),
     );
   }
@@ -220,14 +233,14 @@ class KanjiGridScreenState extends ConsumerState<KanjiGridScreen> {
     }
   }
 
-  Color _tileColor(String status) {
+  Color _tileColor(String status, ThemeColors colors) {
     switch (status) {
       case 'target':
-        return AppColors.accent.withValues(alpha: 0.85);
+        return colors.accent.withValues(alpha: 0.85);
       case 'learned':
         return AppColors.correct.withValues(alpha: 0.6);
       default:
-        return AppColors.btnBg;
+        return colors.btnBg;
     }
   }
 
@@ -237,7 +250,7 @@ class KanjiGridScreenState extends ConsumerState<KanjiGridScreen> {
     return 'N${widget.level} Kanji';
   }
 
-  Widget _buildBody(List<(Kanji, String)> items) {
+  Widget _buildBody(List<(Kanji, String)> items, ThemeColors colors) {
     final allSelected = items.isNotEmpty &&
         items.every((item) => _statusFor(item.$1, items) != 'unlearned');
     final targetedCount = items
@@ -252,12 +265,12 @@ class KanjiGridScreenState extends ConsumerState<KanjiGridScreen> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             color: allSelected
-                ? AppColors.accent.withValues(alpha: 0.15)
-                : AppColors.surface,
+                ? colors.accent.withValues(alpha: 0.15)
+                : colors.surface,
             child: Row(children: [
               Icon(
                 allSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                color: allSelected ? AppColors.accent : AppColors.muted,
+                color: allSelected ? colors.accent : colors.muted,
                 size: 22,
               ),
               const SizedBox(width: 12),
@@ -266,18 +279,18 @@ class KanjiGridScreenState extends ConsumerState<KanjiGridScreen> {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: allSelected ? AppColors.accent : AppColors.fg,
+                  color: allSelected ? colors.accent : colors.fg,
                 ),
               ),
               const Spacer(),
               Text(
                 '$targetedCount / ${items.length}',
-                style: TextStyle(fontSize: 13, color: AppColors.muted),
+                style: TextStyle(fontSize: 13, color: colors.muted),
               ),
             ]),
           ),
         ),
-        Divider(height: 1, color: AppColors.pillBg),
+        Divider(height: 1, color: colors.pillBg),
         Expanded(
           child: GridView.builder(
             padding: const EdgeInsets.all(12),
@@ -295,7 +308,7 @@ class KanjiGridScreenState extends ConsumerState<KanjiGridScreen> {
                 onLongPress: () => showKanjiInfoSheet(context, kanji),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: _tileColor(status),
+                    color: _tileColor(status, colors),
                     borderRadius: BorderRadius.circular(AppColors.buttonRadius),
                   ),
                   alignment: Alignment.center,
@@ -303,7 +316,7 @@ class KanjiGridScreenState extends ConsumerState<KanjiGridScreen> {
                     kanji.character,
                     style: TextStyle(
                       fontSize: 22,
-                      color: status == 'target' ? AppColors.fg : AppColors.kanjiColor,
+                      color: status == 'target' ? colors.fg : AppColors.kanjiColor,
                     ),
                   ),
                 ),
@@ -317,37 +330,46 @@ class KanjiGridScreenState extends ConsumerState<KanjiGridScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final scaffold = Scaffold(
-      appBar: AppBar(
-        title: Text(_addLearnedMode ? 'Tap to mark as learned' : _screenTitle),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _addLearnedMode ? Icons.school : Icons.school_outlined,
-              color: _addLearnedMode ? AppColors.accent : AppColors.fg,
+    final colors = ref.watch(themeColorsProvider);
+    return Scaffold(
+      backgroundColor: colors.bg,
+      body: SafeArea(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+            child: KBackHeader(
+              title: _addLearnedMode ? 'Tap to mark as learned' : _screenTitle,
+              colors: colors,
+              trailing: IconButton(
+                icon: Icon(
+                  _addLearnedMode ? Icons.school : Icons.school_outlined,
+                  color: _addLearnedMode ? colors.accent : KDesign.ink(colors),
+                ),
+                tooltip: 'Add Learned Kanji',
+                onPressed: () => setState(() => _addLearnedMode = !_addLearnedMode),
+              ),
             ),
-            tooltip: 'Add Learned Kanji',
-            onPressed: () => setState(() => _addLearnedMode = !_addLearnedMode),
           ),
-        ],
+          Expanded(
+            child: widget.tag != null
+                ? ref.watch(_kanjiTagStatusProvider(widget.tag!)).when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (e, _) => Center(child: Text('Error: $e')),
+                    data: (items) => _buildBody(items, colors),
+                  )
+                : ref.watch(_kanjiStatusProvider).when(
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (e, _) => Center(child: Text('Error: $e')),
+                    data: (allData) {
+                      final items = widget.level == null
+                          ? allData.values.expand((l) => l).toList()
+                          : (allData[widget.level] ?? []);
+                      return _buildBody(items, colors);
+                    },
+                  ),
+          ),
+        ]),
       ),
-      body: widget.tag != null
-          ? ref.watch(_kanjiTagStatusProvider(widget.tag!)).when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('Error: $e')),
-              data: _buildBody,
-            )
-          : ref.watch(_kanjiStatusProvider).when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('Error: $e')),
-              data: (allData) {
-                final items = widget.level == null
-                    ? allData.values.expand((l) => l).toList()
-                    : (allData[widget.level] ?? []);
-                return _buildBody(items);
-              },
-            ),
     );
-    return scaffold;
   }
 }

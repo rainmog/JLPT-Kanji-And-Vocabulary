@@ -47,8 +47,10 @@ class _VocabPracticeConfigScreenState extends ConsumerState<VocabPracticeConfigS
       );
       return;
     }
-    final words = allWords.length > _count
-        ? (List<VocabWord>.from(allWords)..shuffle()).sublist(0, _count)
+    // Each word is practiced twice; select half the question count as unique words.
+    final wordCount = (_count / 2).ceil();
+    final words = allWords.length > wordCount
+        ? (List<VocabWord>.from(allWords)..shuffle()).sublist(0, wordCount)
         : allWords;
     soundService.playSelectButton();
     Navigator.push(context, AppRoute.to(PracticePreviewScreen(

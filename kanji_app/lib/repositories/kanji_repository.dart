@@ -321,6 +321,14 @@ class KanjiRepository {
     );
     return rows.map((r) => r['character'] as String).toSet();
   }
+
+  Future<int> getHighPracticeTargetCount(int threshold) async {
+    final rows = await dbService.query(
+      "SELECT COUNT(*) as cnt FROM user_progress WHERE status='target' AND COALESCE(practice_correct_count,0) > ?",
+      [threshold],
+    );
+    return rows.first['cnt'] as int? ?? 0;
+  }
 }
 
 final kanjiRepo = KanjiRepository();

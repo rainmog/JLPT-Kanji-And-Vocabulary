@@ -1,101 +1,41 @@
-# Next Step: Delete orphaned screens + redesign remaining ⬜ screens
-
-## Recent work (2026-06-09)
-- **Bug fix**: Auto-progression now staged: hiragana first (15) → katakana+vocab → kanji+vocab. Fresh/clean-start users progress through kana before kanji.
-- **Bug fix**: Unlearn tap added for kana and vocab (confirm dialog). Previously learned kana/vocab were non-interactive.
-- **Select All logic**: now targets only unlearned items; if all are learned/targeted, shows popup to reset all to unlearned. Applies to kanji, vocab, and kana per-row.
-- **JLPT Practice screen**: swipe left reveals test history (filtered to JLPT by default). `TestHistoryScreen` now reachable.
-- **Item Info Sheets**: long-press on any kanji/vocab/kana tile shows modal bottom sheet with readings, meanings, example sentences/related words. Tap in vocab dictionary also opens sheet. `kanji_detail_screen` rewritten to use `KanjiInfoContent`.
-- **Practice Preview Screen**: inserted between config and session for all 3 practice types. Shows grid of items; tap opens info sheet. Kanji config uses `pickKanjiForSession` (ordered by practice count for test selection).
-- **Practice Identification Tracker**: per-item correct-answer counter persisted in `practice_correct_count` column. Shown in session/vocab/kana results. Resets to 0 on item learned. Kanji/kana test modes select highest-count items first.
-
-Exercise/session screens redesigned (2026-06-08). Remaining work:
-
-- **Delete 9 orphaned screens** (❌ in DEVNOTES.md): `about_screen.dart`, `filter_screen.dart`, `review_screen.dart`, `result_screen.dart`, `test_intro_screen.dart`, `vocab_test_intro_screen.dart`, `untargeted_practice_screen.dart`, `word_session_screen.dart`, `session_config_screen.dart`
-- **Remaining ⬜ screens** (~10): `select_target_kanji_screen`, `vocab_list_screen`, `select_target_kana_screen`, `word_result_screen`, `matching_game_config_screen`, `speed_read_config_screen`, `jlpt_test_session_screen`, `vocab_test_session_screen`, `vocab_test_result_screen`, `kanji_data_license_screen`, `stats_screen`, `onboarding_n5_screen`, `onboarding_welcome_back_screen`
-- **Design patterns**: tokens in `theme.dart` → `KDesign`, shared widgets in `widgets/k_setup.dart`, nav = hub-and-spoke push/pop with `AppRoute.to()`, no bottom bar
-- **Current `AppSettings` fields**: `difficultyMin/Max`, `sessionSize`, `autoNextDelaySeconds`, `ambientSfx`, `ambientVolume`, `sfxVolume`, `sfxEnabled`, `ambientEnabled`, `animationsEnabled`, `showTrackerPicker`, `englishFont`, `japaneseFont`, `homeTrackers: List<String>`, `dailyGoal`, `autoProgressionEnabled: bool`, `autoProgressionKanjiQuota: int`, `autoProgressionVocabQuota: int`, `completedKanjiLevels: List<int>`, `completedVocabLevels: List<int>`
-- **Tracker ID format**: `kanji:all`, `vocab:all`, `hiragana:all`, `katakana:all`, `kanji:N5`–`kanji:N1`, `vocab:N5`–`vocab:N1`, `kanji:tag:<tag>`, `vocab:tag:<tag>`
+# Next Steps
 
 ---
 
-# Future Implementations
+# Future Ideas
 
-- Complete Kanji Database (N1 sentences have 3/9 sentences complete. N5-N1 done.)
-
-- Consider adding more fonts
-
-- Publish a clean database of kanji/sentences/vocab to GitHub for public download
-
-- ~~Add system to show vocab/kanji by frequency.~~
-
-- ~~Add tags to vocabulary and kanji entries.~~
-
-- ~~Implement JLPT practice tests and test result history~~
-
-- ~~Add ambient royalty-free background sounds/music option in Settings~~ 
-
-- ~~Add the ability to export data (kanji progress, vocab lists, test results)~~ 
-
-- ~~Fill out About screen (button placeholder added to home screen)~~ 
-
-- ~~Add a new app font and make it configurable in Settings~~ 
-
-- ~~JLPT test result history~~ 
-
-- ~~N4–N1 JLPT practice tests~~ 
-
-- ~~Show 2 or 3 of the common meanings of words instead of just one~~
-
-- **Story Mode** (future) — optional toggle in Settings. Locks kanji progression in-order within chosen JLPT level (N5→N1). Point economy: start 50pts, 10 target kanji; buy kanji 5pts each; practice/games free + reward points; tests cost 20pts, refund = correct answers count. Clear a level to unlock the next. Toggle on/off at any time (state persists). Key open questions: (1) what defines "clear" — all kanji learned, or pass rate on level test? (2) in-order criterion — DB order, stroke count, or frequency rank? (3) behaviour at 0pts — fully locked or can still practice? (4) kanji-only or affects vocab too? Implementation notes: add `StoryModeService` + new DB tables (don't touch existing progress tables); points logic touches all result screens; gating touches target selection + home screen.
+- **Story Mode** — progression lock with point economy. Toggle in Settings. Points: start 50, target kanji 5pts each, tests cost 20pts (refund = correct count). Open questions: (1) "clear" = all learned or pass rate? (2) ordering = DB/stroke/frequency? (3) 0pts = locked or practice-only? (4) kanji-only or also vocab? Needs `StoryModeService` + new DB tables; touches all result screens and target selection.
+- **Vocab level reclassification** - 1794 "Other" words need proper JLPT levels. Candidates: jisho.org API scan of `#jlpt-n1`→`#jlpt-n5`, or jpdb.io data. Script: `tools/import_core6k.py` (presence filter), `tools/dedup_vocab.py`. Rebuild with `build_db.py` after.
 
 ---
 
-# Google Play Pre-Launch Checklist
+# Completed
 
-## Blocks submission
-
-- [x] **Release signing keystore** — generate keystore, configure `android/app/build.gradle.kts` (replace debug signingConfig). Back up `.jks` file — losing it means no future updates.
-  
-  ```bash
-  keytool -genkey -v -keystore ~/kanji-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias kanji-key
-  ```
-
-- [ ] **Host privacy policy** — convert `store_assets/privacy_policy.md` to a public URL (GitHub Pages). Paste URL into Play Console.
-
-## Required assets (Play Console won't let you submit without these)
-
-- [ ] **Feature graphic** (1024×500 PNG) → `store_assets/feature_graphic/`. Dark background, app logo/title centred, faint kanji in background.
-
-## Play Console forms
-
-- [ ] **Data Safety questionnaire** — answer "No" to all data collection/sharing questions.
-- [ ] **IARC content rating** — fill questionnaire (expect "Everyone").
-- [ ] **Play Store long description** — include JLPT disclaimer: *"JLPT® is a registered trademark of JEES. This app is not affiliated with or endorsed by JEES or the Japan Foundation."*
-
-## Before final build
-
-- [ ] **Clean up permissions** in `android/app/src/main/AndroidManifest.xml` — keep READ/WRITE_EXTERNAL_STORAGE (needed for export to external storage). Remove the 3 unused media permissions:
-  
-  ```xml
-  <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-  <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
-  <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
-  ```
-
-- [ ] **Build AAB** (not APK) for Play Store submission:
-  
-  ```bash
-  cd kanji_app && flutter build appbundle --release
-  ```
-
-## Done (pre-launch prep completed)
-
-- [x] Application ID changed: `com.example.kanji_app` → `com.rainmog.kanji_app`
-- [x] Theme renamed: "Potential Copyright Lawsuit #01" → "Colorful Bricks"
-- [x] Credits screen: KANJIDIC2 (CC BY-SA 4.0), JMdict (CC BY-SA 4.0), kanji-data (MIT full text on linked screen)
-- [x] JLPT disclaimer added to About screen and Credits screen
-- [x] App icon 512×512 exported → `store_assets/icon/icon_512x512.png`
-- [x] Privacy policy draft → `store_assets/privacy_policy.md`
-- [x] Asset DB version system — user_progress preserved across content updates (bump `_assetDbVersion` in `database_service.dart` when shipping N1 sentences)
-- [x] **Screenshots** (min 2, phone) → `store_assets/screenshots/`. Capture from device or emulator.
+- Fonts: 5 English fonts added ✓ 2026-06-10
+- Background animations restored (snow, falling blocks, stars) ✓ 2026-06-10
+- Kana test page added to test hub ✓ 2026-06-10
+- All screens converted to KDesign (except stats_screen) ✓ 2026-06-10
+- N1 sentence database complete (2230 kanji × 9 sentences) ✓ 2026-06-11
+- Public DB export script (`tools/export_public_db.py`) ✓ 2026-06-11
+- "Usually written in kana" system (JMdict `uk` tag, 695 words) ✓ 2026-06-11
+- Vocab deduplication (8254 → 7173 entries) ✓ 2026-06-11
+- Core 6k vocab filtering (N1: 3340 → 920 validated; 1794 → Other) ✓ 2026-06-11
+- Nav bar + Progress screen: MainShell with 4 tabs (Study & Test, Progress, Dictionary, JLPT); ProgressScreen with kanji/vocab rings, by-level breakdown, tag groups bottom sheet ✓ 2026-06-11
+- JLPT nav tab fixed to route to JlptTestScreen (was TestHubScreen) ✓ 2026-06-11
+- KSetupHeader back button suppressed when Navigator.canPop is false (tab context) ✓ 2026-06-11
+- Home screen UI polish: + hit area 44×44, tracker→hero and hero→nav bumpers screen-% matched, goal ring 100px, "Test Targets" → "Test", usually-kana label in dict ✓ 2026-06-11
+- Test hub swipe indicators moved to top of each page ✓ 2026-06-11
+- Daily goal default changed to 100 ✓ 2026-06-11
+- Background animations: gentle_rain → Chou-chou Green, silver sparkle → Love Letter; aurora waves, fireflies, particle dust, shooting stars implemented but unused ✓ 2026-06-11
+- All orphaned screens deleted ✓ 2026-06-11
+- Credits page + study resources screen ✓ 2026-06-10
+- Theme picker on onboarding + bg animations on onboarding ✓ 2026-06-10
+- stats_screen deleted (never wired) ✓ 2026-06-12
+- Hero redesign: Variant C outline card (white surface, border, divider; gradient on Start Studying button; accent-colored ring + stats) ✓ 2026-06-12
+- Background overlays on all 4 nav tabs (Dictionary + JLPT now match Study & Test / Progress) ✓ 2026-06-12
+- Sentence mode bugs fixed: compound display (庭園 shows full compound not just 園), period inconsistency (。filtered), furigana okurigana (食べる → た not たべる) ✓ 2026-06-12
+- Theme palette pass 1: Simple Black, Simple Light, Starman redesigned ✓ 2026-06-12
+- Practice session proportional kanji: 10q→4 kanji, 20q→5, 30q→6, 40q→8 (sentence/word modes); vocab selects count/2 words shown twice each ✓ 2026-06-12
+- Practice preview screen: descriptive text per item type (kanji/vocab/kana) ✓ 2026-06-12
+- JLPT paragraph_reorder lockout fixed: now renders as multiple choice (was drag-and-drop with impossible 5-slot/4-chip N1 question) ✓ 2026-06-12
+- JLPT translation UI + data: 568 questions + 35 passages translated, DB v7, installed ✓ 2026-06-12

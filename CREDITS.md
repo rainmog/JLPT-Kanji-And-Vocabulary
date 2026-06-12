@@ -40,6 +40,20 @@ Sourced from Pixabay.com — https://pixabay.com
 
 ---
 
+## Fonts
+
+All fonts are licensed under the SIL Open Font License 1.1.
+
+**Inter Variable** — © The Inter Project Authors  
+**Nunito** — © Vernon Adams  
+**VT323** — © Peter Hull  
+**Crimson Pro** — © Jacques Le Bailly  
+**Quicksand** — © Andrew Paglinawan  
+**Space Grotesk** — © Florian Karsten  
+**Noto Serif CJK JP** — © Google LLC
+
+---
+
 ## Development
 
 Designed and developed with Claude Code by Anthropic.

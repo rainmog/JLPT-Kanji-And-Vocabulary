@@ -8,7 +8,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseService {
   // Bump when shipping a new kanji.db asset (e.g. N1 sentences added).
   // Users will get the new content; user_progress is preserved across the rebuild.
-  static const int _assetDbVersion = 2;
+  static const int _assetDbVersion = 7;
   static const String _prefDbVersion = 'db_asset_version';
 
   static Future<Database>? _initFuture;
@@ -70,6 +70,7 @@ class DatabaseService {
 
       if (savedProgress.isNotEmpty) {
         final db = await openDatabase(path);
+        await _runMigrations(db);
         final batch = db.batch();
         for (final row in savedProgress) {
           batch.insert('user_progress', row, conflictAlgorithm: ConflictAlgorithm.replace);
@@ -125,11 +126,12 @@ class DatabaseService {
       )
     ''');
 
-    // practice_correct_count — guarded by try/catch (ALTER TABLE fails if column already exists)
+    // guarded ALTER TABLEs — fail silently if column already exists
     for (final migration in [
       'ALTER TABLE user_progress ADD COLUMN practice_correct_count INTEGER DEFAULT 0',
       'ALTER TABLE vocabulary_progress ADD COLUMN practice_correct_count INTEGER DEFAULT 0',
       'ALTER TABLE kana_progress ADD COLUMN practice_correct_count INTEGER DEFAULT 0',
+      'ALTER TABLE session_log ADD COLUMN question_count INTEGER DEFAULT 0',
     ]) {
       try {
         await db.execute(migration);

@@ -9,7 +9,8 @@
     "option_3": "しょうかん",
     "option_4": "しゅうがん",
     "correct_option": 1,
-    "question_stem_display": "{彼女|かのじょ}は{毎朝|まいあさ}{新聞|しんぶん}を{読|よ}む習慣がある。「習慣」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{彼女|かのじょ}は{毎朝|まいあさ}{新聞|しんぶん}を{読|よ}む習慣がある。「習慣」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "She has the habit of reading the newspaper every morning. Which is the correct reading for \"習慣\"?"
   },
   {
     "level": 3,
@@ -21,7 +22,8 @@
     "option_3": "せつめえ",
     "option_4": "せつみょう",
     "correct_option": 1,
-    "question_stem_display": "{先生|せんせい}の説明がよくわからなかった。「説明」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{先生|せんせい}の説明がよくわからなかった。「説明」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "The teacher's explanation was hard to understand. Which is the correct reading for \"説明\"?"
   },
   {
     "level": 3,
@@ -33,7 +35,8 @@
     "option_3": "はっぴょ",
     "option_4": "はつひょ",
     "correct_option": 1,
-    "question_stem_display": "アンケートの{結果|けっか}を発表した。「発表」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "アンケートの{結果|けっか}を発表した。「発表」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "The results of the survey were announced. Which is the correct reading for \"発表\"?"
   },
   {
     "level": 3,
@@ -45,7 +48,8 @@
     "option_3": "しょうさ",
     "option_4": "しょうさく",
     "correct_option": 1,
-    "question_stem_display": "{工場|こうじょう}で{機械|きかい}を操作する{仕事|しごと}をしている。「操作」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{工場|こうじょう}で{機械|きかい}を操作する{仕事|しごと}をしている。「操作」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I work operating machinery at a factory. Which is the correct reading for \"操作\"?"
   },
   {
     "level": 3,
@@ -57,7 +61,8 @@
     "option_3": "しんさく",
     "option_4": "じんさく",
     "correct_option": 1,
-    "question_stem_display": "{体|からだ}の{具合|ぐあい}が{悪|わる}いので{医者|いしゃ}に診察してもらった。「診察」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{体|からだ}の{具合|ぐあい}が{悪|わる}いので{医者|いしゃ}に診察してもらった。「診察」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Because my body wasn't feeling well, I had a doctor examine me. Which is the correct reading for \"診察\"?"
   },
   {
     "level": 3,
@@ -69,7 +74,8 @@
     "option_3": "じあい",
     "option_4": "じかい",
     "correct_option": 1,
-    "question_stem_display": "{今日|きょう}の試合に{向|む}けて{練習|れんしゅう}を{重|かさ}ねた。「試合」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{今日|きょう}の試合に{向|む}けて{練習|れんしゅう}を{重|かさ}ねた。「試合」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "In preparation for today's match, we practiced repeatedly. Which is the correct reading for \"試合\"?"
   },
   {
     "level": 3,
@@ -81,7 +87,8 @@
     "option_3": "のうぎょ",
     "option_4": "のぎょう",
     "correct_option": 1,
-    "question_stem_display": "この{地域|ちいき}では農業が{盛|さか}んだ。「農業」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "この{地域|ちいき}では農業が{盛|さか}んだ。「農業」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Agriculture is thriving in this region. Which is the correct reading for \"農業\"?"
   },
   {
     "level": 3,
@@ -93,7 +100,8 @@
     "option_3": "えんぞう",
     "option_4": "えんずう",
     "correct_option": 1,
-    "question_stem_display": "{彼女|かのじょ}のピアノの演奏は{素晴|すば}らしかった。「演奏」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{彼女|かのじょ}のピアノの演奏は{素晴|すば}らしかった。「演奏」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Her piano performance was wonderful. Which is the correct reading for \"演奏\"?"
   },
   {
     "level": 3,
@@ -105,7 +113,8 @@
     "option_3": "きねい",
     "option_4": "きれい",
     "correct_option": 1,
-    "question_stem_display": "{卒業式|そつぎょうしき}の記念に{写真|しゃしん}を{撮|と}った。「記念」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{卒業式|そつぎょうしき}の記念に{写真|しゃしん}を{撮|と}った。「記念」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "As a memento of the graduation ceremony, we took a photo. Which is the correct reading for \"記念\"?"
   },
   {
     "level": 3,
@@ -117,7 +126,8 @@
     "option_3": "きょうけん",
     "option_4": "きょうげん",
     "correct_option": 1,
-    "question_stem_display": "{彼|かれ}は{海外|かいがい}で{豊|ゆた}かな経験を{積|つ}んだ。「経験」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{彼|かれ}は{海外|かいがい}で{豊|ゆた}かな経験を{積|つ}んだ。「経験」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "He gained rich experience overseas. Which is the correct reading for \"経験\"?"
   },
   {
     "level": 3,
@@ -129,7 +139,8 @@
     "option_3": "かくりん",
     "option_4": "かくにい",
     "correct_option": 1,
-    "question_stem_display": "{資料|しりょう}の{内容|ないよう}を確認してからサインした。「確認」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{資料|しりょう}の{内容|ないよう}を確認してからサインした。「確認」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I confirmed the content of the materials before signing. Which is the correct reading for \"確認\"?"
   },
   {
     "level": 3,
@@ -141,7 +152,8 @@
     "option_3": "そうか",
     "option_4": "そうが",
     "correct_option": 1,
-    "question_stem_display": "{両国|りょうこく}{間|かん}の{貿易|ぼうえき}が増加している。「増加」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{両国|りょうこく}{間|かん}の{貿易|ぼうえき}が増加している。「増加」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Trade between the two countries is increasing. Which is the correct reading for \"増加\"?"
   },
   {
     "level": 3,
@@ -153,7 +165,8 @@
     "option_3": "げかつ",
     "option_4": "げきつ",
     "correct_option": 1,
-    "question_stem_display": "この{問題|もんだい}を解決するためにみんなで{話|はな}し{合|あ}った。「解決」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "この{問題|もんだい}を解決するためにみんなで{話|はな}し{合|あ}った。「解決」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "We talked it over as a group to solve this problem. Which is the correct reading for \"解決\"?"
   },
   {
     "level": 3,
@@ -165,7 +178,8 @@
     "option_3": "れいらく",
     "option_4": "れいろく",
     "correct_option": 1,
-    "question_stem_display": "連絡が{遅|おく}れて{申|もう}し{訳|わけ}ありません。「連絡」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "連絡が{遅|おく}れて{申|もう}し{訳|わけ}ありません。「連絡」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "I apologize for the delay in contacting you. What is the reading for \"連絡\"?"
   },
   {
     "level": 3,
@@ -177,7 +191,8 @@
     "option_3": "じゅんぴ",
     "option_4": "しゅんぴ",
     "correct_option": 1,
-    "question_stem_display": "準備が{整|ととの}ったら{出発|しゅっぱつ}しましょう。「準備」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "準備が{整|ととの}ったら{出発|しゅっぱつ}しましょう。「準備」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "Let's depart once preparations are complete. What is the reading for \"準備\"?"
   },
   {
     "level": 3,
@@ -189,7 +204,8 @@
     "option_3": "ぜんもん",
     "option_4": "ぜんぼん",
     "correct_option": 1,
-    "question_stem_display": "{彼|かれ}は{自分|じぶん}の専門について{詳|くわ}しく{話|はな}してくれた。「専門」の{読|よ}み{方|かた}はどれですか。"
+    "question_stem_display": "{彼|かれ}は{自分|じぶん}の専門について{詳|くわ}しく{話|はな}してくれた。「専門」の{読|よ}み{方|かた}はどれですか。",
+    "question_translation": "He spoke in detail about his area of expertise. What is the reading for \"専門\"?"
   },
   {
     "level": 3,
@@ -201,7 +217,8 @@
     "option_3": "貸けて",
     "option_4": "替けて",
     "correct_option": 2,
-    "question_stem_display": "{荷物|にもつ}を預けてから{観光|かんこう}した。「あずけて」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "{荷物|にもつ}を預けてから{観光|かんこう}した。「あずけて」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "I checked my baggage and then went sightseeing. How do you write \"あずけて\" in kanji?"
   },
   {
     "level": 3,
@@ -213,7 +230,8 @@
     "option_3": "必ず",
     "option_4": "努す",
     "correct_option": 3,
-    "question_stem_display": "{会議|かいぎ}には必ず{出席|しゅっせき}してください。「かならず」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "{会議|かいぎ}には必ず{出席|しゅっせき}してください。「かならず」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "Please be sure to attend the meeting. How do you write \"かならず\" in kanji?"
   },
   {
     "level": 3,
@@ -225,7 +243,8 @@
     "option_3": "破れた",
     "option_4": "割れた",
     "correct_option": 1,
-    "question_stem_display": "壊れた{椅子|いす}を{修理|しゅうり}した。「こわれた」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "壊れた{椅子|いす}を{修理|しゅうり}した。「こわれた」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "I repaired the broken chair. How do you write \"こわれた\" in kanji?"
   },
   {
     "level": 3,
@@ -237,7 +256,8 @@
     "option_3": "勧めた",
     "option_4": "進めた",
     "correct_option": 3,
-    "question_stem_display": "{子|こ}どもに{健康|けんこう}な{食事|しょくじ}をすすめた。「すすめた」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "{子|こ}どもに{健康|けんこう}な{食事|しょくじ}をすすめた。「すすめた」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "I recommended healthy eating habits to the children. How do you write \"すすめた\" in kanji?"
   },
   {
     "level": 3,
@@ -249,7 +269,8 @@
     "option_3": "溶かした",
     "option_4": "流かした",
     "correct_option": 3,
-    "question_stem_display": "{砂糖|さとう}を{入|い}れてよくとかした。「とかした」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "{砂糖|さとう}を{入|い}れてよくとかした。「とかした」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "I added sugar and dissolved it thoroughly. How do you write \"とかした\" in kanji?"
   },
   {
     "level": 3,
@@ -261,7 +282,8 @@
     "option_3": "楽せ",
     "option_4": "楽い",
     "correct_option": 2,
-    "question_stem_display": "{家族|かぞく}の幸せを{願|ねが}っている。「しあわせ」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "{家族|かぞく}の幸せを{願|ねが}っている。「しあわせ」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "I wish for my family's happiness. How do you write \"しあわせ\" in kanji?"
   },
   {
     "level": 3,
@@ -273,7 +295,8 @@
     "option_3": "守って",
     "option_4": "固って",
     "correct_option": 3,
-    "question_stem_display": "ルールを守って{行動|こうどう}してください。「まもって」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "ルールを守って{行動|こうどう}してください。「まもって」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "Please follow the rules and act accordingly. How do you write \"まもって\" in kanji?"
   },
   {
     "level": 3,
@@ -285,7 +308,8 @@
     "option_3": "微かい",
     "option_4": "少かい",
     "correct_option": 1,
-    "question_stem_display": "細かいことまで{注意|ちゅうい}を{払|はら}った。「こまかい」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "細かいことまで{注意|ちゅうい}を{払|はら}った。「こまかい」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "I paid attention even to the smallest details. How do you write \"こまかい\" in kanji?"
   },
   {
     "level": 3,
@@ -297,7 +321,8 @@
     "option_3": "手伝って",
     "option_4": "手助った",
     "correct_option": 2,
-    "question_stem_display": "{友人|ゆうじん}の{引|ひ}っ{越|こ}しを手伝った。「てつだった」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "{友人|ゆうじん}の{引|ひ}っ{越|こ}しを手伝った。「てつだった」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "I helped my friend move. How do you write \"てつだった\" in kanji?"
   },
   {
     "level": 3,
@@ -309,7 +334,8 @@
     "option_3": "大折",
     "option_4": "大徹",
     "correct_option": 1,
-    "question_stem_display": "{引|ひ}き{出|だ}しに大切な{書類|しょるい}をしまった。「たいせつ」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "{引|ひ}き{出|だ}しに大切な{書類|しょるい}をしまった。「たいせつ」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "I put important documents away in a drawer. How do you write \"たいせつ\" in kanji?"
   },
   {
     "level": 3,
@@ -321,7 +347,8 @@
     "option_3": "包み形",
     "option_4": "掴み形",
     "correct_option": 1,
-    "question_stem_display": "プレゼントの包み{方|かた}を{工夫|くふう}した。「つつみかた」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "プレゼントの包み{方|かた}を{工夫|くふう}した。「つつみかた」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "I devised a creative way to wrap the present. How do you write \"つつみかた\" in kanji?"
   },
   {
     "level": 3,
@@ -333,7 +360,8 @@
     "option_3": "長い",
     "option_4": "久い",
     "correct_option": 3,
-    "question_stem_display": "そこで長い{間|あいだ}{待|ま}ち{続|つづ}けた。「ながい」を{漢字|かんじ}で{書|か}くとどれですか。"
+    "question_stem_display": "そこで長い{間|あいだ}{待|ま}ち{続|つづ}けた。「ながい」を{漢字|かんじ}で{書|か}くとどれですか。",
+    "question_translation": "I waited there for a long time. How do you write \"ながい\" in kanji?"
   },
   {
     "level": 3,
@@ -349,7 +377,8 @@
     "option_1_display": "{競争|きょうそう}",
     "option_2_display": "{区別|くべつ}",
     "option_3_display": "{検査|けんさ}",
-    "option_4_display": "{比較|ひかく}"
+    "option_4_display": "{比較|ひかく}",
+    "question_translation": "**Compared** to 50 years ago, the population of this town has increased by 100,000."
   },
   {
     "level": 3,
@@ -365,7 +394,8 @@
     "option_1_display": "{応募|おうぼ}",
     "option_2_display": "{注文|ちゅうもん}",
     "option_3_display": "{予約|よやく}",
-    "option_4_display": "{交流|こうりゅう}"
+    "option_4_display": "{交流|こうりゅう}",
+    "question_translation": "I **applied** for a part-time job and started a new job last month."
   },
   {
     "level": 3,
@@ -381,7 +411,8 @@
     "option_1_display": "{壁|かべ}",
     "option_2_display": "{裏|うら}",
     "option_3_display": "{底|そこ}",
-    "option_4_display": "{周|まわ}り"
+    "option_4_display": "{周|まわ}り",
+    "question_translation": "A large stone lies at the bottom of the pond."
   },
   {
     "level": 3,
@@ -397,7 +428,8 @@
     "option_1_display": "{回収|かいしゅう}",
     "option_2_display": "{解決|かいけつ}",
     "option_3_display": "{修理|しゅうり}",
-    "option_4_display": "{中止|ちゅうし}"
+    "option_4_display": "{中止|ちゅうし}",
+    "question_translation": "Construction is underway to widen the road in order to **solve** the traffic congestion problem."
   },
   {
     "level": 3,
@@ -409,7 +441,8 @@
     "option_3": "アイデア",
     "option_4": "レベル",
     "correct_option": 1,
-    "question_stem_display": "{電車|でんしゃ}の{中|なか}では（　）を{守|まも}って{静|しず}かにしましょう。"
+    "question_stem_display": "{電車|でんしゃ}の{中|なか}では（　）を{守|まも}って{静|しず}かにしましょう。",
+    "question_translation": "Let's observe good **manners** and be quiet on the train."
   },
   {
     "level": 3,
@@ -425,7 +458,8 @@
     "option_1_display": "{健康|けんこう}に",
     "option_2_display": "{立派|りっぱ}に",
     "option_3_display": "{正常|せいじょう}に",
-    "option_4_display": "{丁寧|ていねい}に"
+    "option_4_display": "{丁寧|ていねい}に",
+    "question_translation": "In this building, whether the elevators are running can be confirmed on a computer."
   },
   {
     "level": 3,
@@ -441,7 +475,8 @@
     "option_1_display": "{最上|さいじょう}",
     "option_2_display": "{身近|みぢか}",
     "option_3_display": "{単純|たんじゅん}",
-    "option_4_display": "{確実|かくじつ}"
+    "option_4_display": "{確実|かくじつ}",
+    "question_translation": "Since his speech just now was truly wonderful, it's **certain** that he will win."
   },
   {
     "level": 3,
@@ -453,7 +488,8 @@
     "option_3": "そっと",
     "option_4": "ぐっすり",
     "correct_option": 3,
-    "question_stem_display": "{子|こ}どもが{寝|ね}ているので、{音|おと}を{立|た}てないように、ドアを（　）{閉|し}めた。"
+    "question_stem_display": "{子|こ}どもが{寝|ね}ているので、{音|おと}を{立|た}てないように、ドアを（　）{閉|し}めた。",
+    "question_translation": "Since the child is sleeping, I **gently** closed the door so as not to make noise."
   },
   {
     "level": 3,
@@ -469,7 +505,8 @@
     "option_1_display": "{材料|ざいりょう}",
     "option_2_display": "{内容|ないよう}",
     "option_3_display": "{場所|ばしょ}",
-    "option_4_display": "{方法|ほうほう}"
+    "option_4_display": "{方法|ほうほう}",
+    "question_translation": "The **content** of this movie is complex, and no matter how many times you watch it, there are new discoveries."
   },
   {
     "level": 3,
@@ -485,7 +522,8 @@
     "option_1_display": "{情報|じょうほう}",
     "option_2_display": "{経験|けいけん}",
     "option_3_display": "{意見|いけん}",
-    "option_4_display": "{感想|かんそう}"
+    "option_4_display": "{感想|かんそう}",
+    "question_translation": "When planning the trip, I first gathered **information**."
   },
   {
     "level": 3,
@@ -501,7 +539,8 @@
     "option_1_display": "{目的|もくてき}",
     "option_2_display": "{教訓|きょうくん}",
     "option_3_display": "{理由|りゆう}",
-    "option_4_display": "{結果|けっか}"
+    "option_4_display": "{結果|けっか}",
+    "question_translation": "Taking the failure as a **lesson**, I thought I would do better next time."
   },
   {
     "level": 3,
@@ -517,7 +556,8 @@
     "option_1_display": "{評判|ひょうばん}",
     "option_2_display": "{数量|すうりょう}",
     "option_3_display": "{価格|かかく}",
-    "option_4_display": "{様子|ようす}"
+    "option_4_display": "{様子|ようす}",
+    "question_translation": "This store has a good **reputation** and is always full of customers."
   },
   {
     "level": 3,
@@ -533,7 +573,8 @@
     "option_1_display": "{文化|ぶんか}",
     "option_2_display": "{技術|ぎじゅつ}",
     "option_3_display": "{産業|さんぎょう}",
-    "option_4_display": "{地位|ちい}"
+    "option_4_display": "{地位|ちい}",
+    "question_translation": "To live abroad, it is important to get used to the local **culture**."
   },
   {
     "level": 3,
@@ -549,7 +590,8 @@
     "option_1_display": "{複雑|ふくざつ}",
     "option_2_display": "{自然|しぜん}",
     "option_3_display": "{元気|げんき}",
-    "option_4_display": "{急速|きゅうそく}"
+    "option_4_display": "{急速|きゅうそく}",
+    "question_translation": "She always brightens up those around her with her **cheerful** smile."
   },
   {
     "level": 3,
@@ -565,7 +607,8 @@
     "option_1_display": "{待機|たいき}",
     "option_2_display": "{警戒|けいかい}",
     "option_3_display": "{待合|まちあい}",
-    "option_4_display": "{観察|かんさつ}"
+    "option_4_display": "{観察|かんさつ}",
+    "question_translation": "While **waiting** for the train on the station platform, I ran into a friend."
   },
   {
     "level": 3,
@@ -581,7 +624,8 @@
     "option_1_display": "{実現|じつげん}",
     "option_2_display": "{完成|かんせい}",
     "option_3_display": "{達成|たっせい}",
-    "option_4_display": "{向上|こうじょう}"
+    "option_4_display": "{向上|こうじょう}",
+    "question_translation": "In order to **improve** my work, I wake up early every day to study."
   },
   {
     "level": 3,
@@ -597,7 +641,8 @@
     "option_1_display": "{安全|あんぜん}",
     "option_2_display": "{自由|じゆう}",
     "option_3_display": "{責任|せきにん}",
-    "option_4_display": "{利益|りえき}"
+    "option_4_display": "{利益|りえき}",
+    "question_translation": "During an earthquake, it is important to first ensure your personal **safety**."
   },
   {
     "level": 3,
@@ -609,7 +654,8 @@
     "option_3": "不満",
     "option_4": "心配",
     "correct_option": 2,
-    "question_stem_display": "{彼|かれ}の{話|はなし}は（　）で、みんなが{笑|わら}った。"
+    "question_stem_display": "{彼|かれ}の{話|はなし}は（　）で、みんなが{笑|わら}った。",
+    "question_translation": "His story was full of **humor**, and everyone laughed."
   },
   {
     "level": 3,
@@ -625,7 +671,8 @@
     "option_1_display": "{関心|かんしん}",
     "option_2_display": "{感心|かんしん}",
     "option_3_display": "{中心|ちゅうしん}",
-    "option_4_display": "{安心|あんしん}"
+    "option_4_display": "{安心|あんしん}",
+    "question_translation": "The number of young people working on environmental issues with genuine **interest** is increasing."
   },
   {
     "level": 3,
@@ -641,7 +688,8 @@
     "option_1_display": "{解答|かいとう}",
     "option_2_display": "{感想|かんそう}",
     "option_3_display": "{目標|もくひょう}",
-    "option_4_display": "{材料|ざいりょう}"
+    "option_4_display": "{材料|ざいりょう}",
+    "question_translation": "Please state your **answer** to this problem."
   },
   {
     "level": 3,
@@ -657,7 +705,8 @@
     "option_1_display": "{我慢|がまん}",
     "option_2_display": "{慣れ|なれ}",
     "option_3_display": "{集中|しゅうちゅう}",
-    "option_4_display": "{適応|てきおう}"
+    "option_4_display": "{適応|てきおう}",
+    "question_translation": "It took some time to **adapt** to the new workplace."
   },
   {
     "level": 3,
@@ -669,7 +718,8 @@
     "option_3": "なんとか",
     "option_4": "どうにか",
     "correct_option": 1,
-    "question_stem_display": "この{薬|くすり}は{食後|しょくご}に（　）{飲|の}んでください。"
+    "question_stem_display": "この{薬|くすり}は{食後|しょくご}に（　）{飲|の}んでください。",
+    "question_translation": "Please take this medicine after meals **without fail**."
   },
   {
     "level": 3,
@@ -685,7 +735,8 @@
     "option_1_display": "{積極的|せっきょくてき}",
     "option_2_display": "{否定的|ひていてき}",
     "option_3_display": "{感情的|かんじょうてき}",
-    "option_4_display": "{効果的|こうかてき}"
+    "option_4_display": "{効果的|こうかてき}",
+    "question_translation": "He is a very **proactive** person who is kind to everyone."
   },
   {
     "level": 3,
@@ -701,7 +752,8 @@
     "option_1_display": "{丁寧|ていねい}",
     "option_2_display": "{簡潔|かんけつ}",
     "option_3_display": "{具体的|ぐたいてき}",
-    "option_4_display": "{明確|めいかく}"
+    "option_4_display": "{明確|めいかく}",
+    "question_translation": "If you speak a little more **specifically**, I'll understand much better."
   },
   {
     "level": 3,
@@ -717,7 +769,8 @@
     "option_1_display": "{不安|ふあん}",
     "option_2_display": "{余裕|よゆう}",
     "option_3_display": "{理解|りかい}",
-    "option_4_display": "{対応|たいおう}"
+    "option_4_display": "{対応|たいおう}",
+    "question_translation": "Recently, work has been busy and I have little **breathing room**."
   },
   {
     "level": 3,
@@ -733,7 +786,8 @@
     "option_1_display": "{配|くば}って",
     "option_2_display": "{積|つ}んで",
     "option_3_display": "{並|なら}べて",
-    "option_4_display": "{保管|ほかん}して"
+    "option_4_display": "{保管|ほかん}して",
+    "question_translation": "By **distributing** posters, we called on everyone to participate in the event."
   },
   {
     "level": 3,
@@ -745,7 +799,8 @@
     "option_3": "また",
     "option_4": "必ず",
     "correct_option": 4,
-    "question_stem_display": "{絶対|ぜったい}に{来|き}てください。"
+    "question_stem_display": "{絶対|ぜったい}に{来|き}てください。",
+    "question_translation": "Please definitely come."
   },
   {
     "level": 3,
@@ -760,7 +815,8 @@
     "question_stem_display": "{実験|じっけん}は{終|お}わりになった。",
     "option_1_display": "{完成|かんせい}した",
     "option_3_display": "おしまいになった",
-    "option_4_display": "{成功|せいこう}した"
+    "option_4_display": "{成功|せいこう}した",
+    "question_translation": "The experiment came to an end."
   },
   {
     "level": 3,
@@ -776,7 +832,8 @@
     "option_1_display": "{暗|くら}すぎて",
     "option_2_display": "{明|あか}るすぎて",
     "option_3_display": "{小|ちい}さすぎて",
-    "option_4_display": "{遠|とお}すぎて"
+    "option_4_display": "{遠|とお}すぎて",
+    "question_translation": "It's so bright I can't read the signs clearly."
   },
   {
     "level": 3,
@@ -792,7 +849,8 @@
     "option_1_display": "{面白|おもしろ}いと{思|おも}っている",
     "option_2_display": "{本当|ほんとう}だと{思|おも}っている",
     "option_3_display": "{知|し}らないと{思|おも}っている",
-    "option_4_display": "{難|むずか}しいと{思|おも}っている"
+    "option_4_display": "{難|むずか}しいと{思|おも}っている",
+    "question_translation": "Everyone believes Yamada's story."
   },
   {
     "level": 3,
@@ -808,7 +866,8 @@
     "option_1_display": "{調|しら}べた",
     "option_2_display": "{借|か}りた",
     "option_3_display": "{片付|かたづ}けた",
-    "option_4_display": "{直|なお}した"
+    "option_4_display": "{直|なお}した",
+    "question_translation": "I organized the warehouse."
   },
   {
     "level": 3,
@@ -824,7 +883,8 @@
     "option_1_display": "{使|つか}わせて",
     "option_2_display": "{見|み}せて",
     "option_3_display": "{帰|かえ}らせて",
-    "option_4_display": "{終|お}わらせて"
+    "option_4_display": "{終|お}わらせて",
+    "question_translation": "Please finish quickly."
   },
   {
     "level": 3,
@@ -840,7 +900,8 @@
     "option_1_display": "{悲|かな}しい",
     "option_2_display": "{恐|おそ}ろしい",
     "option_3_display": "{変|へん}だ",
-    "option_4_display": "{簡単|かんたん}だ"
+    "option_4_display": "{簡単|かんたん}だ",
+    "question_translation": "I think this story is very strange."
   },
   {
     "level": 3,
@@ -853,7 +914,8 @@
     "option_4": "古いところ",
     "correct_option": 2,
     "question_stem_display": "この{商品|しょうひん}には{欠点|けってん}がある。",
-    "option_2_display": "よくないところ"
+    "option_2_display": "よくないところ",
+    "question_translation": "This product has a defect."
   },
   {
     "level": 3,
@@ -869,7 +931,8 @@
     "option_1_display": "テレビの{天気予報|てんきよほう}で{明日|あした}の{天気|てんき}の{報告|ほうこく}をしている。",
     "option_2_display": "{先生|せんせい}から{試験|しけん}に{合格|ごうかく}したという{報告|ほうこく}をもらった。",
     "option_3_display": "アンケートの{結果|けっか}について、{今日|きょう}の{会議|かいぎ}で{報告|ほうこく}があった。",
-    "option_4_display": "{友人|ゆうじん}から{旅行|りょこう}に{行|い}こうという{報告|ほうこく}が{来|き}た。"
+    "option_4_display": "{友人|ゆうじん}から{旅行|りょこう}に{行|い}こうという{報告|ほうこく}が{来|き}た。",
+    "question_translation": "Which of the following is the most appropriate usage of \"report\"?"
   },
   {
     "level": 3,
@@ -883,7 +946,8 @@
     "correct_option": 4,
     "question_stem_display": "「{引|ひ}き{受|う}ける」の{使|つか}い{方|かた}として{最|もっと}もよいものはどれですか。",
     "option_1_display": "{友人|ゆうじん}からのアドバイスを{引|ひ}き{受|う}けて、{考|かんが}えを{変|か}えた。",
-    "option_4_display": "{先輩|せんぱい}から{頼|たの}まれた{仕事|しごと}を{引|ひ}き{受|う}けることにした。"
+    "option_4_display": "{先輩|せんぱい}から{頼|たの}まれた{仕事|しごと}を{引|ひ}き{受|う}けることにした。",
+    "question_translation": "Which of the following is the most appropriate usage of \"undertake\"?"
   },
   {
     "level": 3,
@@ -896,7 +960,8 @@
     "option_4": "強い風で、看板がどきどきしているのが見える。",
     "correct_option": 1,
     "question_stem_display": "「どきどき」の{使|つか}い{方|かた}として{最|もっと}もよいものはどれですか。",
-    "option_1_display": "{大勢|おおぜい}の{人|ひと}の{前|まえ}でスピーチをしたとき、{緊張|きんちょう}で{胸|むね}がどきどきした。"
+    "option_1_display": "{大勢|おおぜい}の{人|ひと}の{前|まえ}でスピーチをしたとき、{緊張|きんちょう}で{胸|むね}がどきどきした。",
+    "question_translation": "Which of the following is the most appropriate usage of \"restless/excited\"?"
   },
   {
     "level": 3,
@@ -909,7 +974,8 @@
     "option_4": "会場は満員で、座れない人もたくさんいた。",
     "correct_option": 4,
     "question_stem_display": "「{満員|まんいん}」の{使|つか}い{方|かた}として{最|もっと}もよいものはどれですか。",
-    "option_4_display": "{会場|かいじょう}は{満員|まんいん}で、{座|すわ}れない{人|ひと}もたくさんいた。"
+    "option_4_display": "{会場|かいじょう}は{満員|まんいん}で、{座|すわ}れない{人|ひと}もたくさんいた。",
+    "question_translation": "Which of the following is the most appropriate usage of \"full/crowded\"?"
   },
   {
     "level": 3,
@@ -922,7 +988,8 @@
     "option_4": "その映画を見て、日本への興味が発生した。",
     "correct_option": 3,
     "question_stem_display": "「{発生|はっせい}」の{使|つか}い{方|かた}として{最|もっと}もよいものはどれですか。",
-    "option_3_display": "{火災|かさい}が{発生|はっせい}したときのために、{避難訓練|ひなんくんれん}をした。"
+    "option_3_display": "{火災|かさい}が{発生|はっせい}したときのために、{避難訓練|ひなんくんれん}をした。",
+    "question_translation": "Which of the following is the most appropriate usage of \"occur/arise\"?"
   },
   {
     "level": 3,
@@ -935,7 +1002,8 @@
     "option_4": "このクラスにはいろいろな国の留学生がかき混ぜられている。",
     "correct_option": 2,
     "question_stem_display": "「かき{混|ま}ぜる」の{使|つか}い{方|かた}として{最|もっと}もよいものはどれですか。",
-    "option_2_display": "{牛乳|ぎゅうにゅう}に{卵|たまご}と{砂糖|さとう}を{入|い}れたら、よくかき{混|ま}ぜてください。"
+    "option_2_display": "{牛乳|ぎゅうにゅう}に{卵|たまご}と{砂糖|さとう}を{入|い}れたら、よくかき{混|ま}ぜてください。",
+    "question_translation": "Which of the following is the most appropriate usage of \"stir/mix\"?"
   },
   {
     "level": 3,
@@ -948,7 +1016,8 @@
     "option_4": "彼女はお互いに外国語を勉強するのが得意だ。",
     "correct_option": 1,
     "question_stem_display": "「お{互|たが}いに」の{使|つか}い{方|かた}として{最|もっと}もよいものはどれですか。",
-    "option_1_display": "あの{夫婦|ふうふ}は、どんなときでもお{互|たが}いに{協力|きょうりょく}し{合|あ}って{生|い}きてきた。"
+    "option_1_display": "あの{夫婦|ふうふ}は、どんなときでもお{互|たが}いに{協力|きょうりょく}し{合|あ}って{生|い}きてきた。",
+    "question_translation": "Which of the following is the most appropriate usage of \"mutually/each other\"?"
   },
   {
     "level": 3,
@@ -961,7 +1030,8 @@
     "option_4": "さっそく日本語を勉強したいと思っているが、時間がない。",
     "correct_option": 1,
     "question_stem_display": "「さっそく」の{使|つか}い{方|かた}として{最|もっと}もよいものはどれですか。",
-    "option_1_display": "{注文|ちゅうもん}したカメラが{届|とど}いたのがうれしくて、さっそく{箱|はこ}から{出|だ}して{使|つか}ってみた。"
+    "option_1_display": "{注文|ちゅうもん}したカメラが{届|とど}いたのがうれしくて、さっそく{箱|はこ}から{出|だ}して{使|つか}ってみた。",
+    "question_translation": "Which of the following is the most appropriate usage of \"right away/promptly\"?"
   },
   {
     "level": 3,
@@ -973,7 +1043,8 @@
     "option_3": "しか",
     "option_4": "でも",
     "correct_option": 1,
-    "question_stem_display": "{留学|りゅうがく}{中|ちゅう}は{楽|たの}しいこと（　）ではなく、{大変|たいへん}なこともあったが、いい{経験|けいけん}になった。"
+    "question_stem_display": "{留学|りゅうがく}{中|ちゅう}は{楽|たの}しいこと（　）ではなく、{大変|たいへん}なこともあったが、いい{経験|けいけん}になった。",
+    "question_translation": "During my study abroad, not only was it fun, but there were also difficult times; it became a good experience."
   },
   {
     "level": 3,
@@ -985,7 +1056,8 @@
     "option_3": "にしたがって",
     "option_4": "のに対して",
     "correct_option": 3,
-    "question_stem_display": "{仕事|しごと}に{慣|な}れる（　）、{笑顔|えがお}でお{客様|きゃくさま}と{話|はな}せるようになった。"
+    "question_stem_display": "{仕事|しごと}に{慣|な}れる（　）、{笑顔|えがお}でお{客様|きゃくさま}と{話|はな}せるようになった。",
+    "question_translation": "**As** I got used to work, I became able to speak with customers with a smile."
   },
   {
     "level": 3,
@@ -997,7 +1069,8 @@
     "option_3": "ようやく",
     "option_4": "絶対に",
     "correct_option": 3,
-    "question_stem_display": "{三日間|みっかかん}{降|ふ}り{続|つづ}けた{雨|あめ}が（　）やんで、{今日|きょう}は{青空|あおぞら}が{見|み}えた。"
+    "question_stem_display": "{三日間|みっかかん}{降|ふ}り{続|つづ}けた{雨|あめ}が（　）やんで、{今日|きょう}は{青空|あおぞら}が{見|み}えた。",
+    "question_translation": "The rain that had been falling for three days **finally** stopped, and today we can see blue sky."
   },
   {
     "level": 3,
@@ -1013,7 +1086,8 @@
     "option_1_display": "{便利|べんり}な{一方|いっぽう}で",
     "option_2_display": "{便利|べんり}なのだから",
     "option_3_display": "{便利|べんり}だとすると",
-    "option_4_display": "{便利|べんり}であるように"
+    "option_4_display": "{便利|べんり}であるように",
+    "question_translation": "Online shopping is **convenient, but on the other hand** there is also the fear of not being able to see the seller's face."
   },
   {
     "level": 3,
@@ -1025,7 +1099,8 @@
     "option_3": "入れ",
     "option_4": "入り",
     "correct_option": 3,
-    "question_stem_display": "{赤|あか}ちゃんはつかんだものは{何|なん}でも{口|くち}に（　）たがるので、{危|あぶ}ないものは{近|ちか}くに{置|お}かないように{注意|ちゅうい}が{必要|ひつよう}だ。"
+    "question_stem_display": "{赤|あか}ちゃんはつかんだものは{何|なん}でも{口|くち}に（　）たがるので、{危|あぶ}ないものは{近|ちか}くに{置|お}かないように{注意|ちゅうい}が{必要|ひつよう}だ。",
+    "question_translation": "Babies tend to **put** everything they grab into their mouths, so care must be taken not to place dangerous things nearby."
   },
   {
     "level": 3,
@@ -1041,7 +1116,8 @@
     "option_1_display": "{間|ま}に{合|あ}うに{違|ちが}いなくて",
     "option_2_display": "{間|ま}に{合|あ}いそうになくて",
     "option_3_display": "{間|ま}に{合|あ}わないはずがなくて",
-    "option_4_display": "{間|ま}に{合|あ}わせないといけなくて"
+    "option_4_display": "{間|ま}に{合|あ}わせないといけなくて",
+    "question_translation": "\"Hello, I'm rushing your way right now, but it **looks like I won't make it** in time.\""
   },
   {
     "level": 3,
@@ -1053,7 +1129,8 @@
     "option_3": "入るな",
     "option_4": "入りなさい",
     "correct_option": 3,
-    "question_stem_display": "{小学校|しょうがっこう}の{近|ちか}くにある{池|いけ}は{深|ふか}くて{危|あぶ}ないので、「{池|いけ}に（　）！」という{看板|かんばん}を{立|た}てた。"
+    "question_stem_display": "{小学校|しょうがっこう}の{近|ちか}くにある{池|いけ}は{深|ふか}くて{危|あぶ}ないので、「{池|いけ}に（　）！」という{看板|かんばん}を{立|た}てた。",
+    "question_translation": "Since the pond near the elementary school is deep and dangerous, they put up a sign saying \"**Do not enter** the pond!\""
   },
   {
     "level": 3,
@@ -1069,7 +1146,8 @@
     "option_1_display": "{買|か}うところだ",
     "option_2_display": "{買|か}うことにする",
     "option_3_display": "{買|か}ってほしい",
-    "option_4_display": "{買|か}ってしまう"
+    "option_4_display": "{買|か}ってしまう",
+    "question_translation": "When I find shoes online, I inevitably **end up buying** them."
   },
   {
     "level": 3,
@@ -1081,7 +1159,8 @@
     "option_3": "だけに",
     "option_4": "までで",
     "correct_option": 1,
-    "question_stem_display": "{今日|きょう}（　）{朝|あさ}と{夕方|ゆうがた}の2{回|かい}、{同|おな}じ{猫|ねこ}を{見|み}た。"
+    "question_stem_display": "{今日|きょう}（　）{朝|あさ}と{夕方|ゆうがた}の2{回|かい}、{同|おな}じ{猫|ねこ}を{見|み}た。",
+    "question_translation": "**Just today**, I saw the same cat twice, in the morning and evening."
   },
   {
     "level": 3,
@@ -1093,7 +1172,8 @@
     "option_3": "持たないで",
     "option_4": "持てないで",
     "correct_option": 3,
-    "question_stem_display": "{傘|かさ}を（　）{出|で}かけたが、{夕方|ゆうがた}{急|きゅう}に{雨|あめ}が{降|ふ}り{出|だ}してぬれてしまった。"
+    "question_stem_display": "{傘|かさ}を（　）{出|で}かけたが、{夕方|ゆうがた}{急|きゅう}に{雨|あめ}が{降|ふ}り{出|だ}してぬれてしまった。",
+    "question_translation": "I went out **without bringing** an umbrella, but it suddenly started raining and I got wet."
   },
   {
     "level": 3,
@@ -1106,7 +1186,8 @@
     "option_4": "入ってからのほうが",
     "correct_option": 4,
     "question_stem_display": "{受験勉強|じゅけんべんきょう}も{大変|たいへん}だったが、{大学|だいがく}に（　）もっと{大変|たいへん}だった。",
-    "option_4_display": "{入|はい}ってからのほうが"
+    "option_4_display": "{入|はい}ってからのほうが",
+    "question_translation": "Studying for exams was tough, but things were even tougher **after I entered** university."
   },
   {
     "level": 3,
@@ -1118,7 +1199,8 @@
     "option_3": "をしている",
     "option_4": "がしてある",
     "correct_option": 2,
-    "question_stem_display": "{夕方|ゆうがた}、{窓|まど}を{開|あ}けていると、いつもみそ{汁|しる}のにおい（　）。"
+    "question_stem_display": "{夕方|ゆうがた}、{窓|まど}を{開|あ}けていると、いつもみそ{汁|しる}のにおい（　）。",
+    "question_translation": "In the evening, when I open the window, the smell of miso soup **comes wafting** in."
   },
   {
     "level": 3,
@@ -1130,7 +1212,8 @@
     "option_3": "やってみてもいいんですが",
     "option_4": "やっているところなんですが",
     "correct_option": 2,
-    "question_stem_display": "（{会社|かいしゃ}で）「この{仕事|しごと}は{今日|きょう}{中|じゅう}に（　）。」"
+    "question_stem_display": "（{会社|かいしゃ}で）「この{仕事|しごと}は{今日|きょう}{中|じゅう}に（　）。」",
+    "question_translation": "(At the office) \"I want to **get this work done** by the end of today.\""
   },
   {
     "level": 3,
@@ -1143,7 +1226,8 @@
     "option_4": "習わせたいものを",
     "correct_option": 3,
     "question_stem_display": "{子供|こども}には、（　）{習|なら}わせたほうがいいと{思|おも}う。",
-    "option_3_display": "{興味|きょうみ}があるものを"
+    "option_3_display": "{興味|きょうみ}があるものを",
+    "question_translation": "I think it's better to have children learn **things they are interested in**."
   },
   {
     "level": 3,
@@ -1155,7 +1239,8 @@
     "option_3": "なぜか",
     "option_4": "ところが",
     "correct_option": 1,
-    "question_stem_display": "{彼女|かのじょ}は{毎日|まいにち}{練習|れんしゅう}した。その{結果|けっか}、（　）コンクールで{優勝|ゆうしょう}できた。"
+    "question_stem_display": "{彼女|かのじょ}は{毎日|まいにち}{練習|れんしゅう}した。その{結果|けっか}、（　）コンクールで{優勝|ゆうしょう}できた。",
+    "question_translation": "She practiced every day. As a result, she was **finally** able to win the competition."
   },
   {
     "level": 3,
@@ -1167,7 +1252,8 @@
     "option_3": "にわたって",
     "option_4": "について",
     "correct_option": 1,
-    "question_stem_display": "{来年|らいねん}の{計画|けいかく}を{立|た}てる（　）、まず{今年|ことし}を{振|ふ}り{返|かえ}ることにした。"
+    "question_stem_display": "{来年|らいねん}の{計画|けいかく}を{立|た}てる（　）、まず{今年|ことし}を{振|ふ}り{返|かえ}ることにした。",
+    "question_translation": "**When making** plans for next year, I decided to first look back on this year."
   },
   {
     "level": 3,
@@ -1183,7 +1269,8 @@
     "option_1_display": "ために",
     "option_2_display": "{際|さい}に",
     "option_3_display": "ために",
-    "option_4_display": "だけに"
+    "option_4_display": "だけに",
+    "question_translation": "Since this document has complex content, care is needed **when** reading it."
   },
   {
     "level": 3,
@@ -1196,7 +1283,8 @@
     "option_4": "よくないどころか",
     "correct_option": 2,
     "question_stem_display": "スポーツは{健康|けんこう}に（　）、ストレス{解消|かいしょう}にもなる。",
-    "option_2_display": "いいだけでなく"
+    "option_2_display": "いいだけでなく",
+    "question_translation": "Sports are **not only** good for your health, but also help relieve stress."
   },
   {
     "level": 3,
@@ -1208,7 +1296,8 @@
     "option_3": "見て",
     "option_4": "見ない",
     "correct_option": 1,
-    "question_stem_display": "この{映画|えいが}を（　）なら、{早|はや}めに{予約|よやく}したほうがいい。"
+    "question_stem_display": "この{映画|えいが}を（　）なら、{早|はや}めに{予約|よやく}したほうがいい。",
+    "question_translation": "**If** you plan to watch this movie, it's better to reserve early."
   },
   {
     "level": 3,
@@ -1220,7 +1309,8 @@
     "option_3": "するせいで",
     "option_4": "したにもかかわらず",
     "correct_option": 1,
-    "question_stem_display": "{彼|かれ}は{親切|しんせつ}に（　）、いつもみんなに{感謝|かんしゃ}されている。"
+    "question_stem_display": "{彼|かれ}は{親切|しんせつ}に（　）、いつもみんなに{感謝|かんしゃ}されている。",
+    "question_translation": "**By being** kind, he is always thanked by everyone."
   },
   {
     "level": 3,
@@ -1232,7 +1322,8 @@
     "option_3": "ながら",
     "option_4": "ばかりに",
     "correct_option": 2,
-    "question_stem_display": "この{仕事|しごと}は{難|むずか}しい（　）、やりがいがある。"
+    "question_stem_display": "この{仕事|しごと}は{難|むずか}しい（　）、やりがいがある。",
+    "question_translation": "**Although** this work is difficult, it is rewarding."
   },
   {
     "level": 3,
@@ -1248,7 +1339,8 @@
     "option_1_display": "{喜|よろこ}び",
     "option_2_display": "{嬉|うれ}し",
     "option_3_display": "{楽|たの}し",
-    "option_4_display": "{感謝|かんしゃ}し"
+    "option_4_display": "{感謝|かんしゃ}し",
+    "question_translation": "She seemed very **happy** to have received a present."
   },
   {
     "level": 3,
@@ -1264,7 +1356,8 @@
     "option_1_display": "{離|はな}れても",
     "option_2_display": "{離|はな}れなくて",
     "option_3_display": "{離|はな}れるけれど",
-    "option_4_display": "{離|はな}れなければ"
+    "option_4_display": "{離|はな}れなければ",
+    "question_translation": "**Even if** we are far apart, our friendship will not change."
   },
   {
     "level": 3,
@@ -1280,7 +1373,8 @@
     "option_1_display": "{降|ふ}りがちだ",
     "option_2_display": "{降|ふ}りつつある",
     "option_3_display": "{降|ふ}ってばかりだ",
-    "option_4_display": "{降|ふ}るおそれがある"
+    "option_4_display": "{降|ふ}るおそれがある",
+    "question_translation": "There is a **risk of** heavy rain from tomorrow afternoon into the evening."
   },
   {
     "level": 3,
@@ -1296,7 +1390,8 @@
     "question_stem_display": "レストランAは〔　　〕〔　　〕★〔　　〕{人気|にんき}{店|てん}になった。",
     "option_1_display": "{雑誌|ざっし}に",
     "option_2_display": "{紹介|しょうかい}されて",
-    "option_4_display": "なかなか{予約|よやく}がとれない"
+    "option_4_display": "なかなか{予約|よやく}がとれない",
+    "question_translation": "Restaurant A became a popular establishment where **reservations are hard to get**."
   },
   {
     "level": 3,
@@ -1312,7 +1407,8 @@
     "question_stem_display": "{子供|こども}には、{親|おや}の〔　　〕〔　　〕★〔　　〕{習|なら}わせたほうがいいと{思|おも}う。",
     "option_1_display": "{習|なら}わせるのではなくて",
     "option_3_display": "{興味|きょうみ}を",
-    "option_4_display": "{持|も}つものを"
+    "option_4_display": "{持|も}つものを",
+    "question_translation": "For children, I think it's better to have them learn their parents' **interests**."
   },
   {
     "level": 3,
@@ -1327,7 +1423,8 @@
     "correct_order": "2,3,1,4",
     "question_stem_display": "{来月|らいげつ}、{大学|だいがく}のスピーチ{大会|たいかい}に{出|で}る。{全部|ぜんぶ}{覚|おぼ}える〔　　〕★〔　　〕〔　　〕つもりだ。",
     "option_2_display": "たくさん{練習|れんしゅう}して",
-    "option_4_display": "メモを{見|み}ないで{話|はな}せる"
+    "option_4_display": "メモを{見|み}ないで{話|はな}せる",
+    "question_translation": "Next month I'll compete in a speech contest. I plan to speak **without looking at notes**."
   },
   {
     "level": 3,
@@ -1343,7 +1440,8 @@
     "question_stem_display": "{私|わたし}は〔　　〕〔　　〕★〔　　〕{泳|およ}げるようになりたい。",
     "option_1_display": "{毎日|まいにち}",
     "option_2_display": "{練習|れんしゅう}する",
-    "option_4_display": "もっと{上手|じょうず}に"
+    "option_4_display": "もっと{上手|じょうず}に",
+    "question_translation": "I want to swim **more skillfully**."
   },
   {
     "level": 3,
@@ -1358,7 +1456,8 @@
     "correct_order": "1,2,4,3",
     "question_stem_display": "この{映画|えいが}は〔　　〕〔　　〕〔　　〕★{見|み}て{感動|かんどう}した。",
     "option_1_display": "{友人|ゆうじん}に",
-    "option_2_display": "すすめられて"
+    "option_2_display": "すすめられて",
+    "question_translation": "I watched this movie for the **first time** and was moved."
   },
   {
     "level": 3,
@@ -1374,7 +1473,8 @@
     "question_stem_display": "{昨日|きのう}〔　　〕〔　　〕★〔　　〕、{最後|さいご}まで{本当|ほんとう}にどきどきした。",
     "option_1_display": "テレビで",
     "option_2_display": "テニスの",
-    "option_4_display": "{試合|しあい}を{見|み}た。{勝|か}っても"
+    "option_4_display": "{試合|しあい}を{見|み}た。{勝|か}っても",
+    "question_translation": "Yesterday I was truly nervous until the end about **which side would win**."
   },
   {
     "level": 3,
@@ -1389,7 +1489,8 @@
     "correct_order": "3,4,2,1",
     "question_stem_display": "〔　　〕〔　　〕★〔　　〕、{私|わたし}は{小|ちい}さいとき、この{絵本|えほん}が{大好|だいす}きだったそうだ。",
     "option_2_display": "{話|はなし}",
-    "option_3_display": "{母|はは}"
+    "option_3_display": "{母|はは}",
+    "question_translation": "Apparently I loved this picture book when I was little, so they tell me the **story**."
   },
   {
     "level": 3,
@@ -1405,7 +1506,8 @@
     "question_stem_display": "{今日|きょう}、{学校|がっこう}に〔　　〕〔　　〕★〔　　〕のシャツがほしい。",
     "option_1_display": "あんな{色|いろ}",
     "option_2_display": "{木村|きむら}さんが",
-    "option_4_display": "{私|わたし}も"
+    "option_4_display": "{私|わたし}も",
+    "question_translation": "Today at school, I want a shirt like the one someone was **wearing**."
   },
   {
     "level": 3,
@@ -1421,7 +1523,8 @@
     "question_stem_display": "{彼女|かのじょ}は〔　　〕〔　　〕★〔　　〕{才能|さいのう}がある。",
     "option_1_display": "だけでなく",
     "option_2_display": "{歌|うた}が{上手|じょうず}な",
-    "option_4_display": "{素晴|すば}らしい"
+    "option_4_display": "{素晴|すば}らしい",
+    "question_translation": "She has talent **even in dancing**."
   },
   {
     "level": 3,
@@ -1437,7 +1540,8 @@
     "question_stem_display": "この{問題|もんだい}は〔　　〕〔　　〕★〔　　〕{簡単|かんたん}には{解|と}けない。",
     "option_1_display": "{見|み}える",
     "option_3_display": "{簡単|かんたん}に",
-    "option_4_display": "{実際|じっさい}には"
+    "option_4_display": "{実際|じっさい}には",
+    "question_translation": "This problem cannot be solved easily **despite appearing** simple."
   },
   {
     "level": 3,
@@ -1454,7 +1558,9 @@
     "passage_id": 301,
     "passage_display": "以下は{留学生|りゅうがくせい}の{作文|さくぶん}である。\n{私|わたし}は１{年間|ねんかん}、{日本|にほん}に{留学|りゅうがく}した。{最初|さいしょ}は{言葉|ことば}の{壁|かべ}に{苦|くる}しんだ。しかし、{友人|ゆうじん}たちの{助|たす}けを（Ａ）、{少|すこ}しずつ{日本語|にほんご}が{上手|じょうず}になっていった。{留学中|りゅうがくちゅう}は{楽|たの}しいことばかりではなかったが、この{経験|けいけん}は{私|わたし}の{人生|じんせい}にとってとても（Ｂ）ものだった。",
     "passage_title_display": "{留学|りゅうがく}の{思|おも}い{出|で}",
-    "question_stem_display": "（Ａ）に{入|はい}るのに{最|もっと}もよいものを{選|えら}びなさい。"
+    "question_stem_display": "（Ａ）に{入|はい}るのに{最|もっと}もよいものを{選|えら}びなさい。",
+    "question_translation": "Choose the best word to fill in (A).",
+    "passage_translation": "The following is an essay by an international student.\nI studied abroad in Japan for one year. At first, I struggled with the language barrier. However, with the help of my friends ___, my Japanese gradually improved. While my time studying abroad wasn't all fun, this experience was very ___ to my life."
   },
   {
     "level": 3,
@@ -1474,7 +1580,9 @@
     "question_stem_display": "（Ｂ）に{入|はい}るのに{最|もっと}もよいものを{選|えら}びなさい。",
     "option_1_display": "{大切|たいせつ}な",
     "option_3_display": "{不思議|ふしぎ}な",
-    "option_4_display": "{珍|めずら}しい"
+    "option_4_display": "{珍|めずら}しい",
+    "question_translation": "Choose the best word to fill in (B).",
+    "passage_translation": "The following is an essay by an international student.\nI studied abroad in Japan for one year. At first, I struggled with the language barrier. However, with the help of my friends ___, my Japanese gradually improved. While my time studying abroad wasn't all fun, this experience was very ___ to my life."
   },
   {
     "level": 3,
@@ -1491,7 +1599,9 @@
     "passage_id": 302,
     "passage_display": "{私|わたし}はよく{近|ちか}くの{公園|こうえん}を{散歩|さんぽ}する。{季節|きせつ}によって、{景色|けしき}がまったく（Ｃ）。{春|はる}は{桜|さくら}が{満開|まんかい}になり、{夏|なつ}には{緑|みどり}が{深|ふか}くなる。{秋|あき}は{紅葉|こうよう}が{美|うつく}しく、{冬|ふゆ}には{雪|ゆき}が{積|つ}もることもある。（Ｄ）この{公園|こうえん}は{私|わたし}にとって{大切|たいせつ}な{場所|ばしょ}だ。",
     "passage_title_display": "{季節|きせつ}の{公園|こうえん}",
-    "question_stem_display": "（Ｃ）に{入|はい}るのに{最|もっと}もよいものを{選|えら}びなさい。"
+    "question_stem_display": "（Ｃ）に{入|はい}るのに{最|もっと}もよいものを{選|えら}びなさい。",
+    "question_translation": "Choose the best word to fill in (C).",
+    "passage_translation": "I often take walks in a nearby park. Depending on the season, the scenery is completely ___. In spring, the cherry blossoms bloom in full, and in summer the greenery becomes deep. In autumn, the autumn leaves are beautiful, and in winter snow sometimes accumulates. ___ this park is an important place for me."
   },
   {
     "level": 3,
@@ -1508,7 +1618,9 @@
     "passage_id": 302,
     "passage_display": "{私|わたし}はよく{近|ちか}くの{公園|こうえん}を{散歩|さんぽ}する。{季節|きせつ}によって、{景色|けしき}がまったく（Ｃ）。{春|はる}は{桜|さくら}が{満開|まんかい}になり、{夏|なつ}には{緑|みどり}が{深|ふか}くなる。{秋|あき}は{紅葉|こうよう}が{美|うつく}しく、{冬|ふゆ}には{雪|ゆき}が{積|つ}もることもある。（Ｄ）この{公園|こうえん}は{私|わたし}にとって{大切|たいせつ}な{場所|ばしょ}だ。",
     "passage_title_display": "{季節|きせつ}の{公園|こうえん}",
-    "question_stem_display": "（Ｄ）に{入|はい}るのに{最|もっと}もよいものを{選|えら}びなさい。"
+    "question_stem_display": "（Ｄ）に{入|はい}るのに{最|もっと}もよいものを{選|えら}びなさい。",
+    "question_translation": "Choose the best word to fill in (D).",
+    "passage_translation": "I often take walks in a nearby park. Depending on the season, the scenery is completely ___. In spring, the cherry blossoms bloom in full, and in summer the greenery becomes deep. In autumn, the autumn leaves are beautiful, and in winter snow sometimes accumulates. ___ this park is an important place for me."
   },
   {
     "level": 3,
@@ -1525,7 +1637,9 @@
     "passage_id": 303,
     "passage_display": "{今日|きょう}は{友人|ゆうじん}の{引|ひ}っ{越|こ}しを{手伝|てつだ}った。{荷物|にもつ}を{運|はこ}ぶのは（Ｅ）が、{友人|ゆうじん}がとても{喜|よろこ}んでくれたので、{手伝|てつだ}ってよかったと{思|おも}った。{引|ひ}っ{越|こ}しが{終|お}わった{後|あと}、{友人|ゆうじん}が{食事|しょくじ}に（Ｆ）くれた。",
     "passage_title_display": "{友人|ゆうじん}の{引|ひ}っ{越|こ}し",
-    "question_stem_display": "（Ｅ）に{入|はい}るのに{最|もっと}もよいものを{選|えら}びなさい。"
+    "question_stem_display": "（Ｅ）に{入|はい}るのに{最|もっと}もよいものを{選|えら}びなさい。",
+    "question_translation": "Choose the best word to fill in (E).",
+    "passage_translation": "Today I helped my friend move. Moving boxes was ___, but my friend was so pleased that I'm glad I helped. After the move was finished, my friend ___ me to dinner."
   },
   {
     "level": 3,
@@ -1546,7 +1660,9 @@
     "option_1_display": "{連|つ}れて{行|い}って",
     "option_2_display": "{連|つ}れて{行|い}き",
     "option_3_display": "{連|つ}れて{行|い}く",
-    "option_4_display": "{連|つ}れて{行|い}った"
+    "option_4_display": "{連|つ}れて{行|い}った",
+    "question_translation": "Choose the best word to fill in (F).",
+    "passage_translation": "Today I helped my friend move. Moving boxes was ___, but my friend was so pleased that I'm glad I helped. After the move was finished, my friend ___ me to dinner."
   },
   {
     "level": 3,
@@ -1563,7 +1679,9 @@
     "passage_id": 401,
     "passage_display": "お{客様|きゃくさま}へ\n{誠|まこと}に{申|もう}し{訳|わけ}ございませんが、{本日|ほんじつ}の{営業|えいぎょう}は{都合|つごう}により{午後|ごご}3{時|じ}で{終了|しゅうりょう}いたします。{明日|あした}は{通常通|つうじょうどお}り{午前|ごぜん}10{時|じ}より{営業|えいぎょう}いたします。ご{不便|ふべん}をおかけして{申|もう}し{訳|わけ}ありません。",
     "passage_title_display": "お{知|し}らせ",
-    "question_stem_display": "この{店|みせ}の{今日|きょう}の{営業|えいぎょう}は{何時|なんじ}に{終|お}わりますか。"
+    "question_stem_display": "この{店|みせ}の{今日|きょう}の{営業|えいぎょう}は{何時|なんじ}に{終|お}わりますか。",
+    "question_translation": "What time does this store close today?",
+    "passage_translation": "Notice to Customers\nWe sincerely apologize, but due to circumstances, we will close at 3 p.m. today. We will reopen tomorrow at 10 a.m. as usual. We apologize for any inconvenience this may cause."
   },
   {
     "level": 3,
@@ -1584,7 +1702,9 @@
     "option_1_display": "{明日|あした}から{休業|きゅうぎょう}すること",
     "option_2_display": "{今日|きょう}の{営業時間|えいぎょうじかん}が{変|か}わること",
     "option_3_display": "{新|あたら}しい{商品|しょうひん}が{入|はい}ったこと",
-    "option_4_display": "{店|みせ}の{場所|ばしょ}が{変|か}わること"
+    "option_4_display": "{店|みせ}の{場所|ばしょ}が{変|か}わること",
+    "question_translation": "What is this store communicating to customers in this notice?",
+    "passage_translation": "Notice to Customers\nWe sincerely apologize, but due to circumstances, we will close at 3 p.m. today. We will reopen tomorrow at 10 a.m. as usual. We apologize for any inconvenience this may cause."
   },
   {
     "level": 3,
@@ -1605,7 +1725,9 @@
     "option_1_display": "{多|おお}くの{人|ひと}が{書|か}いたから",
     "option_2_display": "{聞|き}き{手|て}の{反応|はんのう}によって{磨|みが}かれてきたから",
     "option_3_display": "{内容|ないよう}が{変|か}わらないから",
-    "option_4_display": "お{説教|せっきょう}が{含|ふく}まれているから"
+    "option_4_display": "お{説教|せっきょう}が{含|ふく}まれているから",
+    "question_translation": "According to this text, what is the reason why folktales are interesting?",
+    "passage_translation": "Folk tales are stories that originally were heard by just a small number of people, and one or two of those people would remember and tell them to the next generation, and then passed down through the generations. It's natural for the same story to change. Depending on how the listeners react, the interesting parts are told in more detail, boring parts are left out, and the story takes on a proper form as a tale. That's why they should be interesting."
   },
   {
     "level": 3,
@@ -1626,7 +1748,9 @@
     "option_1_display": "{話|はな}す{人|ひと}によって{内容|ないよう}が{変|か}えられてきたから",
     "option_2_display": "{印刷|いんさつ}する{機械|きかい}がなかったから",
     "option_3_display": "{昔|むかし}の{人|ひと}が{記憶力|きおくりょく}が{悪|わる}かったから",
-    "option_4_display": "{作者|さくしゃ}が{毎回|まいかい}{違|ちが}う{人|ひと}だったから"
+    "option_4_display": "{作者|さくしゃ}が{毎回|まいかい}{違|ちが}う{人|ひと}だったから",
+    "question_translation": "It states that \"even the same story changes.\" What is the reason for this?",
+    "passage_translation": "Folk tales are stories that originally were heard by just a small number of people, and one or two of those people would remember and tell them to the next generation, and then passed down through the generations. It's natural for the same story to change. Depending on how the listeners react, the interesting parts are told in more detail, boring parts are left out, and the story takes on a proper form as a tale. That's why they should be interesting."
   },
   {
     "level": 3,
@@ -1647,7 +1771,9 @@
     "option_1_display": "{図書館|としょかん}は{子|こ}どもだけが{使|つか}う{場所|ばしょ}だ",
     "option_2_display": "{本|ほん}は{一度|いちど}{読|よ}めば{十分|じゅうぶん}だ",
     "option_3_display": "{同|おな}じ{本|ほん}でも{読|よ}む{人|ひと}の{状況|じょうきょう}によって{受|う}け{取|と}り{方|かた}が{変|か}わる",
-    "option_4_display": "{昔|むかし}の{本|ほん}より{最近|さいきん}の{本|ほん}のほうが{面白|おもしろ}い"
+    "option_4_display": "{昔|むかし}の{本|ほん}より{最近|さいきん}の{本|ほん}のほうが{面白|おもしろ}い",
+    "question_translation": "What is the author trying to convey in this passage?",
+    "passage_translation": "I've loved reading books since childhood, and I used to go to the library every week. Now that I'm an adult, that habit hasn't changed. The other day, I found a book I had read long ago in the library and reread it. My impression of it was different from when I was a child. I realized once again that even the same book can be felt differently depending on the reader's age and experience."
   },
   {
     "level": 3,
@@ -1668,7 +1794,9 @@
     "option_1_display": "{大人|おとな}になること",
     "option_2_display": "{図書館|としょかん}に{通|かよ}うこと",
     "option_3_display": "{本|ほん}を{書|か}くこと",
-    "option_4_display": "{昔|むかし}の{本|ほん}を{捨|す}てること"
+    "option_4_display": "{昔|むかし}の{本|ほん}を{捨|す}てること",
+    "question_translation": "What does \"that habit\" refer to?",
+    "passage_translation": "I've loved reading books since childhood, and I used to go to the library every week. Now that I'm an adult, that habit hasn't changed. The other day, I found a book I had read long ago in the library and reread it. My impression of it was different from when I was a child. I realized once again that even the same book can be felt differently depending on the reader's age and experience."
   },
   {
     "level": 3,
@@ -1689,7 +1817,9 @@
     "option_1_display": "{価格|かかく}が{高|たか}いこと",
     "option_2_display": "{睡眠不足|すいみんぶそく}や{人間関係|にんげんかんけい}の{希薄化|きはくか}",
     "option_3_display": "{電池|でんち}がすぐ{切|き}れること",
-    "option_4_display": "{使|つか}い{方|かた}が{難|むずか}しいこと"
+    "option_4_display": "{使|つか}い{方|かた}が{難|むずか}しいこと",
+    "question_translation": "What are the problems with smartphones described in this passage?",
+    "passage_translation": "In modern times, the widespread adoption of smartphones has greatly changed people's lives. While it has become convenient to obtain information anytime, anywhere, problems have also arisen such as reduced sleep time and fewer opportunities to speak directly with people. Especially among young generations, the number of cases where people's daily rhythms are disrupted due to using smartphones late into the night is increasing. Experts recommend that families decide on rules for how to use smartphones."
   },
   {
     "level": 3,
@@ -1709,7 +1839,9 @@
     "question_stem_display": "{専門家|せんもんか}のアドバイスはどれか。",
     "option_1_display": "スマートフォンを{使|つか}わないこと",
     "option_3_display": "{家族|かぞく}でスマートフォンのルールを{作|つく}ること",
-    "option_4_display": "{夜|よる}だけスマートフォンを{使|つか}うこと"
+    "option_4_display": "{夜|よる}だけスマートフォンを{使|つか}うこと",
+    "question_translation": "What is the expert's advice?",
+    "passage_translation": "In modern times, the widespread adoption of smartphones has greatly changed people's lives. While it has become convenient to obtain information anytime, anywhere, problems have also arisen such as reduced sleep time and fewer opportunities to speak directly with people. Especially among young generations, the number of cases where people's daily rhythms are disrupted due to using smartphones late into the night is increasing. Experts recommend that families decide on rules for how to use smartphones."
   },
   {
     "level": 3,
@@ -1728,7 +1860,9 @@
     "passage_title_display": "スマートフォンと{現代|げんだい}{生活|せいかつ}",
     "question_stem_display": "「{便利|べんり}になった{一方|いっぽう}」という{表現|ひょうげん}はどういう{意味|いみ}か。",
     "option_2_display": "{便利|べんり}になったが、{同時|どうじ}に{問題|もんだい}も{出|で}てきたこと",
-    "option_3_display": "{便利|べんり}になったので、{問題|もんだい}がなくなったこと"
+    "option_3_display": "{便利|べんり}になったので、{問題|もんだい}がなくなったこと",
+    "question_translation": "What does the phrase \"while at the same time becoming convenient\" mean?",
+    "passage_translation": "In modern times, the widespread adoption of smartphones has greatly changed people's lives. While it has become convenient to obtain information anytime, anywhere, problems have also arisen such as reduced sleep time and fewer opportunities to speak directly with people. Especially among young generations, the number of cases where people's daily rhythms are disrupted due to using smartphones late into the night is increasing. Experts recommend that families decide on rules for how to use smartphones."
   },
   {
     "level": 3,
@@ -1749,7 +1883,9 @@
     "option_1_display": "パーティーを{断|ことわ}ること",
     "option_2_display": "{先週|せんしゅう}のパーティーのお{礼|れい}と{次|つぎ}の{招待|しょうたい}",
     "option_3_display": "{料理|りょうり}の{作|つく}り{方|かた}を{教|おし}えること",
-    "option_4_display": "{来月|らいげつ}の{予定|よてい}を{確認|かくにん}すること"
+    "option_4_display": "{来月|らいげつ}の{予定|よてい}を{確認|かくにん}すること",
+    "question_translation": "What does Tanaka-san want to convey to Suzuki-san?",
+    "passage_translation": "Email from Mr. Tanaka\n\nDear Ms. Suzuki, Thank you for the party last week. The food was delicious, and it was fun to see everyone after such a long time. Next time I'll cook, so please come visit my home. How about the second Saturday of next month? I look forward to your reply.\n\nTanaka"
   },
   {
     "level": 3,
@@ -1770,7 +1906,9 @@
     "option_1_display": "パーティーの{料理|りょうり}を{作|つく}る",
     "option_2_display": "{来月|らいげつ}の{予定|よてい}を{返事|へんじ}する",
     "option_3_display": "{田中|たなか}さんの{家|いえ}に{料理|りょうり}を{持|も}っていく",
-    "option_4_display": "メールで{感謝|かんしゃ}を{伝|つた}える"
+    "option_4_display": "メールで{感謝|かんしゃ}を{伝|つた}える",
+    "question_translation": "What does Suzuki-san need to do for Tanaka-san?",
+    "passage_translation": "Email from Mr. Tanaka\n\nDear Ms. Suzuki, Thank you for the party last week. The food was delicious, and it was fun to see everyone after such a long time. Next time I'll cook, so please come visit my home. How about the second Saturday of next month? I look forward to your reply.\n\nTanaka"
   },
   {
     "level": 3,
@@ -1791,7 +1929,9 @@
     "option_1_display": "{高齢者|こうれいしゃ}{向|む}けのスポーツイベントを{開催|かいさい}している",
     "option_2_display": "{食事|しょくじ}の{配達|はいたつ}や{話|はなし}し{相手|あいて}などのサービスを{提供|ていきょう}している",
     "option_3_display": "{高齢者|こうれいしゃ}に{仕事|しごと}を{紹介|しょうかい}している",
-    "option_4_display": "{高齢者|こうれいしゃ}のための{学校|がっこう}を{作|つく}っている"
+    "option_4_display": "{高齢者|こうれいしゃ}のための{学校|がっこう}を{作|つく}っている",
+    "question_translation": "What kind of activities is the volunteer organization conducting?",
+    "passage_translation": "In recent years, Japan has been experiencing an aging population, and the number of elderly people living alone is increasing. In such circumstances, local volunteer organizations are working to support the elderly. For example, there are services such as meal delivery and conversation partners. Such efforts play an important role in creating an environment where the elderly can live with peace of mind. By having young people participate in these activities, intergenerational exchange is fostered, and it is believed that the local community becomes richer."
   },
   {
     "level": 3,
@@ -1812,7 +1952,9 @@
     "option_1_display": "{高齢者|こうれいしゃ}が{仕事|しごと}を{見|み}つけられること",
     "option_2_display": "{地域社会|ちいきしゃかい}が{豊|ゆた}かになること",
     "option_3_display": "{若者|わかもの}の{給料|きゅうりょう}が{増|ふ}えること",
-    "option_4_display": "{高齢者|こうれいしゃ}の{数|かず}が{減|へ}ること"
+    "option_4_display": "{高齢者|こうれいしゃ}の{数|かず}が{減|へ}ること",
+    "question_translation": "What effects are expected from young people's participation in the activities?",
+    "passage_translation": "In recent years, Japan has been experiencing an aging population, and the number of elderly people living alone is increasing. In such circumstances, local volunteer organizations are working to support the elderly. For example, there are services such as meal delivery and conversation partners. Such efforts play an important role in creating an environment where the elderly can live with peace of mind. By having young people participate in these activities, intergenerational exchange is fostered, and it is believed that the local community becomes richer."
   },
   {
     "level": 3,
@@ -1833,7 +1975,9 @@
     "option_1_display": "{日本|にほん}では{若者|わかもの}の{数|かず}が{増|ふ}えている",
     "option_2_display": "ボランティア{活動|かつどう}は{高齢者|こうれいしゃ}の{支援|しえん}に{役立|やくだ}っている",
     "option_3_display": "{高齢者|こうれいしゃ}はみんな{家族|かぞく}と{一緒|いっしょ}に{暮|く}らしている",
-    "option_4_display": "{地域|ちいき}のボランティア{活動|かつどう}は{政府|せいふ}が{運営|うんえい}している"
+    "option_4_display": "{地域|ちいき}のボランティア{活動|かつどう}は{政府|せいふ}が{運営|うんえい}している",
+    "question_translation": "Which statement matches the content of this passage?",
+    "passage_translation": "In recent years, Japan has been experiencing an aging population, and the number of elderly people living alone is increasing. In such circumstances, local volunteer organizations are working to support the elderly. For example, there are services such as meal delivery and conversation partners. Such efforts play an important role in creating an environment where the elderly can live with peace of mind. By having young people participate in these activities, intergenerational exchange is fostered, and it is believed that the local community becomes richer."
   },
   {
     "level": 3,
@@ -1854,7 +1998,9 @@
     "option_1_display": "{返信|へんしん}をできるだけ{早|はや}くすること",
     "option_2_display": "{件名|けんめい}を{明確|めいかく}にし、{丁寧|ていねい}な{言葉|ことば}を{使|つか}うこと",
     "option_3_display": "{文章|ぶんしょう}を{短|みじか}くまとめること",
-    "option_4_display": "CCに{必|かなら}ず{上司|じょうし}を{入|い}れること"
+    "option_4_display": "CCに{必|かなら}ず{上司|じょうし}を{入|い}れること",
+    "question_translation": "According to this passage, what is important in email exchanges?",
+    "passage_translation": "When working as a member of society, it is important to follow workplace manners. For example, greeting your boss and colleagues is the most basic practice. Additionally, one must always attend meetings on time, and when speaking, one is expected to respect others' opinions. Furthermore, in email communication, it is important to have a clear subject line and use polite language. By following such manners, human relationships in the workplace become smooth, and work efficiency improves. It is said that new employees in particular should have a proactive attitude toward learning from their senior colleagues."
   },
   {
     "level": 3,
@@ -1875,7 +2021,9 @@
     "option_1_display": "{給料|きゅうりょう}が{上|あ}がること",
     "option_2_display": "{休日|きゅうじつ}が{増|ふ}えること",
     "option_3_display": "{人間関係|にんげんかんけい}が{円滑|えんかつ}になり、{仕事|しごと}の{効率|こうりつ}が{上|あ}がること",
-    "option_4_display": "{早|はや}く{昇進|しょうしん}できること"
+    "option_4_display": "{早|はや}く{昇進|しょうしん}できること",
+    "question_translation": "What is expected to result from following workplace etiquette?",
+    "passage_translation": "When working as a member of society, it is important to follow workplace manners. For example, greeting your boss and colleagues is the most basic practice. Additionally, one must always attend meetings on time, and when speaking, one is expected to respect others' opinions. Furthermore, in email communication, it is important to have a clear subject line and use polite language. By following such manners, human relationships in the workplace become smooth, and work efficiency improves. It is said that new employees in particular should have a proactive attitude toward learning from their senior colleagues."
   },
   {
     "level": 3,
@@ -1896,7 +2044,9 @@
     "option_1_display": "{会議|かいぎ}での{積極的|せっきょくてき}な{発言|はつげん}",
     "option_2_display": "{先輩|せんぱい}から{学|まな}ぼうとする{姿勢|しせい}",
     "option_3_display": "{残業|ざんぎょう}を{進|すす}んで{引|ひ}き{受|う}けること",
-    "option_4_display": "{上司|じょうし}への{報告|ほうこく}を{毎日|まいにち}すること"
+    "option_4_display": "{上司|じょうし}への{報告|ほうこく}を{毎日|まいにち}すること",
+    "question_translation": "What is specifically expected of new employees?",
+    "passage_translation": "When working as a member of society, it is important to follow workplace manners. For example, greeting your boss and colleagues is the most basic practice. Additionally, one must always attend meetings on time, and when speaking, one is expected to respect others' opinions. Furthermore, in email communication, it is important to have a clear subject line and use polite language. By following such manners, human relationships in the workplace become smooth, and work efficiency improves. It is said that new employees in particular should have a proactive attitude toward learning from their senior colleagues."
   },
   {
     "level": 3,
@@ -1917,7 +2067,9 @@
     "option_1_display": "{商品|しょうひん}を{実際|じっさい}に{確認|かくにん}してから{買|か}える",
     "option_2_display": "{値段|ねだん}の{交渉|こうしょう}ができる",
     "option_3_display": "{価格|かかく}の{比較|ひかく}が{簡単|かんたん}で、{深夜|しんや}でも{注文|ちゅうもん}できる",
-    "option_4_display": "{配送|はいそう}が{必|かなら}ず{翌日|よくじつ}になる"
+    "option_4_display": "{配送|はいそう}が{必|かなら}ず{翌日|よくじつ}になる",
+    "question_translation": "Which is mentioned as an advantage of online shopping?",
+    "passage_translation": "Online shopping is a convenient service that allows you to purchase various products from home. The fact that you can easily compare prices and place orders even in the middle of the night is supported by many people. However, since you cannot actually hold the product and check it, the size or quality may differ from expectations. Additionally, fraud cases involving fake shopping websites are increasing, so choosing a trustworthy site is important. It is recommended to check reviews before purchasing and to read the return policy carefully."
   },
   {
     "level": 3,
@@ -1938,7 +2090,9 @@
     "option_1_display": "{店員|てんいん}に{電話|でんわ}で{相談|そうだん}すること",
     "option_2_display": "{口|くち}コミやレビューを{確認|かくにん}し、{返品|へんぴん}ポリシーを{読|よ}むこと",
     "option_3_display": "おなじ{商品|しょうひん}を{複数|ふくすう}のサイトで{注文|ちゅうもん}すること",
-    "option_4_display": "クレジットカードを{登録|とうろく}しないこと"
+    "option_4_display": "クレジットカードを{登録|とうろく}しないこと",
+    "question_translation": "What are you advised to do before making a purchase?",
+    "passage_translation": "Online shopping is a convenient service that allows you to purchase various products from home. The fact that you can easily compare prices and place orders even in the middle of the night is supported by many people. However, since you cannot actually hold the product and check it, the size or quality may differ from expectations. Additionally, fraud cases involving fake shopping websites are increasing, so choosing a trustworthy site is important. It is recommended to check reviews before purchasing and to read the return policy carefully."
   },
   {
     "level": 3,
@@ -1959,7 +2113,9 @@
     "option_1_display": "{商品|しょうひん}の{種類|しゅるい}が{少|すく}ないこと",
     "option_2_display": "{営業時間|えいぎょうじかん}が{限|かぎ}られていること",
     "option_3_display": "{詐欺被害|さぎひがい}のリスクがあること",
-    "option_4_display": "{配送|はいそう}に{時間|じかん}がかかりすぎること"
+    "option_4_display": "{配送|はいそう}に{時間|じかん}がかかりすぎること",
+    "question_translation": "Which is mentioned as a disadvantage of online shopping?",
+    "passage_translation": "Online shopping is a convenient service that allows you to purchase various products from home. The fact that you can easily compare prices and place orders even in the middle of the night is supported by many people. However, since you cannot actually hold the product and check it, the size or quality may differ from expectations. Additionally, fraud cases involving fake shopping websites are increasing, so choosing a trustworthy site is important. It is recommended to check reviews before purchasing and to read the return policy carefully."
   },
   {
     "level": 3,
@@ -1980,7 +2136,9 @@
     "option_1_display": "{毎日|まいにち}30{分|ふん}{以上|いじょう}",
     "option_2_display": "{週|しゅう}に150{分|ふん}{以上|いじょう}の{中程度|ちゅうていど}の{運動|うんどう}",
     "option_3_display": "{月|つき}に{合計|ごうけい}1000{分|ふん}の{激|はげ}しい{運動|うんどう}",
-    "option_4_display": "1{日|にち}に10000{歩|ほ}のウォーキング"
+    "option_4_display": "1{日|にち}に10000{歩|ほ}のウォーキング",
+    "question_translation": "How much exercise does the expert recommend?",
+    "passage_translation": "Modern people tend to become sedentary due to an increase in desk work. According to experts, to maintain health, at least 150 minutes of moderate exercise per week is recommended. Aerobic exercises such as walking and swimming, which put less strain on the body, are said to improve heart function and relieve stress. Additionally, by incorporating strength training, it is said that basal metabolism increases and the body becomes less likely to gain weight. To make exercise a habit, it is important to set realistic goals and maintain consistency."
   },
   {
     "level": 3,
@@ -2001,7 +2159,9 @@
     "option_1_display": "{体重|たいじゅう}が{急速|きゅうそく}に{減|へ}ること",
     "option_2_display": "{筋肉|きんにく}が{大|おお}きくなること",
     "option_3_display": "{心臓|しんぞう}の{機能|きのう}を{高|たか}め、ストレスを{解消|かいしょう}すること",
-    "option_4_display": "{睡眠時間|すいみんじかん}が{長|なが}くなること"
+    "option_4_display": "{睡眠時間|すいみんじかん}が{長|なが}くなること",
+    "question_translation": "Which effect of aerobic exercise is described in the passage?",
+    "passage_translation": "Modern people tend to become sedentary due to an increase in desk work. According to experts, to maintain health, at least 150 minutes of moderate exercise per week is recommended. Aerobic exercises such as walking and swimming, which put less strain on the body, are said to improve heart function and relieve stress. Additionally, by incorporating strength training, it is said that basal metabolism increases and the body becomes less likely to gain weight. To make exercise a habit, it is important to set realistic goals and maintain consistency."
   },
   {
     "level": 3,
@@ -2022,7 +2182,9 @@
     "option_1_display": "{毎日|まいにち}{同|おな}じ{時間|じかん}に{運動|うんどう}すること",
     "option_2_display": "{専門家|せんもんか}のコーチをつけること",
     "option_3_display": "{無理|むり}のない{目標|もくひょう}を{設定|せってい}し、{継続|けいぞく}すること",
-    "option_4_display": "スポーツジムに{入会|にゅうかい}すること"
+    "option_4_display": "スポーツジムに{入会|にゅうかい}すること",
+    "question_translation": "What is important for making exercise a habit?",
+    "passage_translation": "Modern people tend to become sedentary due to an increase in desk work. According to experts, to maintain health, at least 150 minutes of moderate exercise per week is recommended. Aerobic exercises such as walking and swimming, which put less strain on the body, are said to improve heart function and relieve stress. Additionally, by incorporating strength training, it is said that basal metabolism increases and the body becomes less likely to gain weight. To make exercise a habit, it is important to set realistic goals and maintain consistency."
   },
   {
     "level": 3,
@@ -2043,7 +2205,9 @@
     "option_1_display": "{午前|ごぜん}9{時|じ}から{午後|ごご}5{時|じ}",
     "option_2_display": "{午前|ごぜん}10{時|じ}から{午後|ごご}6{時|じ}（{変更|へんこう}なし）",
     "option_3_display": "{午前|ごぜん}9{時|じ}から{午後|ごご}7{時|じ}",
-    "option_4_display": "{午前|ごぜん}8{時|じ}から{午後|ごご}8{時|じ}"
+    "option_4_display": "{午前|ごぜん}8{時|じ}から{午後|ごご}8{時|じ}",
+    "question_translation": "What will happen to the opening hours on weekdays from next month?",
+    "passage_translation": "Notice from the Municipal Library. Starting next month, the opening hours will change. On weekdays, hours will change from 10 a.m. to 6 p.m. to 9 a.m. to 7 p.m. On weekends, there is no change—10 a.m. to 5 p.m. Additionally, the library will be closed on the third Monday of every month. Up to 10 books can be borrowed per person, and the loan period is two weeks. Please note that if you fail to return books on time, you will not be able to borrow again. Online reservation services will continue to be available."
   },
   {
     "level": 3,
@@ -2064,7 +2228,9 @@
     "option_1_display": "{罰金|ばっきん}を{払|はら}わなければならない",
     "option_2_display": "{次|つぎ}の{貸|か}し{出|だ}しができなくなる",
     "option_3_display": "{会員資格|かいいんしかく}がなくなる",
-    "option_4_display": "{借|か}りられる{冊数|さっすう}が{減|へ}る"
+    "option_4_display": "{借|か}りられる{冊数|さっすう}が{減|へ}る",
+    "question_translation": "What will happen if returning a book is late?",
+    "passage_translation": "Notice from the Municipal Library. Starting next month, the opening hours will change. On weekdays, hours will change from 10 a.m. to 6 p.m. to 9 a.m. to 7 p.m. On weekends, there is no change—10 a.m. to 5 p.m. Additionally, the library will be closed on the third Monday of every month. Up to 10 books can be borrowed per person, and the loan period is two weeks. Please note that if you fail to return books on time, you will not be able to borrow again. Online reservation services will continue to be available."
   },
   {
     "level": 3,
@@ -2085,7 +2251,9 @@
     "option_1_display": "{土日|どにち}の{開館時間|かいかんじかん}も{変更|へんこう}される",
     "option_2_display": "{毎週|まいしゅう}{月曜日|げつようび}が{休館日|きゅうかんび}だ",
     "option_3_display": "{一人|ひとり}が{借|か}りられるのは{最大|さいだい}10{冊|さつ}だ",
-    "option_4_display": "インターネット{予約|よやく}は{廃止|はいし}される"
+    "option_4_display": "インターネット{予約|よやく}は{廃止|はいし}される",
+    "question_translation": "According to this notice, which one is correct?",
+    "passage_translation": "Notice from the Municipal Library. Starting next month, the opening hours will change. On weekdays, hours will change from 10 a.m. to 6 p.m. to 9 a.m. to 7 p.m. On weekends, there is no change—10 a.m. to 5 p.m. Additionally, the library will be closed on the third Monday of every month. Up to 10 books can be borrowed per person, and the loan period is two weeks. Please note that if you fail to return books on time, you will not be able to borrow again. Online reservation services will continue to be available."
   },
   {
     "level": 3,
@@ -2106,7 +2274,9 @@
     "option_1_display": "{漢字|かんじ}",
     "option_2_display": "ひらがな",
     "option_3_display": "カタカナ",
-    "option_4_display": "ローマ{字|じ}"
+    "option_4_display": "ローマ{字|じ}",
+    "question_translation": "How are foreign words typically written?",
+    "passage_translation": "Japanese contains many loanwords borrowed from foreign languages. In particular, loanwords from English continue to increase, and words like 'smartphone,' 'internet,' and 'convenience store' have become essential in everyday conversation. Loanwords are often written in katakana and are said to be well-suited for expressing foreign cultures and new concepts. On the other hand, some people worry that too many loanwords might cause original Japanese words to be lost. As loanwords and Japanese coexist, the language continues to evolve with the times."
   },
   {
     "level": 3,
@@ -2127,7 +2297,9 @@
     "option_1_display": "{外国人|がいこくじん}が{日本語|にほんご}を{習|なら}いにくくなること",
     "option_2_display": "{日本語本来|にほんごほんらい}の{言葉|ことば}が{失|うしな}われること",
     "option_3_display": "カタカナが{読|よ}めない{人|ひと}が{増|ふ}えること",
-    "option_4_display": "{英語|えいご}の{勉強|べんきょう}が{必要|ひつよう}なくなること"
+    "option_4_display": "{英語|えいご}の{勉強|べんきょう}が{必要|ひつよう}なくなること",
+    "question_translation": "What aspect is the person who worries that there are too many foreign words concerned about?",
+    "passage_translation": "Japanese contains many loanwords borrowed from foreign languages. In particular, loanwords from English continue to increase, and words like 'smartphone,' 'internet,' and 'convenience store' have become essential in everyday conversation. Loanwords are often written in katakana and are said to be well-suited for expressing foreign cultures and new concepts. On the other hand, some people worry that too many loanwords might cause original Japanese words to be lost. As loanwords and Japanese coexist, the language continues to evolve with the times."
   },
   {
     "level": 3,
@@ -2148,7 +2320,9 @@
     "option_1_display": "{英語|えいご}を{学|まな}ぶ{重要性|じゅうようせい}",
     "option_2_display": "カタカナの{書|か}き{方|かた}",
     "option_3_display": "{外来語|がいらいご}の{日本語|にほんご}への{広|ひろ}がりと{問題点|もんだいてん}",
-    "option_4_display": "{日本語|にほんご}を{守|まも}るための{運動|うんどう}"
+    "option_4_display": "{日本語|にほんご}を{守|まも}るための{運動|うんどう}",
+    "question_translation": "What is the theme of this text?",
+    "passage_translation": "Japanese contains many loanwords borrowed from foreign languages. In particular, loanwords from English continue to increase, and words like 'smartphone,' 'internet,' and 'convenience store' have become essential in everyday conversation. Loanwords are often written in katakana and are said to be well-suited for expressing foreign cultures and new concepts. On the other hand, some people worry that too many loanwords might cause original Japanese words to be lost. As loanwords and Japanese coexist, the language continues to evolve with the times."
   },
   {
     "level": 3,
@@ -2169,7 +2343,9 @@
     "option_1_display": "{歴史|れきし}や{文化|ぶんか}が{感|かん}じられる{場所|ばしょ}",
     "option_2_display": "{現地|げんち}の{食|た}べ{物|もの}が{口|くち}に{合|あ}うこと",
     "option_3_display": "{天気|てんき}がよいこと",
-    "option_4_display": "{博物館|はくぶつかん}や{遺跡|いせき}が{訪|おとず}れられること"
+    "option_4_display": "{博物館|はくぶつかん}や{遺跡|いせき}が{訪|おとず}れられること",
+    "question_translation": "Which one is not mentioned as a criterion that Tanaka uses when choosing a travel destination?",
+    "passage_translation": "Tanaka is planning an overseas trip for next summer. The destination hasn't been decided yet, but she's considering either Europe or Asia. Since Tanaka is interested in history and culture, she hopes to visit a place where she can see museums and historical sites. Also, because she is particular about food, whether the local cuisine will suit her taste is an important selection criterion. According to advice from a friend, Asian countries have relatively low prices and good access from Japan, making them suitable for a first overseas trip. Tanaka is thinking of first consulting with a travel agency."
   },
   {
     "level": 3,
@@ -2190,7 +2366,9 @@
     "option_1_display": "{歴史的|れきしてき}な{遺跡|いせき}が{多|おお}いこと",
     "option_2_display": "{物価|ぶっか}が{安|やす}く、{日本|にほん}からアクセスしやすいこと",
     "option_3_display": "{料理|りょうり}のバリエーションが{豊富|ほうふ}なこと",
-    "option_4_display": "{英語|えいご}が{通|つう}じやすいこと"
+    "option_4_display": "{英語|えいご}が{通|つう}じやすいこと",
+    "question_translation": "According to the friend's advice, what is the merit of traveling in Asia?",
+    "passage_translation": "Tanaka is planning an overseas trip for next summer. The destination hasn't been decided yet, but she's considering either Europe or Asia. Since Tanaka is interested in history and culture, she hopes to visit a place where she can see museums and historical sites. Also, because she is particular about food, whether the local cuisine will suit her taste is an important selection criterion. According to advice from a friend, Asian countries have relatively low prices and good access from Japan, making them suitable for a first overseas trip. Tanaka is thinking of first consulting with a travel agency."
   },
   {
     "level": 3,
@@ -2211,7 +2389,9 @@
     "option_1_display": "ヨーロッパのホテルを{予約|よやく}する",
     "option_2_display": "{友人|ゆうじん}と{一緒|いっしょ}に{旅行先|りょこうさき}を{決|き}める",
     "option_3_display": "{旅行会社|りょこうがいしゃ}に{相談|そうだん}する",
-    "option_4_display": "パスポートを{取得|しゅとく}する"
+    "option_4_display": "パスポートを{取得|しゅとく}する",
+    "question_translation": "What does Tanaka intend to do as the next step in planning the trip?",
+    "passage_translation": "Tanaka is planning an overseas trip for next summer. The destination hasn't been decided yet, but she's considering either Europe or Asia. Since Tanaka is interested in history and culture, she hopes to visit a place where she can see museums and historical sites. Also, because she is particular about food, whether the local cuisine will suit her taste is an important selection criterion. According to advice from a friend, Asian countries have relatively low prices and good access from Japan, making them suitable for a first overseas trip. Tanaka is thinking of first consulting with a travel agency."
   },
   {
     "level": 3,
@@ -2232,7 +2412,9 @@
     "option_1_display": "{毎日|まいにち}{同|おな}じ{時間|じかん}に{出|だ}せばよい",
     "option_2_display": "{決|き}められた{曜日|ようび}の{朝|あさ}に{指定|してい}された{場所|ばしょ}に{出|だ}す",
     "option_3_display": "{袋|ふくろ}の{色|いろ}によって{分別|ぶんべつ}する",
-    "option_4_display": "マンションの{管理人|かんりにん}に{渡|わた}す"
+    "option_4_display": "マンションの{管理人|かんりにん}に{渡|わた}す",
+    "question_translation": "Which rule regarding garbage disposal is mentioned?",
+    "passage_translation": "In Japan, it is mandatory to properly separate garbage before disposal. Although specific rules differ by municipality, in general garbage must be separated into burnable waste, non-burnable waste, plastics, and recyclable materials such as bottles and cans. Garbage must be placed at a designated location on a specified day of the week in the morning. For foreigners who have just moved to an area, this system can sometimes feel complex. However, proper garbage separation is an important initiative that promotes recycling and contributes to environmental protection. Local neighborhood associations may also explain garbage disposal methods to new residents."
   },
   {
     "level": 3,
@@ -2253,7 +2435,9 @@
     "option_1_display": "ゴミ{収集車|しゅうしゅうしゃ}の{仕事|しごと}を{楽|らく}にするため",
     "option_2_display": "リサイクルを{促進|そくしん}し、{環境保護|かんきょうほご}につながるため",
     "option_3_display": "{法律|ほうりつ}で{決|き}められているため",
-    "option_4_display": "{近所|きんじょ}との{関係|かんけい}を{良|よ}くするため"
+    "option_4_display": "{近所|きんじょ}との{関係|かんけい}を{良|よ}くするため",
+    "question_translation": "Why is garbage separation described as important?",
+    "passage_translation": "In Japan, it is mandatory to properly separate garbage before disposal. Although specific rules differ by municipality, in general garbage must be separated into burnable waste, non-burnable waste, plastics, and recyclable materials such as bottles and cans. Garbage must be placed at a designated location on a specified day of the week in the morning. For foreigners who have just moved to an area, this system can sometimes feel complex. However, proper garbage separation is an important initiative that promotes recycling and contributes to environmental protection. Local neighborhood associations may also explain garbage disposal methods to new residents."
   },
   {
     "level": 3,
@@ -2274,6 +2458,8 @@
     "option_1_display": "{日本人|にほんじん}より{上手|じょうず}にできる",
     "option_2_display": "{複雑|ふくざつ}に{感|かん}じられることがある",
     "option_3_display": "{楽|たの}しく{理解|りかい}できる",
-    "option_4_display": "まったく{問題|もんだい}ない"
+    "option_4_display": "まったく{問題|もんだい}ない",
+    "question_translation": "How is this system described for foreigners?",
+    "passage_translation": "In Japan, it is mandatory to properly separate garbage before disposal. Although specific rules differ by municipality, in general garbage must be separated into burnable waste, non-burnable waste, plastics, and recyclable materials such as bottles and cans. Garbage must be placed at a designated location on a specified day of the week in the morning. For foreigners who have just moved to an area, this system can sometimes feel complex. However, proper garbage separation is an important initiative that promotes recycling and contributes to environmental protection. Local neighborhood associations may also explain garbage disposal methods to new residents."
   }
 ]

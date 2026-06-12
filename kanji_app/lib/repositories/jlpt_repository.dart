@@ -19,6 +19,9 @@ class JlptQuestion {
   final List<String?> optionsDisplay;
   // Sentence-reorder only: "a,b,c,d" → slot1=optA, slot2=optB, etc.
   final String? correctOrder;
+  // English translations (null until translate_jlpt.py has run).
+  final String? questionTranslation;
+  final String? passageTranslation;
 
   const JlptQuestion({
     required this.id,
@@ -36,6 +39,8 @@ class JlptQuestion {
     this.questionStemDisplay,
     required this.optionsDisplay,
     this.correctOrder,
+    this.questionTranslation,
+    this.passageTranslation,
   });
 
   factory JlptQuestion.fromMap(Map<String, dynamic> m) => JlptQuestion(
@@ -64,6 +69,8 @@ class JlptQuestion {
       m['option_4_display'] as String?,
     ],
     correctOrder: m['correct_order'] as String?,
+    questionTranslation: m['question_translation'] as String?,
+    passageTranslation: m['passage_translation'] as String?,
   );
 
   String get correctAnswer => options[correctOption - 1];

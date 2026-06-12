@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/settings_service.dart';
 import '../theme_provider.dart';
 
 class SakuraPetalsOverlay extends ConsumerStatefulWidget {
@@ -54,15 +55,17 @@ class _SakuraPetalsOverlayState extends ConsumerState<SakuraPetalsOverlay>
   @override
   Widget build(BuildContext context) {
     final isSakura = ref.watch(themeNotifier) == AppTheme.sakura;
+    final animate = ref.watch(settingsProvider).animationsEnabled;
+    final active = isSakura && animate;
 
-    if (isSakura && !_ticker.isActive) {
+    if (active && !_ticker.isActive) {
       _lastElapsed = Duration.zero;
       _ticker.start();
-    } else if (!isSakura && _ticker.isActive) {
+    } else if (!active && _ticker.isActive) {
       _ticker.stop();
     }
 
-    if (!isSakura) return const SizedBox.shrink();
+    if (!active) return const SizedBox.shrink();
 
     return IgnorePointer(
       child: LayoutBuilder(builder: (_, constraints) {

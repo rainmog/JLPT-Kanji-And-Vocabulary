@@ -15,7 +15,8 @@
     "option_1_display": "{消して|けして}",
     "option_2_display": "{付けて|つけて}",
     "option_3_display": "{閉めて|しめて}",
-    "option_4_display": "{開けて|あけて}"
+    "option_4_display": "{開けて|あけて}",
+    "question_translation": "Please **turn off** the TV because it's loud."
   },
   {
     "level": 5,
@@ -34,7 +35,8 @@
     "option_1_display": "{寝ます|ねます}",
     "option_2_display": "{起きます|おきます}",
     "option_3_display": "{帰ります|かえります}",
-    "option_4_display": "{出ます|でます}"
+    "option_4_display": "{出ます|でます}",
+    "question_translation": "I wake up at 7 AM every morning."
   },
   {
     "level": 5,
@@ -53,7 +55,8 @@
     "option_1_display": "{食べました|たべました}",
     "option_2_display": "{見ました|みました}",
     "option_3_display": "{飲みました|のみました}",
-    "option_4_display": "{買いました|かいました}"
+    "option_4_display": "{買いました|かいました}",
+    "question_translation": "Because I was thirsty, I **drank** water."
   },
   {
     "level": 5,
@@ -72,7 +75,8 @@
     "option_1_display": "{来ました|きました}",
     "option_2_display": "{行きました|いきました}",
     "option_3_display": "{帰りました|かえりました}",
-    "option_4_display": "{入りました|はいりました}"
+    "option_4_display": "{入りました|はいりました}",
+    "question_translation": "I **went** to the station by train."
   },
   {
     "level": 5,
@@ -91,7 +95,8 @@
     "option_1_display": "{書きました|かきました}",
     "option_2_display": "{見ました|みました}",
     "option_3_display": "{読みました|よみました}",
-    "option_4_display": "{聞き|きき}ました"
+    "option_4_display": "{聞き|きき}ました",
+    "question_translation": "I **read** this book at the library."
   },
   {
     "level": 5,
@@ -109,7 +114,8 @@
     "question_stem_display": "{先生|せんせい}が {黒板|こくばん}に じを （　　）。",
     "option_1_display": "{書きました|かきました}",
     "option_2_display": "{読みました|よみました}",
-    "option_3_display": "{見ました|みました}"
+    "option_3_display": "{見ました|みました}",
+    "question_translation": "The teacher **wrote** letters on the blackboard."
   },
   {
     "level": 5,
@@ -128,7 +134,8 @@
     "option_1_display": "{飲みました|のみました}",
     "option_2_display": "{食べました|たべました}",
     "option_3_display": "{買いました|かいました}",
-    "option_4_display": "{作りました|つくりました}"
+    "option_4_display": "{作りました|つくりました}",
+    "question_translation": "Because I was hungry, I **ate** rice."
   },
   {
     "level": 5,
@@ -146,7 +153,8 @@
     "question_stem_display": "{新しい|あたらしい} {靴|くつ}を {店|みせ}で （　　）。",
     "option_1_display": "{売りました|うりました}",
     "option_2_display": "{使いました|つかいました}",
-    "option_3_display": "{買いました|かいました}"
+    "option_3_display": "{買いました|かいました}",
+    "question_translation": "I **bought** new shoes at the store."
   },
   {
     "level": 5,
@@ -165,7 +173,8 @@
     "option_1_display": "{話しました|はなしました}",
     "option_2_display": "{書きました|かきました}",
     "option_3_display": "{見ました|みました}",
-    "option_4_display": "{読みました|よみました}"
+    "option_4_display": "{読みました|よみました}",
+    "question_translation": "I **spoke** with my friend on the phone."
   },
   {
     "level": 5,
@@ -183,7 +192,8 @@
     "question_stem_display": "{音楽|おんがく}を （　　） ながら {勉強|べんきょう}します。",
     "option_2_display": "{読み|よみ}",
     "option_3_display": "{聞き|きき}",
-    "option_4_display": "{書き|かき}"
+    "option_4_display": "{書き|かき}",
+    "question_translation": "I study while **listening to** music."
   },
   {
     "level": 5,
@@ -202,7 +212,8 @@
     "option_1_display": "{開けて|あけて}",
     "option_2_display": "{閉めて|しめて}",
     "option_3_display": "{消して|けして}",
-    "option_4_display": "{付けて|つけて}"
+    "option_4_display": "{付けて|つけて}",
+    "question_translation": "Please **close** the window. It's cold outside."
   },
   {
     "level": 5,
@@ -221,7 +232,8 @@
     "option_1_display": "{消して|けして}",
     "option_2_display": "{閉めて|しめて}",
     "option_3_display": "{付けて|つけて}",
-    "option_4_display": "{開けて|あけて}"
+    "option_4_display": "{開けて|あけて}",
+    "question_translation": "Please **turn on** the lights because it's dark."
   },
   {
     "level": 5,
@@ -240,7 +252,8 @@
     "option_1_display": "{行きました|いきました}",
     "option_2_display": "{来ました|きました}",
     "option_3_display": "{出ました|でました}",
-    "option_4_display": "{帰りました|かえりました}"
+    "option_4_display": "{帰りました|かえりました}",
+    "question_translation": "Because work was over, I **went home**."
   },
   {
     "level": 5,
@@ -259,7 +272,8 @@
     "option_1_display": "{来ます|きます}",
     "option_2_display": "{帰ります|かえります}",
     "option_3_display": "{行きます|いきます}",
-    "option_4_display": "{出ます|でます}"
+    "option_4_display": "{出ます|でます}",
+    "question_translation": "I **go** to school every day."
   },
   {
     "level": 5,
@@ -278,7 +292,8 @@
     "option_1_display": "{行きました|いきました}",
     "option_2_display": "{来ました|きました}",
     "option_3_display": "{帰りました|かえりました}",
-    "option_4_display": "{入りました|はいりました}"
+    "option_4_display": "{入りました|はいりました}",
+    "question_translation": "My friend **came** to my house."
   },
   {
     "level": 5,
@@ -297,7 +312,8 @@
     "option_1_display": "{買います|かいます}",
     "option_2_display": "{使います|つかいます}",
     "option_3_display": "{持ちます|もちます}",
-    "option_4_display": "{見ます|みます}"
+    "option_4_display": "{見ます|みます}",
+    "question_translation": "I **use** this bag every day."
   },
   {
     "level": 5,
@@ -316,7 +332,8 @@
     "option_1_display": "{教えます|おしえます}",
     "option_2_display": "{習います|ならいます}",
     "option_3_display": "{書きます|かきます}",
-    "option_4_display": "{読みます|よみます}"
+    "option_4_display": "{読みます|よみます}",
+    "question_translation": "I **learn** Japanese from a teacher."
   },
   {
     "level": 5,
@@ -335,7 +352,8 @@
     "option_1_display": "{習います|ならいます}",
     "option_2_display": "{勉強|べんきょう}します",
     "option_3_display": "{教えます|おしえます}",
-    "option_4_display": "{読みます|よみます}"
+    "option_4_display": "{読みます|よみます}",
+    "question_translation": "I **teach** English to students."
   },
   {
     "level": 5,
@@ -354,7 +372,8 @@
     "option_1_display": "{起きます|おきます}",
     "option_2_display": "{寝ます|ねます}",
     "option_3_display": "{食べます|たべます}",
-    "option_4_display": "{帰ります|かえります}"
+    "option_4_display": "{帰ります|かえります}",
+    "question_translation": "I **go to sleep** early at night."
   },
   {
     "level": 5,
@@ -373,7 +392,8 @@
     "option_1_display": "{出て|でて}",
     "option_2_display": "{入って|はいって}",
     "option_3_display": "{帰って|かえって}",
-    "option_4_display": "{行って|いって}"
+    "option_4_display": "{行って|いって}",
+    "question_translation": "Please **come into** this room."
   },
   {
     "level": 5,
@@ -392,7 +412,8 @@
     "option_1_display": "{聞き|きき}ました",
     "option_2_display": "{読みました|よみました}",
     "option_3_display": "{見ました|みました}",
-    "option_4_display": "{食べました|たべました}"
+    "option_4_display": "{食べました|たべました}",
+    "question_translation": "I **watched** a movie yesterday."
   },
   {
     "level": 5,
@@ -411,7 +432,8 @@
     "option_1_display": "{食べました|たべました}",
     "option_2_display": "{作りました|つくりました}",
     "option_3_display": "{買いました|かいました}",
-    "option_4_display": "{売りました|うりました}"
+    "option_4_display": "{売りました|うりました}",
+    "question_translation": "I **bought** vegetables at the supermarket."
   },
   {
     "level": 5,
@@ -430,7 +452,8 @@
     "option_1_display": "{書きました|かきました}",
     "option_2_display": "{読みました|よみました}",
     "option_3_display": "{見ました|みました}",
-    "option_4_display": "{習いました|ならいました}"
+    "option_4_display": "{習いました|ならいました}",
+    "question_translation": "I **wrote** a letter to my friend."
   },
   {
     "level": 5,
@@ -449,7 +472,8 @@
     "option_1_display": "{飲んで|のんで}",
     "option_2_display": "{食べて|たべて}",
     "option_3_display": "{作って|つくって}",
-    "option_4_display": "{買って|かって}"
+    "option_4_display": "{買って|かって}",
+    "question_translation": "I go to school **after eating** breakfast."
   },
   {
     "level": 5,
@@ -467,7 +491,8 @@
     "question_stem_display": "この {英語|えいご} の {言葉|ことば}の {意味|いみ}を （　　）。",
     "option_1_display": "{読みました|よみました}",
     "option_2_display": "{書きました|かきました}",
-    "option_4_display": "{習いました|ならいました}"
+    "option_4_display": "{習いました|ならいました}",
+    "question_translation": "What is the meaning of this English word?"
   },
   {
     "level": 5,
@@ -486,7 +511,8 @@
     "option_1_display": "{食べました|たべました}",
     "option_2_display": "{飲みました|のみました}",
     "option_3_display": "{買いました|かいました}",
-    "option_4_display": "{使いました|つかいました}"
+    "option_4_display": "{使いました|つかいました}",
+    "question_translation": "Because I had a headache, I **took** medicine."
   },
   {
     "level": 5,
@@ -505,7 +531,8 @@
     "option_1_display": "{出かけます|でかけます}",
     "option_2_display": "{休みます|やすみます}",
     "option_3_display": "{働きます|はたらきます}",
-    "option_4_display": "{帰ります|かえります}"
+    "option_4_display": "{帰ります|かえります}",
+    "question_translation": "I **rest** at home in the afternoon."
   },
   {
     "level": 5,
@@ -524,7 +551,8 @@
     "option_1_display": "{買います|かいます}",
     "option_2_display": "{寝ます|ねます}",
     "option_3_display": "{遊びます|あそびます}",
-    "option_4_display": "{勉強|べんきょう}します"
+    "option_4_display": "{勉強|べんきょう}します",
+    "question_translation": "I **study** Japanese every day."
   },
   {
     "level": 5,
@@ -543,7 +571,8 @@
     "option_1_display": "{入ります|はいります}",
     "option_2_display": "{帰ります|かえります}",
     "option_3_display": "{出ます|でます}",
-    "option_4_display": "{行きます|いきます}"
+    "option_4_display": "{行きます|いきます}",
+    "question_translation": "I **leave** the office at 6 o'clock."
   },
   {
     "level": 5,
@@ -562,7 +591,8 @@
     "option_1_display": "{行きます|いきます}",
     "option_2_display": "{出ます|でます}",
     "option_3_display": "{来ます|きます}",
-    "option_4_display": "{止まります|とまります}"
+    "option_4_display": "{止まります|とまります}",
+    "question_translation": "The train **arrives** at the station."
   },
   {
     "level": 5,
@@ -580,7 +610,8 @@
     "option_1_display": "{買いません|かいません}",
     "option_2_display": "{教えません|おしえません}",
     "option_3_display": "{読みません|よみません}",
-    "option_4_display": "{書きません|かきません}"
+    "option_4_display": "{書きません|かきません}",
+    "question_translation": "Because I have no money, I **won't buy** what I want."
   },
   {
     "level": 5,
@@ -599,7 +630,8 @@
     "option_1_display": "{行きません|いきません}",
     "option_2_display": "{読みません|よみません}",
     "option_3_display": "{書きません|かきません}",
-    "option_4_display": "{習いません|ならいません}"
+    "option_4_display": "{習いません|ならいません}",
+    "question_translation": "Because that restaurant is expensive, I **don't go** there often."
   },
   {
     "level": 5,
@@ -616,7 +648,8 @@
     "correct_option": 1,
     "question_stem_display": "てが よごれているので {洗って|あらって} （　　）。",
     "option_3_display": "{見ます|みます}",
-    "option_4_display": "{起きます|おきます}"
+    "option_4_display": "{起きます|おきます}",
+    "question_translation": "Since your hands are dirty, **please wash** them."
   },
   {
     "level": 5,
@@ -632,7 +665,8 @@
     "option_4": "よんで",
     "correct_option": 2,
     "option_1_display": "{買って|かって}",
-    "option_2_display": "{使って|つかって}"
+    "option_2_display": "{使って|つかって}",
+    "question_translation": "May I **use** this pen?"
   },
   {
     "level": 5,
@@ -649,7 +683,8 @@
     "correct_option": 3,
     "question_stem_display": "{日本|にほん}に {行って|いって} {日本語|にほんご}で （　　） たいです。",
     "option_3_display": "{話し|はなし}",
-    "option_4_display": "{食べ|たべ}"
+    "option_4_display": "{食べ|たべ}",
+    "question_translation": "I want to **speak** Japanese when I go to Japan."
   },
   {
     "level": 5,
@@ -668,7 +703,8 @@
     "option_1_display": "{使いました|つかいました}",
     "option_2_display": "{食べました|たべました}",
     "option_3_display": "{買いました|かいました}",
-    "option_4_display": "{見ました|みました}"
+    "option_4_display": "{見ました|みました}",
+    "question_translation": "I **bought** eggs and meat at the supermarket."
   },
   {
     "level": 5,
@@ -687,7 +723,8 @@
     "option_1_display": "{聞き|きき}ます",
     "option_2_display": "{見ます|みます}",
     "option_3_display": "{読みます|よみます}",
-    "option_4_display": "{書きます|かきます}"
+    "option_4_display": "{書きます|かきます}",
+    "question_translation": "Tomorrow I will **watch** a movie with my mother."
   },
   {
     "level": 5,
@@ -706,7 +743,8 @@
     "option_1_display": "{起きました|おきました}",
     "option_2_display": "{寝ました|ねました}",
     "option_3_display": "{食べました|たべました}",
-    "option_4_display": "{読みました|よみました}"
+    "option_4_display": "{読みました|よみました}",
+    "question_translation": "Yesterday I **stayed up** until midnight."
   },
   {
     "level": 5,
@@ -723,7 +761,8 @@
     "correct_option": 2,
     "option_1_display": "{食べて|たべて}",
     "option_2_display": "{寝て|ねて}",
-    "option_3_display": "{飲んで|のんで}"
+    "option_3_display": "{飲んで|のんで}",
+    "question_translation": "The baby is **sleeping**."
   },
   {
     "level": 5,
@@ -740,7 +779,8 @@
     "correct_option": 1,
     "question_stem_display": "{花|はな}が （　　） います。きれいですね。",
     "option_1_display": "{咲いて|さいて}",
-    "option_2_display": "{寝て|ねて}"
+    "option_2_display": "{寝て|ねて}",
+    "question_translation": "The flowers are **blooming**. How beautiful!"
   },
   {
     "level": 5,
@@ -756,7 +796,8 @@
     "option_4": "みて",
     "correct_option": 3,
     "question_stem_display": "たなかさんは いま {電話|でんわ}で （　　） います。",
-    "option_3_display": "{話して|はなして}"
+    "option_3_display": "{話して|はなして}",
+    "question_translation": "Tanaka-san is **talking** on the phone right now."
   },
   {
     "level": 5,
@@ -771,7 +812,8 @@
     "option_3": "かいて",
     "option_4": "よんで",
     "correct_option": 1,
-    "question_stem_display": "{今日|きょう}は はれているので そとで あそびを （　　） たいです。"
+    "question_stem_display": "{今日|きょう}は はれているので そとで あそびを （　　） たいです。",
+    "question_translation": "Since the weather is nice today, I want to **play** outside."
   },
   {
     "level": 5,
@@ -787,7 +829,8 @@
     "option_4": "みて",
     "correct_option": 3,
     "question_stem_display": "この {辞書|じしょ}を （　　） いいですか。",
-    "option_3_display": "{借りて|かりて}"
+    "option_3_display": "{借りて|かりて}",
+    "question_translation": "May I **borrow** this dictionary?"
   },
   {
     "level": 5,
@@ -803,7 +846,8 @@
     "option_4": "つかって",
     "correct_option": 2,
     "question_stem_display": "{地図|ちず}を （　　） {駅|えき}を {探しました|さがしました}。",
-    "option_4_display": "{使って|つかって}"
+    "option_4_display": "{使って|つかって}",
+    "question_translation": "I looked at a map and searched for the station."
   },
   {
     "level": 5,
@@ -821,7 +865,8 @@
     "question_stem_display": "{雨|あめ}が （　　） {来ました|きました}。かさを もっていきましょう。",
     "option_1_display": "{降って|ふって}",
     "option_2_display": "{出て|でて}",
-    "option_3_display": "{咲いて|さいて}"
+    "option_3_display": "{咲いて|さいて}",
+    "question_translation": "It has started **raining**. Let's bring an umbrella."
   },
   {
     "level": 5,
@@ -838,7 +883,8 @@
     "correct_option": 2,
     "question_stem_display": "コーヒーを （　　） ながら {新聞|しんぶん}を {読みます|よみます}。",
     "option_1_display": "{食べ|たべ}",
-    "option_2_display": "{飲み|のみ}"
+    "option_2_display": "{飲み|のみ}",
+    "question_translation": "I read the newspaper while **drinking** coffee."
   },
   {
     "level": 5,
@@ -856,7 +902,8 @@
     "option_1_display": "{閉めて|しめて}",
     "option_2_display": "{付けて|つけて}",
     "option_3_display": "{開けて|あけて}",
-    "option_4_display": "{消して|けして}"
+    "option_4_display": "{消して|けして}",
+    "question_translation": "Please **open** this door. It's a parking lot."
   },
   {
     "level": 5,
@@ -872,7 +919,8 @@
     "option_4": "よんで",
     "correct_option": 2,
     "question_stem_display": "{写真|しゃしん}を （　　） ください。",
-    "option_2_display": "{撮って|とって}"
+    "option_2_display": "{撮って|とって}",
+    "question_translation": "Please **take** a photo."
   },
   {
     "level": 5,
@@ -887,7 +935,8 @@
     "option_3": "みて",
     "option_4": "ならべて",
     "correct_option": 2,
-    "option_4_display": "{並べて|ならべて}"
+    "option_4_display": "{並べて|ならべて}",
+    "question_translation": "Please **write** your name here."
   },
   {
     "level": 5,
@@ -906,7 +955,8 @@
     "option_1_display": "{会いました|あいました}",
     "option_2_display": "{行きました|いきました}",
     "option_3_display": "{見ました|みました}",
-    "option_4_display": "{話しました|はなしました}"
+    "option_4_display": "{話しました|はなしました}",
+    "question_translation": "I **met** a friend in front of the school."
   },
   {
     "level": 5,
@@ -921,7 +971,8 @@
     "option_3": "で",
     "option_4": "が",
     "correct_option": 2,
-    "question_stem_display": "{私|わたし}は {毎日|まいにち} {学校|がっこう} （　　） {行きます|いきます}。"
+    "question_stem_display": "{私|わたし}は {毎日|まいにち} {学校|がっこう} （　　） {行きます|いきます}。",
+    "question_translation": "I go **to** school every day."
   },
   {
     "level": 5,
@@ -936,7 +987,8 @@
     "option_3": "の",
     "option_4": "を",
     "correct_option": 3,
-    "question_stem_display": "これは {私|わたし} （　　） {本|ほん}です。"
+    "question_stem_display": "これは {私|わたし} （　　） {本|ほん}です。",
+    "question_translation": "This is **my** book."
   },
   {
     "level": 5,
@@ -951,7 +1003,8 @@
     "option_3": "に",
     "option_4": "が",
     "correct_option": 3,
-    "question_stem_display": "{駅|えき} （　　） {電車|でんしゃ}に のります。"
+    "question_stem_display": "{駅|えき} （　　） {電車|でんしゃ}に のります。",
+    "question_translation": "I take the train **at** the station."
   },
   {
     "level": 5,
@@ -966,7 +1019,8 @@
     "option_3": "を",
     "option_4": "が",
     "correct_option": 2,
-    "question_stem_display": "{図書館|としょかん} （　　） {本|ほん}を {読みます|よみます}。"
+    "question_stem_display": "{図書館|としょかん} （　　） {本|ほん}を {読みます|よみます}。",
+    "question_translation": "I read books **at** the library."
   },
   {
     "level": 5,
@@ -981,7 +1035,8 @@
     "option_3": "は",
     "option_4": "に",
     "correct_option": 3,
-    "question_stem_display": "{私|わたし} （　　） {日本語|にほんご}が すきです。"
+    "question_stem_display": "{私|わたし} （　　） {日本語|にほんご}が すきです。",
+    "question_translation": "**I** like Japanese."
   },
   {
     "level": 5,
@@ -996,7 +1051,8 @@
     "option_3": "が",
     "option_4": "と",
     "correct_option": 4,
-    "question_stem_display": "{友達|ともだち} （　　） いっしょに {映画|えいが}を {見ます|みます}。"
+    "question_stem_display": "{友達|ともだち} （　　） いっしょに {映画|えいが}を {見ます|みます}。",
+    "question_translation": "I watch a movie **with** a friend."
   },
   {
     "level": 5,
@@ -1011,7 +1067,8 @@
     "option_3": "で",
     "option_4": "まで",
     "correct_option": 2,
-    "question_stem_display": "9じ （　　） 5じ まで {働きます|はたらきます}。"
+    "question_stem_display": "9じ （　　） 5じ まで {働きます|はたらきます}。",
+    "question_translation": "I work **from** 9 to 5."
   },
   {
     "level": 5,
@@ -1026,7 +1083,8 @@
     "option_3": "から",
     "option_4": "で",
     "correct_option": 2,
-    "question_stem_display": "{東京|とうきょう} から {大阪|おおさか} （　　） しんかんせんで {行きます|いきます}。"
+    "question_stem_display": "{東京|とうきょう} から {大阪|おおさか} （　　） しんかんせんで {行きます|いきます}。",
+    "question_translation": "I go from Tokyo **to** Osaka by Shinkansen."
   },
   {
     "level": 5,
@@ -1041,7 +1099,8 @@
     "option_3": "だと",
     "option_4": "ならば",
     "correct_option": 1,
-    "question_stem_display": "{明日|あした} はれ （　　） いいですね。"
+    "question_stem_display": "{明日|あした} はれ （　　） いいですね。",
+    "question_translation": "It would be nice **if** it's sunny tomorrow."
   },
   {
     "level": 5,
@@ -1056,7 +1115,8 @@
     "option_3": "ので",
     "option_4": "が",
     "correct_option": 1,
-    "question_stem_display": "てを {洗って|あらって} （　　） {食べ|たべ}ましょう。"
+    "question_stem_display": "てを {洗って|あらって} （　　） {食べ|たべ}ましょう。",
+    "question_translation": "Let's eat **after** washing our hands."
   },
   {
     "level": 5,
@@ -1071,7 +1131,8 @@
     "option_3": "を",
     "option_4": "が",
     "correct_option": 2,
-    "question_stem_display": "{山|やま}だ さんは いま {電話|でんわ} （　　） {話して|はなして} います。"
+    "question_stem_display": "{山|やま}だ さんは いま {電話|でんわ} （　　） {話して|はなして} います。",
+    "question_translation": "Yamada is talking on the phone right now."
   },
   {
     "level": 5,
@@ -1086,7 +1147,8 @@
     "option_3": "を",
     "option_4": "が",
     "correct_option": 3,
-    "question_stem_display": "{明日|あした} {映画|えいが} （　　） みませんか。"
+    "question_stem_display": "{明日|あした} {映画|えいが} （　　） みませんか。",
+    "question_translation": "Would you like to watch a movie tomorrow?"
   },
   {
     "level": 5,
@@ -1101,7 +1163,8 @@
     "option_3": "ます",
     "option_4": "ました",
     "correct_option": 1,
-    "question_stem_display": "いっしょに {公園|こうえん}に いき （　　）。"
+    "question_stem_display": "いっしょに {公園|こうえん}に いき （　　）。",
+    "question_translation": "Let's go to the park together."
   },
   {
     "level": 5,
@@ -1116,7 +1179,8 @@
     "option_3": "まし",
     "option_4": "ましょう",
     "correct_option": 2,
-    "question_stem_display": "{日本|にほん}に いき （　　） です。"
+    "question_stem_display": "{日本|にほん}に いき （　　） です。",
+    "question_translation": "I'm going to Japan."
   },
   {
     "level": 5,
@@ -1131,7 +1195,8 @@
     "option_3": "いで",
     "option_4": "んで",
     "correct_option": 1,
-    "question_stem_display": "{花|はな}を か （　　） {店|みせ}に {行きます|いきます}。"
+    "question_stem_display": "{花|はな}を か （　　） {店|みせ}に {行きます|いきます}。",
+    "question_translation": "I'll go to the flower shop to buy flowers."
   },
   {
     "level": 5,
@@ -1146,7 +1211,8 @@
     "option_3": "そして",
     "option_4": "それから",
     "correct_option": 2,
-    "question_stem_display": "{昨日|きのう}は つかれた。（　　） はやく {寝ました|ねました}。"
+    "question_stem_display": "{昨日|きのう}は つかれた。（　　） はやく {寝ました|ねました}。",
+    "question_translation": "I was tired yesterday. That's why I went to bed early."
   },
   {
     "level": 5,
@@ -1161,7 +1227,8 @@
     "option_3": "でも",
     "option_4": "それから",
     "correct_option": 3,
-    "question_stem_display": "{安い|やすい}です。（　　） あまり おいしく ないです。"
+    "question_stem_display": "{安い|やすい}です。（　　） あまり おいしく ないです。",
+    "question_translation": "It's cheap. However, it's not very delicious."
   },
   {
     "level": 5,
@@ -1176,7 +1243,8 @@
     "option_3": "それから",
     "option_4": "なぜなら",
     "correct_option": 3,
-    "question_stem_display": "{ご飯|ごはん}を {食べました|たべました}。（　　） シャワーを あびました。"
+    "question_stem_display": "{ご飯|ごはん}を {食べました|たべました}。（　　） シャワーを あびました。",
+    "question_translation": "I ate dinner. Then I took a shower."
   },
   {
     "level": 5,
@@ -1191,7 +1259,8 @@
     "option_3": "まで",
     "option_4": "に",
     "correct_option": 2,
-    "question_stem_display": "{時間|じかん}が ない （　　）、はやく してください。"
+    "question_stem_display": "{時間|じかん}が ない （　　）、はやく してください。",
+    "question_translation": "Because there's no time, please do it quickly."
   },
   {
     "level": 5,
@@ -1206,7 +1275,8 @@
     "option_3": "に",
     "option_4": "を",
     "correct_option": 3,
-    "question_stem_display": "{兄|あに} （　　） {車|くるま}が あります。"
+    "question_stem_display": "{兄|あに} （　　） {車|くるま}が あります。",
+    "question_translation": "My older brother has a car."
   },
   {
     "level": 5,
@@ -1221,7 +1291,8 @@
     "option_3": "が",
     "option_4": "を",
     "correct_option": 4,
-    "question_stem_display": "コーヒーを {飲み|のみ}ながら {新聞|しんぶん} （　　） {読みます|よみます}。"
+    "question_stem_display": "コーヒーを {飲み|のみ}ながら {新聞|しんぶん} （　　） {読みます|よみます}。",
+    "question_translation": "While drinking coffee, I read the newspaper."
   },
   {
     "level": 5,
@@ -1236,7 +1307,8 @@
     "option_3": "は",
     "option_4": "が",
     "correct_option": 3,
-    "question_stem_display": "{彼|かれ} （　　） {日本|にほん}じんです。"
+    "question_stem_display": "{彼|かれ} （　　） {日本|にほん}じんです。",
+    "question_translation": "He is Japanese."
   },
   {
     "level": 5,
@@ -1251,7 +1323,8 @@
     "option_3": "に",
     "option_4": "が",
     "correct_option": 3,
-    "question_stem_display": "{机|つくえ}の うえ （　　） {本|ほん}が あります。"
+    "question_stem_display": "{机|つくえ}の うえ （　　） {本|ほん}が あります。",
+    "question_translation": "There are books on the desk."
   },
   {
     "level": 5,
@@ -1266,7 +1339,8 @@
     "option_3": "が",
     "option_4": "に",
     "correct_option": 1,
-    "question_stem_display": "{日本語|にほんご} （　　） かけますか。"
+    "question_stem_display": "{日本語|にほんご} （　　） かけますか。",
+    "question_translation": "Can you write in Japanese?"
   },
   {
     "level": 5,
@@ -1281,7 +1355,8 @@
     "option_3": "が",
     "option_4": "を",
     "correct_option": 1,
-    "question_stem_display": "{彼女|かのじょ} （　　） {髪|かみ}が ながいです。"
+    "question_stem_display": "{彼女|かのじょ} （　　） {髪|かみ}が ながいです。",
+    "question_translation": "She has long hair."
   },
   {
     "level": 5,
@@ -1295,7 +1370,8 @@
     "option_2": "ました",
     "option_3": "て",
     "option_4": "ません",
-    "correct_option": 3
+    "correct_option": 3,
+    "question_translation": "Please wake up early."
   },
   {
     "level": 5,
@@ -1310,7 +1386,8 @@
     "option_3": "ました",
     "option_4": "ません",
     "correct_option": 1,
-    "question_stem_display": "もっと {優しい|やさしい} {言葉|ことば}で {話し|はなし} （　　） ください。"
+    "question_stem_display": "もっと {優しい|やさしい} {言葉|ことば}で {話し|はなし} （　　） ください。",
+    "question_translation": "Please speak in simpler words."
   },
   {
     "level": 5,
@@ -1324,7 +1401,8 @@
     "option_2": "が",
     "option_3": "で",
     "option_4": "に",
-    "correct_option": 3
+    "correct_option": 3,
+    "question_translation": "You can take the bus from here."
   },
   {
     "level": 5,
@@ -1339,7 +1417,8 @@
     "option_3": "が",
     "option_4": "を",
     "correct_option": 3,
-    "question_stem_display": "{姉|あね} （　　） {美味しい|おいしい} ケーキを つくります。"
+    "question_stem_display": "{姉|あね} （　　） {美味しい|おいしい} ケーキを つくります。",
+    "question_translation": "My older sister makes delicious cake."
   },
   {
     "level": 5,
@@ -1354,7 +1433,8 @@
     "option_3": "に",
     "option_4": "を",
     "correct_option": 2,
-    "question_stem_display": "この {仕事|しごと}は 3にん （　　） できます。"
+    "question_stem_display": "この {仕事|しごと}は 3にん （　　） できます。",
+    "question_translation": "This job can be done by three people."
   },
   {
     "level": 5,
@@ -1369,7 +1449,9 @@
     "option_3": "9じ",
     "option_4": "10じ",
     "correct_option": 2,
-    "question_stem_display": "この{店|みせ}は なんじに あきますか。"
+    "question_stem_display": "この{店|みせ}は なんじに あきますか。",
+    "question_translation": "What time does this store open?",
+    "passage_translation": "Araki\nMorning 8:00 AM–Evening 9:00 PM\n(Phone: 012-34-5678)\nClosed Sundays."
   },
   {
     "level": 5,
@@ -1384,7 +1466,9 @@
     "option_3": "げつようび",
     "option_4": "きんようび",
     "correct_option": 2,
-    "question_stem_display": "この{店|みせ}は なんようびに {休みます|やすみます}か。"
+    "question_stem_display": "この{店|みせ}は なんようびに {休みます|やすみます}か。",
+    "question_translation": "What day of the week is this store closed?",
+    "passage_translation": "Araki\nMorning 8:00 AM–Evening 9:00 PM\n(Phone: 012-34-5678)\nClosed Sundays."
   },
   {
     "level": 5,
@@ -1399,7 +1483,9 @@
     "option_3": "021-34-5678",
     "option_4": "012-34-6789",
     "correct_option": 1,
-    "question_stem_display": "この{店|みせ}の {電話|でんわ}ばんごうは なんですか。"
+    "question_stem_display": "この{店|みせ}の {電話|でんわ}ばんごうは なんですか。",
+    "question_translation": "What is this store's phone number?",
+    "passage_translation": "Araki\nMorning 8:00 AM–Evening 9:00 PM\n(Phone: 012-34-5678)\nClosed Sundays."
   },
   {
     "level": 5,
@@ -1415,7 +1501,9 @@
     "option_4": "12じ",
     "correct_option": 2,
     "question_stem_display": "{山|やま}だ さんと たなか さんは なんじに あいますか。",
-    "passage_display": "{山|やま}だ さん へ\nあした の あさ 10じに {駅|えき}の まえで あいましょう。わたしは あおい ぼうしを かぶっています。よろしく おねがいします。\nたなか より"
+    "passage_display": "{山|やま}だ さん へ\nあした の あさ 10じに {駅|えき}の まえで あいましょう。わたしは あおい ぼうしを かぶっています。よろしく おねがいします。\nたなか より",
+    "question_translation": "What time do Yamada and Tanaka meet?",
+    "passage_translation": "To Yamada,\nLet's meet in front of the station at 10 AM tomorrow morning. I'll be wearing a blue hat. Thank you.\nFrom Tanaka"
   },
   {
     "level": 5,
@@ -1430,7 +1518,9 @@
     "option_3": "あおい ぼうし",
     "option_4": "くろい ぼうし",
     "correct_option": 3,
-    "passage_display": "{山|やま}だ さん へ\nあした の あさ 10じに {駅|えき}の まえで あいましょう。わたしは あおい ぼうしを かぶっています。よろしく おねがいします。\nたなか より"
+    "passage_display": "{山|やま}だ さん へ\nあした の あさ 10じに {駅|えき}の まえで あいましょう。わたしは あおい ぼうしを かぶっています。よろしく おねがいします。\nたなか より",
+    "question_translation": "What is Tanaka wearing on his head?",
+    "passage_translation": "To Yamada,\nLet's meet in front of the station at 10 AM tomorrow morning. I'll be wearing a blue hat. Thank you.\nFrom Tanaka"
   },
   {
     "level": 5,
@@ -1449,7 +1539,9 @@
     "option_2_display": "{駅|えき}の まえ",
     "option_3_display": "{店|みせ}の なか",
     "option_4_display": "{公園|こうえん}",
-    "passage_display": "{山|やま}だ さん へ\nあした の あさ 10じに {駅|えき}の まえで あいましょう。わたしは あおい ぼうしを かぶっています。よろしく おねがいします。\nたなか より"
+    "passage_display": "{山|やま}だ さん へ\nあした の あさ 10じに {駅|えき}の まえで あいましょう。わたしは あおい ぼうしを かぶっています。よろしく おねがいします。\nたなか より",
+    "question_translation": "Where do they meet?",
+    "passage_translation": "To Yamada,\nLet's meet in front of the station at 10 AM tomorrow morning. I'll be wearing a blue hat. Thank you.\nFrom Tanaka"
   },
   {
     "level": 5,
@@ -1463,7 +1555,9 @@
     "option_2": "500円",
     "option_3": "600円",
     "option_4": "700円",
-    "correct_option": 3
+    "correct_option": 3,
+    "question_translation": "How much is the ramen?",
+    "passage_translation": "Sakura Diner Menu\nRamen ¥600\nCurry ¥500\nUdon ¥400\nCoffee ¥200\nJuice ¥150\nLunch is served from 11 AM to 2 PM."
   },
   {
     "level": 5,
@@ -1478,7 +1572,9 @@
     "option_3": "うどん",
     "option_4": "コーヒー",
     "correct_option": 3,
-    "question_stem_display": "いちばん {安い|やすい} {食べ|たべ}ものは なんですか。"
+    "question_stem_display": "いちばん {安い|やすい} {食べ|たべ}ものは なんですか。",
+    "question_translation": "What is the cheapest food item?",
+    "passage_translation": "Sakura Diner Menu\nRamen ¥600\nCurry ¥500\nUdon ¥400\nCoffee ¥200\nJuice ¥150\nLunch is served from 11 AM to 2 PM."
   },
   {
     "level": 5,
@@ -1492,7 +1588,9 @@
     "option_2": "12じ",
     "option_3": "13じ",
     "option_4": "14じ",
-    "correct_option": 4
+    "correct_option": 4,
+    "question_translation": "Until what time is lunch served?",
+    "passage_translation": "Sakura Diner Menu\nRamen ¥600\nCurry ¥500\nUdon ¥400\nCoffee ¥200\nJuice ¥150\nLunch is served from 11 AM to 2 PM."
   },
   {
     "level": 5,
@@ -1509,7 +1607,9 @@
     "correct_option": 2,
     "question_stem_display": "この ひとは {毎朝|まいあさ} なんじに {起きます|おきます}か。",
     "passage_display": "{私|わたし}の いちにち\nわたしは {毎朝|まいあさ} 6じに {起きます|おきます}。あさごはんを {食べて|たべて}、7じに {家|いえ}を {出ます|でます}。でんしゃで {学校|がっこう}に {行きます|いきます}。がっこうは 8じに はじまります。ごご 4じに {家|いえ}に {帰ります|かえります}。",
-    "passage_title_display": "{私|わたし}のいちにち"
+    "passage_title_display": "{私|わたし}のいちにち",
+    "question_translation": "What time does this person wake up every morning?",
+    "passage_translation": "My Day\nI wake up at 6 AM every morning. I eat breakfast and leave the house at 7 AM. I take the train to school. School starts at 8 AM. I return home at 4 PM."
   },
   {
     "level": 5,
@@ -1527,7 +1627,9 @@
     "question_stem_display": "この ひとは なんで {学校|がっこう}に {行きます|いきます}か。",
     "option_3_display": "{電車|でんしゃ}",
     "passage_display": "{私|わたし}の いちにち\nわたしは {毎朝|まいあさ} 6じに {起きます|おきます}。あさごはんを {食べて|たべて}、7じに {家|いえ}を {出ます|でます}。でんしゃで {学校|がっこう}に {行きます|いきます}。がっこうは 8じに はじまります。ごご 4じに {家|いえ}に {帰ります|かえります}。",
-    "passage_title_display": "{私|わたし}のいちにち"
+    "passage_title_display": "{私|わたし}のいちにち",
+    "question_translation": "How does this person get to school?",
+    "passage_translation": "My Day\nI wake up at 6 AM every morning. I eat breakfast and leave the house at 7 AM. I take the train to school. School starts at 8 AM. I return home at 4 PM."
   },
   {
     "level": 5,
@@ -1544,7 +1646,9 @@
     "correct_option": 2,
     "question_stem_display": "この ひとは {午後|ごご} なんじに {家|いえ}に {帰ります|かえります}か。",
     "passage_display": "{私|わたし}の いちにち\nわたしは {毎朝|まいあさ} 6じに {起きます|おきます}。あさごはんを {食べて|たべて}、7じに {家|いえ}を {出ます|でます}。でんしゃで {学校|がっこう}に {行きます|いきます}。がっこうは 8じに はじまります。ごご 4じに {家|いえ}に {帰ります|かえります}。",
-    "passage_title_display": "{私|わたし}のいちにち"
+    "passage_title_display": "{私|わたし}のいちにち",
+    "question_translation": "What time does this person come home in the afternoon?",
+    "passage_translation": "My Day\nI wake up at 6 AM every morning. I eat breakfast and leave the house at 7 AM. I take the train to school. School starts at 8 AM. I return home at 4 PM."
   },
   {
     "level": 5,
@@ -1566,7 +1670,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "That mountain is very tall. The reading of '山' is **やま**."
   },
   {
     "level": 5,
@@ -1588,7 +1693,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "A child is playing in this river. The reading of '川' is **かわ**."
   },
   {
     "level": 5,
@@ -1610,7 +1716,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "The moon last night was beautiful. The reading of '月' is **つき**."
   },
   {
     "level": 5,
@@ -1632,7 +1739,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "That cat is white. The reading of '白' is **しろ**."
   },
   {
     "level": 5,
@@ -1654,7 +1762,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "Today I'm wearing red clothes. The reading of '赤' is **あか**."
   },
   {
     "level": 5,
@@ -1676,7 +1785,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "The sky is blue and beautiful. The reading of '青' is **あお**."
   },
   {
     "level": 5,
@@ -1698,7 +1808,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "There is a book on the desk. The reading of '上' is **うえ**."
   },
   {
     "level": 5,
@@ -1720,7 +1831,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "There is a cat under the chair. The reading of '下' is **した**."
   },
   {
     "level": 5,
@@ -1742,7 +1854,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "This child's hands are small. What is the reading for \"hand\"?"
   },
   {
     "level": 5,
@@ -1764,7 +1877,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "He has big eyes. What is the reading for \"eye\"?"
   },
   {
     "level": 5,
@@ -1786,7 +1900,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "There is a **mountain** near the house. (Which kanji is 'yama'?)"
   },
   {
     "level": 5,
@@ -1808,7 +1923,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "I drink **water** every day. (Which kanji is 'mizu'?)"
   },
   {
     "level": 5,
@@ -1830,7 +1946,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "The station is to the **north**. (Which kanji is 'kita'?)"
   },
   {
     "level": 5,
@@ -1852,7 +1969,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "My family lives in the **south**. (Which kanji is 'minami'?)"
   },
   {
     "level": 5,
@@ -1874,7 +1992,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "The **sky** is blue today. (Which kanji is 'sora'?)"
   },
   {
     "level": 5,
@@ -1896,7 +2015,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "His **hands** are beautiful. (Which kanji is 'te'?)"
   },
   {
     "level": 5,
@@ -1918,7 +2038,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "Father goes to work by **car**. (Which kanji is 'kuruma'?)"
   },
   {
     "level": 5,
@@ -1940,7 +2061,8 @@
     "question_stem_display": null,
     "passage_display": null,
     "passage_title_display": null,
-    "correct_order": null
+    "correct_order": null,
+    "question_translation": "Please get off at the bus stop in front of the **station**. (Which kanji is 'eki'?)"
   },
   {
     "level": 5,
@@ -1962,7 +2084,8 @@
     "option_4_display": null,
     "question_stem_display": null,
     "passage_display": null,
-    "passage_title_display": null
+    "passage_title_display": null,
+    "question_translation": "Tanaka-san is living **happily**."
   },
   {
     "level": 5,
@@ -1984,7 +2107,8 @@
     "option_4_display": null,
     "question_stem_display": null,
     "passage_display": null,
-    "passage_title_display": null
+    "passage_title_display": null,
+    "question_translation": "Every morning, I **get up** [at a set time]."
   },
   {
     "level": 5,
@@ -2006,7 +2130,8 @@
     "option_4_display": null,
     "question_stem_display": null,
     "passage_display": null,
-    "passage_title_display": null
+    "passage_title_display": null,
+    "question_translation": "I caught the **bus** in front of the station."
   },
   {
     "level": 5,
@@ -2028,7 +2153,8 @@
     "option_4_display": null,
     "question_stem_display": null,
     "passage_display": null,
-    "passage_title_display": null
+    "passage_title_display": null,
+    "question_translation": "I **bought** things at the supermarket."
   },
   {
     "level": 5,
@@ -2050,6 +2176,7 @@
     "option_4_display": null,
     "question_stem_display": null,
     "passage_display": null,
-    "passage_title_display": null
+    "passage_title_display": null,
+    "question_translation": "Yesterday, I went somewhere **by train**."
   }
 ]

@@ -1,17 +1,18 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/speed_read_question.dart';
 import '../repositories/kanji_repository.dart';
 import '../repositories/kana_repository.dart';
 import '../repositories/vocab_repository.dart';
-import '../theme.dart';
+import '../theme_provider.dart';
 import '../utils/app_route.dart';
-import '../widgets/scale_on_press.dart';
+import '../widgets/k_setup.dart';
 import 'speed_read_screen.dart';
 
 enum SpeedReadContext { kanji, kana }
 
-class SpeedReadConfigScreen extends StatefulWidget {
+class SpeedReadConfigScreen extends ConsumerStatefulWidget {
   final SpeedReadContext speedContext;
   final String? kanaType; // 'hiragana' | 'katakana'
 
@@ -22,10 +23,10 @@ class SpeedReadConfigScreen extends StatefulWidget {
   });
 
   @override
-  State<SpeedReadConfigScreen> createState() => _SpeedReadConfigScreenState();
+  ConsumerState<SpeedReadConfigScreen> createState() => _SpeedReadConfigScreenState();
 }
 
-class _SpeedReadConfigScreenState extends State<SpeedReadConfigScreen> {
+class _SpeedReadConfigScreenState extends ConsumerState<SpeedReadConfigScreen> {
   bool _loading = true;
 
   // Raw data
@@ -33,15 +34,8 @@ class _SpeedReadConfigScreenState extends State<SpeedReadConfigScreen> {
   List<KanaCharacter> _kanaChars = [];
 
   // Config
-  double _flashSeconds = 2.0;
+  double _flashSeconds = 0.3;
   int _questionCount = 20;
-
-  static const _difficulties = [
-    (label: 'Easy', seconds: 3.0),
-    (label: 'Normal', seconds: 2.0),
-    (label: 'Hard', seconds: 1.0),
-    (label: 'Strobe', seconds: 0.1),
-  ];
 
   @override
   void initState() {
@@ -123,131 +117,68 @@ class _SpeedReadConfigScreenState extends State<SpeedReadConfigScreen> {
     }
   }
 
+  String get _badge => switch (widget.speedContext) {
+    SpeedReadContext.kanji => '字',
+    SpeedReadContext.kana => widget.kanaType == 'hiragana' ? 'ひ' : 'カ',
+  };
+
   @override
   Widget build(BuildContext context) {
+    final colors = ref.watch(themeColorsProvider);
+
     return Scaffold(
-      backgroundColor: AppColors.bg,
-      appBar: AppBar(
-        backgroundColor: AppColors.bg,
-        title: Text(_title, style: TextStyle(color: AppColors.fg)),
-        iconTheme: IconThemeData(color: AppColors.fg),
-      ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Difficulty
-                  Text('Difficulty',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.fg)),
-                  const SizedBox(height: 12),
-                  ..._difficulties.map((d) {
-                    final selected = _flashSeconds == d.seconds;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: ScaleOnPress(
-                        child: GestureDetector(
-                          onTap: () => setState(() => _flashSeconds = d.seconds),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            decoration: BoxDecoration(
-                              color: selected
-                                  ? AppColors.accent.withValues(alpha: 0.15)
-                                  : AppColors.btnBg,
-                              borderRadius: BorderRadius.circular(AppColors.buttonRadius),
-                              border: Border.all(
-                                color: selected
-                                    ? AppColors.accent.withValues(alpha: 0.6)
-                                    : AppColors.pillBg,
-                              ),
-                            ),
-                            child: Row(children: [
-                              Icon(
-                                selected
-                                    ? Icons.radio_button_checked
-                                    : Icons.radio_button_unchecked,
-                                color: selected ? AppColors.accent : AppColors.muted,
-                                size: 18,
-                              ),
-                              const SizedBox(width: 12),
-                              Text(d.label,
-                                  style: TextStyle(
-                                      color: selected ? AppColors.fg : AppColors.muted,
-                                      fontSize: 14)),
-                              const Spacer(),
-                              Text('${d.seconds < 1 ? d.seconds.toStringAsFixed(1) : d.seconds.toStringAsFixed(0)}s',
-                                  style: TextStyle(color: AppColors.muted, fontSize: 13)),
-                            ]),
+      backgroundColor: colors.bg,
+      body: SafeArea(
+        child: Column(children: [
+          KSetupHeader(badge: _badge, title: _title, colors: colors),
+
+          Expanded(
+            child: _loading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        KSetupField(
+                          label: 'Difficulty',
+                          child: KChoiceList(
+                            options: const [
+                              KChoiceItem(id: '0.3',  label: 'Easy',   sub: '0.3s per card'),
+                              KChoiceItem(id: '0.2',  label: 'Medium', sub: '0.2s per card'),
+                              KChoiceItem(id: '0.1',  label: 'Hard',   sub: '0.1s per card'),
+                              KChoiceItem(id: '0.05', label: 'Strobe', sub: '0.05s per card'),
+                            ],
+                            value: _flashSeconds.toString(),
+                            onChanged: (v) => setState(() => _flashSeconds = double.parse(v)),
+                            colors: colors,
                           ),
                         ),
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 24),
-
-                  // Question count
-                  Text('Questions',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.fg)),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    children: [10, 20, 30].map((n) {
-                      final selected = _questionCount == n;
-                      final available = _available >= n;
-                      return ScaleOnPress(
-                        child: GestureDetector(
-                          onTap: available ? () => setState(() => _questionCount = n) : null,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: selected
-                                  ? AppColors.accent.withValues(alpha: 0.15)
-                                  : AppColors.btnBg,
-                              borderRadius: BorderRadius.circular(AppColors.buttonRadius),
-                              border: Border.all(
-                                color: selected
-                                    ? AppColors.accent.withValues(alpha: 0.6)
-                                    : AppColors.pillBg,
-                              ),
-                            ),
-                            child: Text(
-                              '$n',
-                              style: TextStyle(
-                                color: available
-                                    ? (selected ? AppColors.accent : AppColors.muted)
-                                    : AppColors.muted.withValues(alpha: 0.4),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                        KSetupField(
+                          label: 'Questions',
+                          hint: '$_available available${_available < _questionCount ? ' — will use $_effectiveCount' : ''}',
+                          child: KCountChips(
+                            options: const [10, 20, 30],
+                            value: _questionCount,
+                            onChanged: (v) => setState(() => _questionCount = v),
+                            colors: colors,
                           ),
                         ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '$_available available'
-                    '${_available < _questionCount ? ' — will use $_available' : ''}',
-                    style: TextStyle(color: AppColors.muted, fontSize: 13),
-                  ),
-                  const SizedBox(height: 32),
-
-                  ScaleOnPress(
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _available > 0 ? _launch : null,
-                        child: const Text('Start Speed Reading'),
-                      ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+          ),
+
+          KStickyFooter(
+            colors: colors,
+            child: KStartButton(
+              label: 'Start Speed Reading',
+              colors: colors,
+              onTap: _launch,
             ),
+          ),
+        ]),
+      ),
     );
   }
 }

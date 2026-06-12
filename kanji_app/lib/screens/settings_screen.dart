@@ -147,9 +147,9 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
                     KSettingRow(
-                      icon: Icons.add_circle_outline_rounded,
-                      label: 'Show progress tracker button',
-                      sub: 'Shows + button on home to add/remove trackers',
+                      icon: Icons.bar_chart_rounded,
+                      label: 'Show progress bar',
+                      sub: 'Shows progress tracking bar on home screen',
                       colors: colors,
                       separator: true,
                       trailing: KToggle(
@@ -235,8 +235,11 @@ class SettingsScreen extends ConsumerWidget {
                       colors: colors,
                       trailing: Icon(Icons.chevron_right_rounded, size: 18, color: KDesign.inkFaint(colors)),
                       onTap: () async {
-                        final path = await exportService.exportProgress(ref.read(settingsProvider));
-                        if (context.mounted) {
+                        final path = await exportService.exportProgress(
+                          ref.read(settingsProvider),
+                          context: context,
+                        );
+                        if (context.mounted && path != null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Saved to $path'), backgroundColor: colors.correct),
                           );
@@ -331,10 +334,15 @@ class SettingsScreen extends ConsumerWidget {
       final date = '${now.year.toString().padLeft(4, '0')}-'
           '${now.month.toString().padLeft(2, '0')}-'
           '${now.day.toString().padLeft(2, '0')}';
-      final path = await exportService.exportProgress(ref.read(settingsProvider), filename: 'kanji_backup_$date.json');
-      if (context.mounted && path != null) {
+      final path = await exportService.exportProgress(
+        ref.read(settingsProvider),
+        filename: 'kanji_backup_$date.json',
+        context: context,
+      );
+      if (context.mounted) {
+        final msg = path != null ? 'Backup saved to $path' : 'Backup shared — proceeding with clear';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Backup saved to $path'), backgroundColor: colors.correct),
+          SnackBar(content: Text(msg), backgroundColor: colors.correct),
         );
         await Future.delayed(const Duration(seconds: 2));
       }
@@ -365,7 +373,6 @@ const _themeLabels = {
   AppTheme.simpleDark:   'Simple Black',
   AppTheme.sakura:       'Spring Sakura',
   AppTheme.galaxy:       'Starman',
-  AppTheme.tetris:       'Colorful Bricks',
   AppTheme.loveLetter:   'Love Letter',
   AppTheme.lily:         'Chou-chou Green',
   AppTheme.totoro:       'Big Rabbit Green',
@@ -377,7 +384,6 @@ const _themeTaglines = {
   AppTheme.simpleDark:   'Simple, clean, easy on the eyes.',
   AppTheme.sakura:       'Pastel pinks. Comes too quickly every year.',
   AppTheme.galaxy:       'Cosmic blues. There\'s a cowboy out there somewhere.',
-  AppTheme.tetris:       'Colorful bricks on a dark background.',
   AppTheme.loveLetter:   'Snow whites, pale blues.',
   AppTheme.lily:         'Forever Ashikaga.',
   AppTheme.totoro:       'It\'s pronounced Jiburi. Ignore Miyazaki.',

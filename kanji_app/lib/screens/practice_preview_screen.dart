@@ -64,7 +64,11 @@ class PracticePreviewScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
               child: Text(
-                '$count items · tap any to preview',
+                switch (items) {
+                  KanjiPreviewItems() => 'These $count kanji will be practiced in this session. Tap any to review their meaning first.',
+                  VocabPreviewItems() => 'These $count words will be practiced in this session. Tap any to review their meaning first.',
+                  KanaPreviewItems() => 'These $count characters will be practiced in this session. Tap any to preview.',
+                },
                 style: TextStyle(
                   fontSize: 13,
                   color: KDesign.inkFaint(colors),

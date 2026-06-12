@@ -5,6 +5,7 @@ import '../repositories/vocab_repository.dart';
 import '../services/settings_service.dart';
 import '../services/sound_service.dart';
 import '../theme.dart';
+import '../theme_provider.dart';
 
 class VocabTestResultScreen extends ConsumerStatefulWidget {
   final List<VocabWord> testedWords;
@@ -73,6 +74,7 @@ class _VocabTestResultScreenState extends ConsumerState<VocabTestResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ref.watch(themeColorsProvider);
     final anim = ref.watch(settingsProvider).animationsEnabled;
     final passedCount = widget.testedWords.where((w) => _passed(w.id)).length;
     final total = widget.testedWords.length;
@@ -88,74 +90,91 @@ class _VocabTestResultScreenState extends ConsumerState<VocabTestResultScreen> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Test Results'),
-          automaticallyImplyLeading: false,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(20),
+        backgroundColor: colors.bg,
+        body: SafeArea(
           child: Column(children: [
-            TweenAnimationBuilder<int>(
-              tween: IntTween(begin: 0, end: correctCount),
-              duration: anim ? const Duration(milliseconds: 900) : Duration.zero,
-              curve: Curves.easeOut,
-              builder: (_, value, __) => Text(
-                '$value / $totalQuestions correct',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.fg),
-              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+              child: Text('Test Results', style: TextStyle(
+                fontSize: 22, fontWeight: FontWeight.w800,
+                color: colors.fg, letterSpacing: -0.4,
+              )),
             ),
-            const SizedBox(height: 8),
-            Text(
-              _resultMessage(percentage),
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppColors.fg),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 4),
-            Text('$passedCount / $total words learned this session',
-              style: TextStyle(fontSize: 14, color: AppColors.muted)),
-            const SizedBox(height: 20),
-
             Expanded(
-              child: _saving
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.separated(
-                    itemCount: widget.testedWords.length,
-                    separatorBuilder: (_, __) => Divider(height: 1, color: AppColors.pillBg),
-                    itemBuilder: (context, i) {
-                      final word = widget.testedWords[i];
-                      final didPass = _passed(word.id);
-                      final s = widget.scores[word.id];
-                      return ListTile(
-                        leading: Icon(
-                          didPass ? Icons.check_circle : Icons.cancel,
-                          color: didPass ? AppColors.correct : AppColors.incorrect,
-                        ),
-                        title: Text(word.reading,
-                          style: TextStyle(color: AppColors.fg, fontSize: 16)),
-                        subtitle: Text(word.meanings,
-                          style: TextStyle(color: AppColors.muted, fontSize: 13)),
-                        trailing: s == null ? null : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(s.wordToMeaning == true ? Icons.check : Icons.close,
-                              size: 14,
-                              color: s.wordToMeaning == true ? AppColors.correct : AppColors.incorrect),
-                            Icon(s.meaningToWord == true ? Icons.check : Icons.close,
-                              size: 14,
-                              color: s.meaningToWord == true ? AppColors.correct : AppColors.incorrect),
-                          ],
-                        ),
-                      );
-                    },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: Column(children: [
+                  TweenAnimationBuilder<int>(
+                    tween: IntTween(begin: 0, end: correctCount),
+                    duration: anim ? const Duration(milliseconds: 900) : Duration.zero,
+                    curve: Curves.easeOut,
+                    builder: (_, value, __) => Text(
+                      '$value / $totalQuestions correct',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: colors.fg),
+                    ),
                   ),
-            ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _resultMessage(percentage),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: colors.fg),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
+                  Text('$passedCount / $total words learned this session',
+                    style: TextStyle(fontSize: 14, color: colors.muted)),
+                  const SizedBox(height: 20),
 
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-                child: const Text('Back to Home'),
+                  Expanded(
+                    child: _saving
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.separated(
+                          itemCount: widget.testedWords.length,
+                          separatorBuilder: (_, __) => Divider(height: 1, color: colors.pillBg),
+                          itemBuilder: (context, i) {
+                            final word = widget.testedWords[i];
+                            final didPass = _passed(word.id);
+                            final s = widget.scores[word.id];
+                            return ListTile(
+                              leading: Icon(
+                                didPass ? Icons.check_circle : Icons.cancel,
+                                color: didPass ? AppColors.correct : AppColors.incorrect,
+                              ),
+                              title: Text(word.reading,
+                                style: TextStyle(color: colors.fg, fontSize: 16)),
+                              subtitle: Text(word.meanings,
+                                style: TextStyle(color: colors.muted, fontSize: 13)),
+                              trailing: s == null ? null : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(s.wordToMeaning == true ? Icons.check : Icons.close,
+                                    size: 14,
+                                    color: s.wordToMeaning == true ? AppColors.correct : AppColors.incorrect),
+                                  Icon(s.meaningToWord == true ? Icons.check : Icons.close,
+                                    size: 14,
+                                    color: s.meaningToWord == true ? AppColors.correct : AppColors.incorrect),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                  ),
+
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 56,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colors.accent,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(17)),
+                      ),
+                      onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
+                      child: const Text('Back to Home', style: TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800)),
+                    ),
+                  ),
+                ]),
               ),
             ),
           ]),

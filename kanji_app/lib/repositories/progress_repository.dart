@@ -123,16 +123,35 @@ class ProgressRepository {
     return {for (final r in rows) r['kanji_id'] as int: r['cnt'] as int};
   }
 
+  Future<int> getTotalAllTimeQuestionCount() async {
+    final rows = await dbService.query(
+      'SELECT SUM(COALESCE(question_count, 1)) as cnt FROM session_log',
+    );
+    return rows.first['cnt'] as int? ?? 0;
+  }
+
+  Future<int> getTodaySessionCount() async {
+    final now = DateTime.now();
+    final midnight = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
+    final rows = await dbService.query(
+      'SELECT SUM(COALESCE(question_count, 1)) as cnt FROM session_log WHERE timestamp >= ?',
+      [midnight],
+    );
+    return rows.first['cnt'] as int? ?? 0;
+  }
+
   Future<void> logSession({
     required String mode,
     required List<int> kanjiIds,
     required int score,
+    int questionCount = 0,
   }) async {
     await dbService.insert('session_log', {
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'mode': mode,
       'kanji_ids': kanjiIds.join(','),
       'score': score,
+      'question_count': questionCount,
     });
   }
 }

@@ -5,6 +5,8 @@ import '../repositories/progress_repository.dart';
 import '../repositories/vocab_repository.dart';
 import '../services/sound_service.dart';
 import '../theme.dart';
+import '../theme_provider.dart';
+import '../widgets/quiz_header.dart';
 import '../utils/app_route.dart';
 import 'vocab_test_result_screen.dart';
 
@@ -95,7 +97,7 @@ class _VocabTestSessionScreenState extends ConsumerState<VocabTestSessionScreen>
   }
 
   String _displayWord(VocabWord word) {
-    if (word.word == word.reading) return word.reading;
+    if (word.word == word.reading || word.isUsuallyKana) return word.reading;
     final kanjiChars = word.word.split('').where(_isKanji);
     if (kanjiChars.isEmpty) return word.reading;
     if (kanjiChars.every((c) => _learnedKanji.contains(c))) return word.word;
@@ -180,9 +182,13 @@ class _VocabTestSessionScreenState extends ConsumerState<VocabTestSessionScreen>
 
   Future<void> _showCancelDialog() async {
     _autoNextTimer?.cancel();
+    final colors = ref.read(themeColorsProvider);
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        backgroundColor: colors.surface,
+        titleTextStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: colors.fg),
+        contentTextStyle: TextStyle(fontSize: 14, color: colors.muted),
         title: const Text('Cancel Test?'),
         content: const Text('Your progress will be lost.'),
         actions: [
@@ -207,9 +213,11 @@ class _VocabTestSessionScreenState extends ConsumerState<VocabTestSessionScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = ref.watch(themeColorsProvider);
+
     if (_loading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Vocabulary Test')),
+        backgroundColor: colors.bg,
         body: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -223,24 +231,17 @@ class _VocabTestSessionScreenState extends ConsumerState<VocabTestSessionScreen>
         if (!didPop) _showCancelDialog();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Vocabulary Test'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: _showCancelDialog,
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: Center(child: Text(progress,
-                style: TextStyle(color: AppColors.muted, fontSize: 14))),
-            ),
-          ],
-        ),
+        backgroundColor: colors.bg,
         body: Stack(children: [
           SafeArea(
-            top: false,
-            child: Padding(
+            child: Column(children: [
+              QuizHeader(
+                progress: progress,
+                onBack: _showCancelDialog,
+                current: _currentIndex + 1,
+                total: _questions.length,
+              ),
+              Expanded(child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: Column(children: [
                 Expanded(
@@ -267,14 +268,14 @@ class _VocabTestSessionScreenState extends ConsumerState<VocabTestSessionScreen>
                             WordToMeaningQuestion() => 'What does this mean?',
                             MeaningToWordQuestion() => 'Which word?',
                           },
-                          style: TextStyle(fontSize: 14, color: AppColors.muted),
+                          style: TextStyle(fontSize: 14, color: colors.muted),
                           textAlign: TextAlign.center,
                         ),
                       ]),
                     ),
                   ),
                 ),
-                Divider(thickness: 1, color: AppColors.pillBg),
+                Divider(thickness: 1, color: colors.pillBg),
                 const SizedBox(height: 8),
                 ...List.generate((switch (q) {
                   WordToMeaningQuestion() => q.options,
@@ -311,12 +312,13 @@ class _VocabTestSessionScreenState extends ConsumerState<VocabTestSessionScreen>
                   child: _showingFeedback
                       ? Center(
                           child: Text('Tap anywhere to continue',
-                              style: TextStyle(fontSize: 13, color: AppColors.muted)),
+                              style: TextStyle(fontSize: 13, color: colors.muted)),
                         )
                       : null,
                 ),
               ]),
-            ),
+            )),
+          ]),
           ),
           if (_showingFeedback)
             Positioned.fill(

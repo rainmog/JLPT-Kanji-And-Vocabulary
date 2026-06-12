@@ -13,7 +13,8 @@
     "option_1": "しこう",
     "option_2": "せこう",
     "option_3": "ほこう",
-    "option_4": "しぎょう"
+    "option_4": "しぎょう",
+    "question_translation": "This law was **implemented** (施行; read: **しこう**) last year."
   },
   {
     "level": 2,
@@ -29,7 +30,8 @@
     "option_1": "たくすぐれ",
     "option_2": "たっすぐれ",
     "option_3": "たくえつ",
-    "option_4": "たっえつ"
+    "option_4": "たっえつ",
+    "question_translation": "She has **outstanding** (卓越; read: **たくえつ**) skills."
   },
   {
     "level": 2,
@@ -45,7 +47,8 @@
     "option_1": "しょり",
     "option_2": "しょぎ",
     "option_3": "しゅり",
-    "option_4": "そり"
+    "option_4": "そり",
+    "question_translation": "At this factory, the **disposal** (処理; read: **しょり**) of waste has become a problem."
   },
   {
     "level": 2,
@@ -61,7 +64,8 @@
     "option_1": "むじゅん",
     "option_2": "ぼうじゅん",
     "option_3": "もじゅん",
-    "option_4": "むじん"
+    "option_4": "むじん",
+    "question_translation": "I think his statement is **contradictory** (矛盾; read: **むじゅん**)."
   },
   {
     "level": 2,
@@ -77,7 +81,8 @@
     "option_1": "けんまん",
     "option_2": "こうまん",
     "option_3": "ごうまん",
-    "option_4": "こうばん"
+    "option_4": "こうばん",
+    "question_translation": "His **arrogant** (傲慢; read: **ごうまん**) attitude made people around him uncomfortable."
   },
   {
     "level": 2,
@@ -93,7 +98,8 @@
     "option_1": "こせき",
     "option_2": "とせき",
     "option_3": "こじょう",
-    "option_4": "とじょう"
+    "option_4": "とじょう",
+    "question_translation": "I went to the municipal office to get a **family register** (戸籍; read: **こせき**) certificate."
   },
   {
     "level": 2,
@@ -105,7 +111,8 @@
     "option_1": "複数",
     "option_2": "副数",
     "option_3": "複数",
-    "option_4": "覆数"
+    "option_4": "覆数",
+    "question_translation": "This product has **multiple** (複数; read: ふくすう) problems."
   },
   {
     "level": 2,
@@ -117,7 +124,8 @@
     "option_1": "延期",
     "option_2": "宴期",
     "option_3": "遅期",
-    "option_4": "縁起"
+    "option_4": "縁起",
+    "question_translation": "The implementation of the plan was **postponed** (延期; read: えんき)."
   },
   {
     "level": 2,
@@ -129,7 +137,8 @@
     "option_1": "成長",
     "option_2": "生長",
     "option_3": "整頂",
-    "option_4": "盛長"
+    "option_4": "盛長",
+    "question_translation": "The government is aiming for economic **growth** (成長; read: せいちょう)."
   },
   {
     "level": 2,
@@ -141,7 +150,8 @@
     "option_1": "根拠",
     "option_2": "婚拠",
     "option_3": "根去",
-    "option_4": "魂拠"
+    "option_4": "魂拠",
+    "question_translation": "That remark has no **basis** (根拠; read: こんきょ)."
   },
   {
     "level": 2,
@@ -153,7 +163,8 @@
     "option_1": "改善",
     "option_2": "改然",
     "option_3": "介善",
-    "option_4": "解善"
+    "option_4": "解善",
+    "question_translation": "The company's performance **improved** (改善; read: かいぜん)."
   },
   {
     "level": 2,
@@ -165,7 +176,8 @@
     "option_1": "勤勉",
     "option_2": "謹勉",
     "option_3": "近勉",
-    "option_4": "禽勉"
+    "option_4": "禽勉",
+    "question_translation": "She is studying **diligently** (勤勉; read: きんべん)."
   },
   {
     "level": 2,
@@ -181,7 +193,8 @@
     "option_1": "第一歩",
     "option_2": "第一段",
     "option_3": "最初段",
-    "option_4": "出発線"
+    "option_4": "出発線",
+    "question_translation": "As the **first step** of the new project, we first conducted market research."
   },
   {
     "level": 2,
@@ -197,7 +210,8 @@
     "option_1": "巧みに",
     "option_2": "巧に",
     "option_3": "巧みく",
-    "option_4": "うまみに"
+    "option_4": "うまみに",
+    "question_translation": "He **skillfully** avoided the difficult question."
   },
   {
     "level": 2,
@@ -213,7 +227,8 @@
     "option_1": "感銘",
     "option_2": "感名",
     "option_3": "感命",
-    "option_4": "感明"
+    "option_4": "感明",
+    "question_translation": "The movie made a deep **impression** on the audience."
   },
   {
     "level": 2,
@@ -229,7 +244,8 @@
     "option_1": "予定",
     "option_2": "予測",
     "option_3": "予想",
-    "option_4": "予期"
+    "option_4": "予期",
+    "question_translation": "The project is progressing as **planned**."
   },
   {
     "level": 2,
@@ -245,7 +261,8 @@
     "option_1": "解決",
     "option_2": "解消",
     "option_3": "解放",
-    "option_4": "解除"
+    "option_4": "解除",
+    "question_translation": "Expert opinions are necessary for the **resolution** of this problem."
   },
   {
     "level": 2,
@@ -261,7 +278,8 @@
     "option_1": "豊か",
     "option_2": "豊富",
     "option_3": "豊かに",
-    "option_4": "豊かさ"
+    "option_4": "豊かさ",
+    "question_translation": "She is good at expressing her emotions **richly**."
   },
   {
     "level": 2,
@@ -277,7 +295,8 @@
     "option_1": "難色",
     "option_2": "難点",
     "option_3": "難題",
-    "option_4": "難問"
+    "option_4": "難問",
+    "question_translation": "He showed **reluctance** toward the proposal."
   },
   {
     "level": 2,
@@ -293,7 +312,8 @@
     "option_1": "少ない",
     "option_2": "希な",
     "option_3": "稀な",
-    "option_4": "まれな"
+    "option_4": "まれな",
+    "question_translation": "It is known that this medicine has **rare** side effects."
   },
   {
     "level": 2,
@@ -309,7 +329,8 @@
     "option_1": "卓越",
     "option_2": "超越",
     "option_3": "優越",
-    "option_4": "優秀"
+    "option_4": "優秀",
+    "question_translation": "He has **outstanding** talent for business."
   },
   {
     "level": 2,
@@ -325,7 +346,8 @@
     "option_1": "支持",
     "option_2": "支援",
     "option_3": "支給",
-    "option_4": "支払い"
+    "option_4": "支払い",
+    "question_translation": "The government's policy did not receive the **support** of the public."
   },
   {
     "level": 2,
@@ -341,7 +363,8 @@
     "option_1": "事例",
     "option_2": "事案",
     "option_3": "事故",
-    "option_4": "事件"
+    "option_4": "事件",
+    "question_translation": "That theory is backed up by many **case studies**."
   },
   {
     "level": 2,
@@ -357,7 +380,8 @@
     "option_1": "説得力",
     "option_2": "説明力",
     "option_3": "説話力",
-    "option_4": "説教力"
+    "option_4": "説教力",
+    "question_translation": "Her words have **persuasive power**."
   },
   {
     "level": 2,
@@ -373,7 +397,8 @@
     "option_1": "動いていない",
     "option_2": "悪化している",
     "option_3": "成長している",
-    "option_4": "変化している"
+    "option_4": "変化している",
+    "question_translation": "The economy in this region is stagnating."
   },
   {
     "level": 2,
@@ -389,7 +414,8 @@
     "option_1": "考えずに動く",
     "option_2": "丁寧だ",
     "option_3": "慎重だ",
-    "option_4": "計画的だ"
+    "option_4": "計画的だ",
+    "question_translation": "Her actions were impulsive."
   },
   {
     "level": 2,
@@ -405,7 +431,8 @@
     "option_1": "うまく進んでいない",
     "option_2": "順調だ",
     "option_3": "終わった",
-    "option_4": "始まった"
+    "option_4": "始まった",
+    "question_translation": "The negotiations are facing difficulties."
   },
   {
     "level": 2,
@@ -421,7 +448,8 @@
     "option_1": "捨てて",
     "option_2": "保存して",
     "option_3": "提出して",
-    "option_4": "コピーして"
+    "option_4": "コピーして",
+    "question_translation": "Please dispose of this document."
   },
   {
     "level": 2,
@@ -437,7 +465,8 @@
     "option_1": "適切だ",
     "option_2": "極端だ",
     "option_3": "遅い",
-    "option_4": "新しい"
+    "option_4": "新しい",
+    "question_translation": "I think his opinion is **appropriate** (妥当)."
   },
   {
     "level": 2,
@@ -453,7 +482,8 @@
     "option_1": "入り組んでいて",
     "option_2": "簡単で",
     "option_3": "単純で",
-    "option_4": "難しすぎて"
+    "option_4": "難しすぎて",
+    "question_translation": "That problem is too **complicated** (複雑) to solve alone."
   },
   {
     "level": 2,
@@ -469,7 +499,8 @@
     "option_1": "失礼だ",
     "option_2": "丁寧だ",
     "option_3": "積極的だ",
-    "option_4": "消極的だ"
+    "option_4": "消極的だ",
+    "question_translation": "His attitude was **overbearing** (横柄)."
   },
   {
     "level": 2,
@@ -485,7 +516,8 @@
     "option_1": "うまくいかなくなった",
     "option_2": "成功した",
     "option_3": "修正された",
-    "option_4": "承認された"
+    "option_4": "承認された",
+    "question_translation": "This plan **fell through** (頓挫)."
   },
   {
     "level": 2,
@@ -501,7 +533,8 @@
     "option_1": "は",
     "option_2": "が",
     "option_3": "を",
-    "option_4": "に"
+    "option_4": "に",
+    "question_translation": "It is not known **whether** she will come or not."
   },
   {
     "level": 2,
@@ -517,7 +550,8 @@
     "option_1": "おかげ",
     "option_2": "せい",
     "option_3": "ため",
-    "option_4": "から"
+    "option_4": "から",
+    "question_translation": "The problem was resolved **thanks to** him speaking honestly."
   },
   {
     "level": 2,
@@ -533,7 +567,8 @@
     "option_1": "ので",
     "option_2": "のに",
     "option_3": "ても",
-    "option_4": "から"
+    "option_4": "から",
+    "question_translation": "**Because** there wasn't enough time, I hurried to finish."
   },
   {
     "level": 2,
@@ -549,7 +584,8 @@
     "option_1": "ために",
     "option_2": "ので",
     "option_3": "から",
-    "option_4": "けれど"
+    "option_4": "けれど",
+    "question_translation": "**In order to** pass the exam, I study without fail every day."
   },
   {
     "level": 2,
@@ -565,7 +601,8 @@
     "option_1": "のに",
     "option_2": "ので",
     "option_3": "から",
-    "option_4": "ため"
+    "option_4": "ため",
+    "question_translation": "**Even though** I wasn't feeling well, I pushed myself to work."
   },
   {
     "level": 2,
@@ -581,7 +618,8 @@
     "option_1": "によって",
     "option_2": "によると",
     "option_3": "にとって",
-    "option_4": "に対して"
+    "option_4": "に対して",
+    "question_translation": "**Due to** the president's decision, the project was cancelled."
   },
   {
     "level": 2,
@@ -597,7 +635,8 @@
     "option_1": "中",
     "option_2": "こと",
     "option_3": "ところ",
-    "option_4": "とき"
+    "option_4": "とき",
+    "question_translation": "No matter how busy she is, she never loses her smile."
   },
   {
     "level": 2,
@@ -613,7 +652,8 @@
     "option_1": "まで",
     "option_2": "までに",
     "option_3": "だけ",
-    "option_4": "ほど"
+    "option_4": "ほど",
+    "question_translation": "This project is scheduled to be completed **by** next month."
   },
   {
     "level": 2,
@@ -629,7 +669,8 @@
     "option_1": "こと",
     "option_2": "もの",
     "option_3": "ところ",
-    "option_4": "の"
+    "option_4": "の",
+    "question_translation": "Success is something that can be achieved **through** making effort."
   },
   {
     "level": 2,
@@ -645,7 +686,8 @@
     "option_1": "から・まで",
     "option_2": "も・も",
     "option_3": "か・か",
-    "option_4": "と・と"
+    "option_4": "と・と",
+    "question_translation": "This movie is a work that **both** children **and** adults can enjoy."
   },
   {
     "level": 2,
@@ -661,7 +703,8 @@
     "option_1": "こと",
     "option_2": "もの",
     "option_3": "ところ",
-    "option_4": "の"
+    "option_4": "の",
+    "question_translation": "According to what he said, there will apparently be a meeting next week."
   },
   {
     "level": 2,
@@ -677,7 +720,8 @@
     "option_1": "に関して",
     "option_2": "については",
     "option_3": "において",
-    "option_4": "にとって"
+    "option_4": "にとって",
+    "question_translation": "As for his job, he is excellent, but he is poor at communication."
   },
   {
     "level": 2,
@@ -693,7 +737,8 @@
     "option_1": "ので",
     "option_2": "から",
     "option_3": "ため",
-    "option_4": "おかげで"
+    "option_4": "おかげで",
+    "question_translation": "Because I was praised by the teacher, I thought I would do my best."
   },
   {
     "level": 2,
@@ -709,7 +754,8 @@
     "option_1": "せい",
     "option_2": "おかげ",
     "option_3": "ため",
-    "option_4": "から"
+    "option_4": "から",
+    "question_translation": "She quit her job **because of** her best friend."
   },
   {
     "level": 2,
@@ -725,7 +771,8 @@
     "option_1": "があっても",
     "option_2": "になっても",
     "option_3": "でも",
-    "option_4": "にしても"
+    "option_4": "にしても",
+    "question_translation": "**No matter what** difficulties there are, it is important not to give up."
   },
   {
     "level": 2,
@@ -741,7 +788,8 @@
     "option_1": "だったため",
     "option_2": "だったので",
     "option_3": "だったから",
-    "option_4": "だったのに"
+    "option_4": "だったのに",
+    "question_translation": "**Because** the presentation was insufficiently prepared, it didn't get through to the audience."
   },
   {
     "level": 2,
@@ -757,7 +805,8 @@
     "option_1": "のに",
     "option_2": "ため",
     "option_3": "から",
-    "option_4": "ので"
+    "option_4": "ので",
+    "question_translation": "Even though his girlfriend was angry, I didn't understand the reason."
   },
   {
     "level": 2,
@@ -773,7 +822,8 @@
     "option_1": "かかわらず",
     "option_2": "かかわって",
     "option_3": "かかっても",
-    "option_4": "かかわると"
+    "option_4": "かかわると",
+    "question_translation": "In spite of the deadline being close, he seemed at ease."
   },
   {
     "level": 2,
@@ -789,7 +839,8 @@
     "option_1": "のに",
     "option_2": "ので",
     "option_3": "から",
-    "option_4": "のが"
+    "option_4": "のが",
+    "question_translation": "It's disappointing that even though I made an effort, the results didn't come out."
   },
   {
     "level": 2,
@@ -805,7 +856,8 @@
     "option_1": "ために",
     "option_2": "ことで",
     "option_3": "ことに",
-    "option_4": "ように"
+    "option_4": "ように",
+    "question_translation": "This law was made to protect the safety of the people."
   },
   {
     "level": 2,
@@ -821,7 +873,8 @@
     "option_1": "によると",
     "option_2": "によって",
     "option_3": "に対して",
-    "option_4": "にとって"
+    "option_4": "にとって",
+    "question_translation": "According to the latest information, that problem seems to have already been resolved."
   },
   {
     "level": 2,
@@ -837,7 +890,8 @@
     "option_1": "にもかかわらず",
     "option_2": "ため",
     "option_3": "から",
-    "option_4": "ので"
+    "option_4": "ので",
+    "question_translation": "Even though she doesn't have much physical strength, she completed the marathon."
   },
   {
     "level": 2,
@@ -853,7 +907,8 @@
     "option_1": "ように",
     "option_2": "ために",
     "option_3": "ため",
-    "option_4": "のに"
+    "option_4": "のに",
+    "question_translation": "In order to get better at Japanese, I write a diary in Japanese every day."
   },
   {
     "level": 2,
@@ -870,7 +925,8 @@
     "option_1": "誰にも",
     "option_2": "相談する",
     "option_3": "自分で",
-    "option_4": "独りで"
+    "option_4": "独りで",
+    "question_translation": "He solved the problem **by himself**, without any issues."
   },
   {
     "level": 2,
@@ -887,7 +943,8 @@
     "option_1": "優秀な",
     "option_2": "成績を",
     "option_3": "学生として",
-    "option_4": "収めた"
+    "option_4": "収めた",
+    "question_translation": "She was selected **as a student** representative."
   },
   {
     "level": 2,
@@ -904,7 +961,8 @@
     "option_1": "勉強する",
     "option_2": "ために",
     "option_3": "語学の",
-    "option_4": "時間"
+    "option_4": "時間",
+    "question_translation": "I want to use this summer vacation to spend **quality time**."
   },
   {
     "level": 2,
@@ -921,7 +979,8 @@
     "option_1": "議論を",
     "option_2": "重ねた",
     "option_3": "十分な",
-    "option_4": "うえで"
+    "option_4": "うえで",
+    "question_translation": "The new system was implemented after **repeated** deliberations."
   },
   {
     "level": 2,
@@ -938,7 +997,8 @@
     "option_1": "突然の",
     "option_2": "事態に",
     "option_3": "どんな",
-    "option_4": "も"
+    "option_4": "も",
+    "question_translation": "She calmly handled the **sudden** situation."
   },
   {
     "level": 2,
@@ -955,7 +1015,8 @@
     "option_1": "世界的に",
     "option_2": "価値が",
     "option_3": "高い",
-    "option_4": "ものとして"
+    "option_4": "ものとして",
+    "question_translation": "That research was recognized for its **high** quality."
   },
   {
     "level": 2,
@@ -972,7 +1033,8 @@
     "option_1": "解決",
     "option_2": "するのが",
     "option_3": "簡単に",
-    "option_4": "ではなく"
+    "option_4": "ではなく",
+    "question_translation": "This problem is **far more than** just difficult."
   },
   {
     "level": 2,
@@ -989,7 +1051,8 @@
     "option_1": "誰にも",
     "option_2": "告げずに",
     "option_3": "行き先を",
-    "option_4": "どこへ行くかを"
+    "option_4": "どこへ行くかを",
+    "question_translation": "He went out alone **without telling** anyone."
   },
   {
     "level": 2,
@@ -1006,7 +1069,8 @@
     "option_1": "社員全員",
     "option_2": "働きに",
     "option_3": "の努力と",
-    "option_4": "よって"
+    "option_4": "よって",
+    "question_translation": "The company's growth is supported by the **efforts** of its workers."
   },
   {
     "level": 2,
@@ -1023,7 +1087,8 @@
     "option_1": "まとまり次第",
     "option_2": "報告書を",
     "option_3": "出て",
-    "option_4": "すぐに"
+    "option_4": "すぐに",
+    "question_translation": "The results will be announced **as soon as** they are compiled."
   },
   {
     "level": 2,
@@ -1043,7 +1108,9 @@
     "option_1": "ウ→イ→ア→エ",
     "option_2": "イ→ウ→エ→ア",
     "option_3": "ウ→イ→エ→ア",
-    "option_4": "イ→エ→ウ→ア"
+    "option_4": "イ→エ→ウ→ア",
+    "question_translation": "Arrange the following sentences in the correct order so that the meaning is clear. (Enter in the ★ position)\nA. Therefore, it is important to develop the ability to listen to what the other person is saying.\nB. However, many people tend to focus on speaking.\nC. Communication includes not only speaking but also listening.\nD. When you have the ability to listen, it becomes easier to understand the other person's feelings.",
+    "passage_translation": "Communication skills are extremely important in modern society. This is true both in the workplace and at home."
   },
   {
     "level": 2,
@@ -1063,7 +1130,9 @@
     "option_1": "イ→ア→ウ→エ",
     "option_2": "ウ→エ→イ→ア",
     "option_3": "イ→ウ→エ→ア",
-    "option_4": "ア→ウ→イ→エ"
+    "option_4": "ア→ウ→イ→エ",
+    "question_translation": "Arrange the following sentences in the correct order so that the meaning is clear. (Enter in the ★ position)\nA. That is why international cooperation is needed.\nB. This problem cannot be solved by a single country alone.\nC. Each country sets its own goals and implements measures.\nD. However, achieving the goals requires coordination from the entire world.",
+    "passage_translation": "Environmental issues have now become a global challenge. Not only individual efforts but also measures by companies and governments are required."
   },
   {
     "level": 2,
@@ -1082,7 +1151,9 @@
     "option_1": "できるだけ長く詳しく書くこと",
     "option_2": "内容が一目でわかるように具体的に書くこと",
     "option_3": "相手の名前を件名に含めること",
-    "option_4": "件名は書かなくてもよい"
+    "option_4": "件名は書かなくてもよい",
+    "question_translation": "What is important about how to write the subject line in a business email?",
+    "passage_translation": "Once you become a working adult, it is necessary to use email for communication in many situations. Business email has formal writing rules, and following these is considered basic manners for a working adult. First, the subject line should be written specifically so that the content is clear at a glance. The body should begin after writing the recipient's name and department, and end with your own name and contact information. Also, it is important to use polite and honorific language in the email tone and to be mindful of objective expression so as not to become emotional. Except for urgent matters, it is generally recommended that replies be sent within 24 hours."
   },
   {
     "level": 2,
@@ -1101,7 +1172,9 @@
     "option_1": "12時間以内",
     "option_2": "24時間以内",
     "option_3": "48時間以内",
-    "option_4": "1週間以内"
+    "option_4": "1週間以内",
+    "question_translation": "By when should email replies be sent according to general guidelines?",
+    "passage_translation": "Once you become a working adult, it is necessary to use email for communication in many situations. Business email has formal writing rules, and following these is considered basic manners for a working adult. First, the subject line should be written specifically so that the content is clear at a glance. The body should begin after writing the recipient's name and department, and end with your own name and contact information. Also, it is important to use polite and honorific language in the email tone and to be mindful of objective expression so as not to become emotional. Except for urgent matters, it is generally recommended that replies be sent within 24 hours."
   },
   {
     "level": 2,
@@ -1120,7 +1193,9 @@
     "option_1": "フレンドリーな表現を使うべきだ",
     "option_2": "感情を豊かに表現することが求められる",
     "option_3": "丁寧語や敬語を使い、客観的な表現を心がける",
-    "option_4": "相手に合わせて自由なスタイルで書く"
+    "option_4": "相手に合わせて自由なスタイルで書く",
+    "question_translation": "According to this passage, which statement about business email style is correct?",
+    "passage_translation": "Once you become a working adult, it is necessary to use email for communication in many situations. Business email has formal writing rules, and following these is considered basic manners for a working adult. First, the subject line should be written specifically so that the content is clear at a glance. The body should begin after writing the recipient's name and department, and end with your own name and contact information. Also, it is important to use polite and honorific language in the email tone and to be mindful of objective expression so as not to become emotional. Except for urgent matters, it is generally recommended that replies be sent within 24 hours."
   },
   {
     "level": 2,
@@ -1141,7 +1216,9 @@
     "option_1": "中学校から英語が必修化された",
     "option_2": "英語教育はコミュニケーション能力の育成が目標だ",
     "option_3": "高校でのみ英語教育が行われる",
-    "option_4": "英語より他の言語の教育が優先されている"
+    "option_4": "英語より他の言語の教育が優先されている",
+    "question_translation": "Which of the following is correct regarding foreign language education in Japan?",
+    "passage_translation": "Notice to Customers\nWe sincerely apologize, but due to circumstances, we will close at 3 p.m. today. We will reopen tomorrow at 10 a.m. as usual. We apologize for any inconvenience this may cause."
   },
   {
     "level": 2,
@@ -1162,7 +1239,9 @@
     "option_1": "英語が日本文化を壊すから",
     "option_2": "母国語習得後に外国語を学ぶことが効果的だから",
     "option_3": "日本語の方が世界的に重要だから",
-    "option_4": "外国語は大人になってから学べばよいから"
+    "option_4": "外国語は大人になってから学べばよいから",
+    "question_translation": "What reason do experts who advocate prioritizing native language acquisition give?",
+    "passage_translation": "Notice to Customers\nWe sincerely apologize, but due to circumstances, we will close at 3 p.m. today. We will reopen tomorrow at 10 a.m. as usual. We apologize for any inconvenience this may cause."
   },
   {
     "level": 2,
@@ -1183,7 +1262,9 @@
     "option_1": "英語を母国語より優先すること",
     "option_2": "幼少期に複数言語を習得させること",
     "option_3": "語学教育のバランスを保つこと",
-    "option_4": "小学校での英語教育をやめること"
+    "option_4": "小学校での英語教育をやめること",
+    "question_translation": "What does the author consider most important?",
+    "passage_translation": "Notice to Customers\nWe sincerely apologize, but due to circumstances, we will close at 3 p.m. today. We will reopen tomorrow at 10 a.m. as usual. We apologize for any inconvenience this may cause."
   },
   {
     "level": 2,
@@ -1204,7 +1285,9 @@
     "option_1": "社員のモチベーションが上がること",
     "option_2": "通勤時間を減らせること",
     "option_3": "同僚とのコミュニケーションが増えること",
-    "option_4": "残業代がなくなること"
+    "option_4": "残業代がなくなること",
+    "question_translation": "Which of the following is mentioned as a merit of remote work?",
+    "passage_translation": "Folk tales are stories that originally were heard by just a small number of people, and one or two of those people would remember and tell them to the next generation, and then passed down through the generations. It's natural for the same story to change. Depending on how the listeners react, the interesting parts are told in more detail, boring parts are left out, and the story takes on a proper form as a tale. That's why they should be interesting."
   },
   {
     "level": 2,
@@ -1225,7 +1308,9 @@
     "option_1": "自宅の広い部屋を確保すること",
     "option_2": "部下を毎日オフィスに呼ぶこと",
     "option_3": "適切なコミュニケーションツールと明確な業務目標",
-    "option_4": "仕事とプライベートの時間を完全に分けること"
+    "option_4": "仕事とプライベートの時間を完全に分けること",
+    "question_translation": "What is mentioned as necessary for making remote work successful?",
+    "passage_translation": "Folk tales are stories that originally were heard by just a small number of people, and one or two of those people would remember and tell them to the next generation, and then passed down through the generations. It's natural for the same story to change. Depending on how the listeners react, the interesting parts are told in more detail, boring parts are left out, and the story takes on a proper form as a tale. That's why they should be interesting."
   },
   {
     "level": 2,
@@ -1246,7 +1331,9 @@
     "option_1": "完全テレワーク化",
     "option_2": "完全オフィス勤務への回帰",
     "option_3": "オフィス勤務とテレワークを組み合わせたハイブリッド型",
-    "option_4": "週3日勤務制"
+    "option_4": "週3日勤務制",
+    "question_translation": "Which way of working are many experts predicting for the future?",
+    "passage_translation": "Folk tales are stories that originally were heard by just a small number of people, and one or two of those people would remember and tell them to the next generation, and then passed down through the generations. It's natural for the same story to change. Depending on how the listeners react, the interesting parts are told in more detail, boring parts are left out, and the story takes on a proper form as a tale. That's why they should be interesting."
   },
   {
     "level": 2,
@@ -1267,7 +1354,9 @@
     "option_1": "晩婚化・非婚化の進行",
     "option_2": "子育てのコスト増大",
     "option_3": "政府の少子化対策の失敗",
-    "option_4": "女性の社会進出による価値観の変化"
+    "option_4": "女性の社会進出による価値観の変化",
+    "question_translation": "Which of the following is NOT mentioned as a cause of declining birth rates?",
+    "passage_translation": "I've loved reading books since childhood, and I used to go to the library every week. Now that I'm an adult, that habit hasn't changed. The other day, I found a book I had read long ago in the library and reread it. My impression of it was different from when I was a child. I realized once again that even the same book can be felt differently depending on the reader's age and experience."
   },
   {
     "level": 2,
@@ -1288,7 +1377,9 @@
     "option_1": "大学の無償化",
     "option_2": "育児休業の取得促進と保育所の整備",
     "option_3": "移民の受け入れ拡大",
-    "option_4": "高齢者への経済支援"
+    "option_4": "高齢者への経済支援",
+    "question_translation": "Which of the following government measures for addressing low birth rates is mentioned?",
+    "passage_translation": "I've loved reading books since childhood, and I used to go to the library every week. Now that I'm an adult, that habit hasn't changed. The other day, I found a book I had read long ago in the library and reread it. My impression of it was different from when I was a child. I realized once again that even the same book can be felt differently depending on the reader's age and experience."
   },
   {
     "level": 2,
@@ -1309,7 +1400,9 @@
     "option_1": "問題の深刻さと解決の難しさを冷静に分析している",
     "option_2": "政府の対策を強く批判している",
     "option_3": "少子化は問題ではないと主張している",
-    "option_4": "解決策として移民受け入れを強く推奨している"
+    "option_4": "解決策として移民受け入れを強く推奨している",
+    "question_translation": "Which tone best describes the style of this passage?",
+    "passage_translation": "I've loved reading books since childhood, and I used to go to the library every week. Now that I'm an adult, that habit hasn't changed. The other day, I found a book I had read long ago in the library and reread it. My impression of it was different from when I was a child. I realized once again that even the same book can be felt differently depending on the reader's age and experience."
   },
   {
     "level": 2,
@@ -1330,7 +1423,9 @@
     "option_1": "毎年約600トンの食品が廃棄されている",
     "option_2": "廃棄量は世界の食料援助量の約1.4倍にあたる",
     "option_3": "廃棄量は中国と同程度だ",
-    "option_4": "毎年約6000万トンが廃棄されている"
+    "option_4": "毎年約6000万トンが廃棄されている",
+    "question_translation": "Which expression is mentioned to describe the scale of food waste in Japan?",
+    "passage_translation": "In modern times, the widespread adoption of smartphones has greatly changed people's lives. While it has become convenient to obtain information anytime, anywhere, problems have also arisen such as reduced sleep time and fewer opportunities to speak directly with people. Especially among young generations, the number of cases where people's daily rhythms are disrupted due to using smartphones late into the night is increasing. Experts recommend that families decide on rules for how to use smartphones."
   },
   {
     "level": 2,
@@ -1351,7 +1446,9 @@
     "option_1": "賞味期限の表示方法の見直し",
     "option_2": "スーパーでの値引き販売",
     "option_3": "フードバンクへの食品寄付",
-    "option_4": "料理教室の開催"
+    "option_4": "料理教室の開催",
+    "question_translation": "Which of the following is NOT mentioned as a corporate or government effort to address food loss?",
+    "passage_translation": "In modern times, the widespread adoption of smartphones has greatly changed people's lives. While it has become convenient to obtain information anytime, anywhere, problems have also arisen such as reduced sleep time and fewer opportunities to speak directly with people. Especially among young generations, the number of cases where people's daily rhythms are disrupted due to using smartphones late into the night is increasing. Experts recommend that families decide on rules for how to use smartphones."
   },
   {
     "level": 2,
@@ -1372,7 +1469,9 @@
     "option_1": "賞味期限を延ばすよう企業に要求する",
     "option_2": "必要な分だけ買い、食べ物を大切にする",
     "option_3": "フードバンクを自分で運営する",
-    "option_4": "食品の輸入を減らすよう政府に求める"
+    "option_4": "食品の輸入を減らすよう政府に求める",
+    "question_translation": "Which of the following is mentioned as something individuals can do to reduce food loss?",
+    "passage_translation": "In modern times, the widespread adoption of smartphones has greatly changed people's lives. While it has become convenient to obtain information anytime, anywhere, problems have also arisen such as reduced sleep time and fewer opportunities to speak directly with people. Especially among young generations, the number of cases where people's daily rhythms are disrupted due to using smartphones late into the night is increasing. Experts recommend that families decide on rules for how to use smartphones."
   },
   {
     "level": 2,
@@ -1388,7 +1487,8 @@
     "option_1": "ちゅうぞう",
     "option_2": "ちゅうしょう",
     "option_3": "ちゅうぞく",
-    "option_4": "ちゅうしゅつ"
+    "option_4": "ちゅうしゅつ",
+    "question_translation": "His **abstract** (抽象; read: **ちゅうしょう**) explanation was difficult to understand."
   },
   {
     "level": 2,
@@ -1404,7 +1504,8 @@
     "option_1": "かんこう",
     "option_2": "かんぎょう",
     "option_3": "かんぎ",
-    "option_4": "かんぎょく"
+    "option_4": "かんぎょく",
+    "question_translation": "That **practice** (慣行; read: **かんこう**) is now outdated."
   },
   {
     "level": 2,
@@ -1420,7 +1521,8 @@
     "option_1": "いけん",
     "option_2": "いいげん",
     "option_3": "いげん",
-    "option_4": "えいげん"
+    "option_4": "えいげん",
+    "question_translation": "He speaks with **dignified** authority (威厳; read: **いげん**)."
   },
   {
     "level": 2,
@@ -1436,7 +1538,8 @@
     "option_1": "こうけん",
     "option_2": "こうへん",
     "option_3": "こうかん",
-    "option_4": "こうぎ"
+    "option_4": "こうぎ",
+    "question_translation": "I feel joy in being able to **contribute** (貢献; read: **こうけん**)."
   },
   {
     "level": 2,
@@ -1452,7 +1555,8 @@
     "option_1": "みかいけつ",
     "option_2": "ふかいけつ",
     "option_3": "みかいけ",
-    "option_4": "ふかいけ"
+    "option_4": "ふかいけ",
+    "question_translation": "That incident remains **unresolved** (未解決; read: **みかいけつ**)."
   },
   {
     "level": 2,
@@ -1464,7 +1568,8 @@
     "option_1": "才能",
     "option_2": "最能",
     "option_3": "在能",
-    "option_4": "才脳"
+    "option_4": "才脳",
+    "question_translation": "Her acting is full of **talent** (才能; read: さいのう)."
   },
   {
     "level": 2,
@@ -1476,7 +1581,8 @@
     "option_1": "抗議",
     "option_2": "講義",
     "option_3": "公義",
-    "option_4": "口義"
+    "option_4": "口義",
+    "question_translation": "To protest against unfair discrimination."
   },
   {
     "level": 2,
@@ -1488,7 +1594,8 @@
     "option_1": "発効",
     "option_2": "発行",
     "option_3": "発交",
-    "option_4": "発功"
+    "option_4": "発功",
+    "question_translation": "The implementation of that treaty is next month."
   },
   {
     "level": 2,
@@ -1500,7 +1607,8 @@
     "option_1": "悲しんだ",
     "option_2": "哀しんだ",
     "option_3": "哀しんた",
-    "option_4": "悲しんた"
+    "option_4": "悲しんた",
+    "question_translation": "He grieved over the death of his friend."
   },
   {
     "level": 2,
@@ -1516,7 +1624,8 @@
     "option_1": "容易",
     "option_2": "簡易",
     "option_3": "簡単に",
-    "option_4": "ただちに"
+    "option_4": "ただちに",
+    "question_translation": "This problem cannot be **easily** resolved."
   },
   {
     "level": 2,
@@ -1532,7 +1641,8 @@
     "option_1": "影響",
     "option_2": "作用",
     "option_3": "効力",
-    "option_4": "動き"
+    "option_4": "動き",
+    "question_translation": "Her speech had a great **impact** on the audience."
   },
   {
     "level": 2,
@@ -1548,7 +1658,8 @@
     "option_1": "糧",
     "option_2": "材料",
     "option_3": "きっかけ",
-    "option_4": "素材"
+    "option_4": "素材",
+    "question_translation": "He used criticism as **nourishment** for new challenges."
   },
   {
     "level": 2,
@@ -1564,7 +1675,8 @@
     "option_1": "微妙",
     "option_2": "困難",
     "option_3": "繊細",
-    "option_4": "複雑"
+    "option_4": "複雑",
+    "question_translation": "The negotiations reached a **delicate** phase."
   },
   {
     "level": 2,
@@ -1580,7 +1692,8 @@
     "option_1": "削減",
     "option_2": "削除",
     "option_3": "抑制",
-    "option_4": "節約"
+    "option_4": "節約",
+    "question_translation": "That policy requires **cuts** to the budget."
   },
   {
     "level": 2,
@@ -1596,7 +1709,8 @@
     "option_1": "誠実",
     "option_2": "正直",
     "option_3": "丁寧",
-    "option_4": "親切"
+    "option_4": "親切",
+    "question_translation": "She is a **sincere** person trusted by everyone."
   },
   {
     "level": 2,
@@ -1612,7 +1726,8 @@
     "option_1": "短くわかりやすく",
     "option_2": "詳しく",
     "option_3": "長く",
-    "option_4": "難しく"
+    "option_4": "難しく",
+    "question_translation": "The report was compiled in a concise manner."
   },
   {
     "level": 2,
@@ -1628,7 +1743,8 @@
     "option_1": "目立って大きい",
     "option_2": "少しある",
     "option_3": "ほとんどない",
-    "option_4": "平均的だ"
+    "option_4": "平均的だ",
+    "question_translation": "The development of this region is remarkable."
   },
   {
     "level": 2,
@@ -1644,7 +1760,8 @@
     "option_1": "断られた",
     "option_2": "承認された",
     "option_3": "修正された",
-    "option_4": "保留された"
+    "option_4": "保留された",
+    "question_translation": "The proposal was rejected by the committee."
   },
   {
     "level": 2,
@@ -1665,7 +1782,9 @@
     "option_1": "創造性が高い仕事",
     "option_2": "対人スキルが必要な仕事",
     "option_3": "定型的な作業が中心の仕事",
-    "option_4": "高度な判断力が必要な仕事"
+    "option_4": "高度な判断力が必要な仕事",
+    "question_translation": "What are the characteristics of jobs that are easily replaced by AI?",
+    "passage_translation": "Email from Mr. Tanaka\n\nDear Ms. Suzuki, Thank you for the party last week. The food was delicious, and it was fun to see everyone after such a long time. Next time I'll cook, so please come visit my home. How about the second Saturday of next month? I look forward to your reply.\n\nTanaka"
   },
   {
     "level": 2,
@@ -1686,7 +1805,9 @@
     "option_1": "AIの発展を止めること",
     "option_2": "定型的な職業を守ること",
     "option_3": "継続的に学習しスキルを更新すること",
-    "option_4": "対人スキルだけを磨くこと"
+    "option_4": "対人スキルだけを磨くこと",
+    "question_translation": "What is the most important thing the expert mentioned?",
+    "passage_translation": "Email from Mr. Tanaka\n\nDear Ms. Suzuki, Thank you for the party last week. The food was delicious, and it was fun to see everyone after such a long time. Next time I'll cook, so please come visit my home. How about the second Saturday of next month? I look forward to your reply.\n\nTanaka"
   },
   {
     "level": 2,
@@ -1707,7 +1828,9 @@
     "option_1": "常に雇用を増やしてきた",
     "option_2": "長期的には新しい雇用機会を創出してきた",
     "option_3": "短期的・長期的に雇用を奪ってきた",
-    "option_4": "雇用にはほとんど影響がなかった"
+    "option_4": "雇用にはほとんど影響がなかった",
+    "question_translation": "What is stated about historical technological innovation?",
+    "passage_translation": "Email from Mr. Tanaka\n\nDear Ms. Suzuki, Thank you for the party last week. The food was delicious, and it was fun to see everyone after such a long time. Next time I'll cook, so please come visit my home. How about the second Saturday of next month? I look forward to your reply.\n\nTanaka"
   },
   {
     "level": 2,
@@ -1728,7 +1851,9 @@
     "option_1": "学校や病院の閉鎖",
     "option_2": "交通機関の廃止",
     "option_3": "伝統行事の消滅",
-    "option_4": "農業の近代化の遅れ"
+    "option_4": "農業の近代化の遅れ",
+    "question_translation": "Which of the following is NOT mentioned as a problem caused by depopulation in rural areas?",
+    "passage_translation": "In recent years, Japan has been experiencing an aging population, and the number of elderly people living alone is increasing. In such circumstances, local volunteer organizations are working to support the elderly. For example, there are services such as meal delivery and conversation partners. Such efforts play an important role in creating an environment where the elderly can live with peace of mind. By having young people participate in these activities, intergenerational exchange is fostered, and it is believed that the local community becomes richer."
   },
   {
     "level": 2,
@@ -1749,7 +1874,9 @@
     "option_1": "さらに過疎化を加速させる",
     "option_2": "地方の活性化につながる可能性がある",
     "option_3": "都市への移住者をさらに増やす",
-    "option_4": "農業の近代化を進める"
+    "option_4": "農業の近代化を進める",
+    "question_translation": "What effect is it thought that the spread of telework will have on depopulation in rural areas?",
+    "passage_translation": "In recent years, Japan has been experiencing an aging population, and the number of elderly people living alone is increasing. In such circumstances, local volunteer organizations are working to support the elderly. For example, there are services such as meal delivery and conversation partners. Such efforts play an important role in creating an environment where the elderly can live with peace of mind. By having young people participate in these activities, intergenerational exchange is fostered, and it is believed that the local community becomes richer."
   },
   {
     "level": 2,
@@ -1770,7 +1897,9 @@
     "option_1": "都市への移住を阻止すること",
     "option_2": "地方への移住促進と地域資源の活用支援",
     "option_3": "農業の保護",
-    "option_4": "若者の地方残留を義務化すること"
+    "option_4": "若者の地方残留を義務化すること",
+    "question_translation": "Which of the following is mentioned as the purpose of the 'Regional Revitalization' policy?",
+    "passage_translation": "In recent years, Japan has been experiencing an aging population, and the number of elderly people living alone is increasing. In such circumstances, local volunteer organizations are working to support the elderly. For example, there are services such as meal delivery and conversation partners. Such efforts play an important role in creating an environment where the elderly can live with peace of mind. By having young people participate in these activities, intergenerational exchange is fostered, and it is believed that the local community becomes richer."
   },
   {
     "level": 2,
@@ -1791,7 +1920,9 @@
     "option_1": "計算力",
     "option_2": "記憶力",
     "option_3": "共感力",
-    "option_4": "集中力"
+    "option_4": "集中力",
+    "question_translation": "What ability is said to be enhanced by reading fiction?",
+    "passage_translation": "When working as a member of society, it is important to follow workplace manners. For example, greeting your boss and colleagues is the most basic practice. Additionally, one must always attend meetings on time, and when speaking, one is expected to respect others' opinions. Furthermore, in email communication, it is important to have a clear subject line and use polite language. By following such manners, human relationships in the workplace become smooth, and work efficiency improves. It is said that new employees in particular should have a proactive attitude toward learning from their senior colleagues."
   },
   {
     "level": 2,
@@ -1812,7 +1943,9 @@
     "option_1": "本の価格が高すぎること",
     "option_2": "読書の時間がないこと",
     "option_3": "スマートフォンの普及",
-    "option_4": "図書館が少なくなったこと"
+    "option_4": "図書館が少なくなったこと",
+    "question_translation": "Which of the following is mentioned as a cause of declining interest in reading among young people?",
+    "passage_translation": "When working as a member of society, it is important to follow workplace manners. For example, greeting your boss and colleagues is the most basic practice. Additionally, one must always attend meetings on time, and when speaking, one is expected to respect others' opinions. Furthermore, in email communication, it is important to have a clear subject line and use polite language. By following such manners, human relationships in the workplace become smooth, and work efficiency improves. It is said that new employees in particular should have a proactive attitude toward learning from their senior colleagues."
   },
   {
     "level": 2,
@@ -1833,6 +1966,8 @@
     "option_1": "語彙力を高めるため",
     "option_2": "深い思考力を養うため",
     "option_3": "共感力を失わないため",
-    "option_4": "ストレスをなくすため"
+    "option_4": "ストレスをなくすため",
+    "question_translation": "Which of the following is mentioned as an important reason for maintaining reading habits?",
+    "passage_translation": "When working as a member of society, it is important to follow workplace manners. For example, greeting your boss and colleagues is the most basic practice. Additionally, one must always attend meetings on time, and when speaking, one is expected to respect others' opinions. Furthermore, in email communication, it is important to have a clear subject line and use polite language. By following such manners, human relationships in the workplace become smooth, and work efficiency improves. It is said that new employees in particular should have a proactive attitude toward learning from their senior colleagues."
   }
 ]

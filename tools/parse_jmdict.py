@@ -45,6 +45,7 @@ MISC_MAP = {
     'arch': 'archaic',
     'on-mim': 'onomatopoeia',
     'vulg': 'slang',
+    'uk': 'usually_kana',
 }
 
 ENTRY_RE = re.compile(r'<entry>(.*?)</entry>', re.DOTALL)

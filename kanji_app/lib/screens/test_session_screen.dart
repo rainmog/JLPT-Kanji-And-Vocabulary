@@ -7,13 +7,15 @@ import '../repositories/sentence_repository.dart';
 import '../services/database_service.dart';
 import '../services/sound_service.dart';
 import '../theme.dart';
+import '../widgets/quiz_header.dart';
 import 'test_result_screen.dart';
 import '../utils/app_route.dart';
 
 class TestSessionScreen extends ConsumerStatefulWidget {
   final List<Kanji> allTargets;
   final bool forceFurigana;
-  const TestSessionScreen({super.key, required this.allTargets, this.forceFurigana = false});
+  final int kanjiCount;
+  const TestSessionScreen({super.key, required this.allTargets, this.forceFurigana = false, this.kanjiCount = 10});
 
   @override
   ConsumerState<TestSessionScreen> createState() => _TestSessionScreenState();
@@ -42,7 +44,7 @@ class _TestSessionScreenState extends ConsumerState<TestSessionScreen> {
 
   Future<void> _loadQuestions() async {
     final targets = [...widget.allTargets]..shuffle();
-    _testedKanji = targets.take(10).toList();
+    _testedKanji = targets.take(widget.kanjiCount).toList();
 
     for (final k in _testedKanji) {
       _kanjiScores[k.character] = (0, 0);
@@ -132,61 +134,73 @@ class _TestSessionScreenState extends ConsumerState<TestSessionScreen> {
     final options = _mcOptions(q);
 
     return Scaffold(
-      appBar: AppBar(title: Text('${_currentIndex + 1} / $total')),
+      backgroundColor: AppColors.bg,
       body: Stack(children: [
         SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(AppColors.containerRadius),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 6,
-                    backgroundColor: AppColors.pillBg,
-                    valueColor: AlwaysStoppedAnimation(AppColors.accent),
+          child: Column(
+            children: [
+              QuizHeader(
+                progress: '${_currentIndex + 1} / $total',
+                onBack: () => Navigator.pop(context),
+                current: _currentIndex + 1,
+                total: total,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: SingleChildScrollView(
+                            child: _buildQuestionCard(q),
+                          ),
+                        ),
+                      ),
+                      Divider(thickness: 1, color: AppColors.pillBg),
+                      const SizedBox(height: 8),
+                      for (int i = 0; i < options.length; i++) ...[
+                        _TestOptionButton(
+                          label: '${i + 1}',
+                          text: options[i],
+                          state: !_showingFeedback
+                              ? _TestOptionState.idle
+                              : (options[i] == _correctReading(q))
+                                  ? _TestOptionState.correct
+                                  : (_selectedOption == options[i])
+                                      ? _TestOptionState.wrong
+                                      : _TestOptionState.idle,
+                          onTap: () => _handleSelect(options[i]),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                      SizedBox(
+                        height: 52,
+                        child: _showingFeedback
+                            ? Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    _lastEnglishMeaning,
+                                    style: TextStyle(fontSize: 13, color: AppColors.muted),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text('Tap anywhere to continue',
+                                      style: TextStyle(fontSize: 13, color: AppColors.muted),
+                                      textAlign: TextAlign.center),
+                                ],
+                              )
+                            : null,
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: Center(
-                    child: SingleChildScrollView(
-                      child: _buildQuestionCard(q),
-                    ),
-                  ),
-                ),
-                Divider(thickness: 1, color: AppColors.pillBg),
-                const SizedBox(height: 8),
-                for (int i = 0; i < options.length; i++) ...[
-                  _TestOptionButton(
-                    label: '${i + 1}',
-                    text: options[i],
-                    state: !_showingFeedback
-                        ? _TestOptionState.idle
-                        : (options[i] == _correctReading(q))
-                            ? _TestOptionState.correct
-                            : (_selectedOption == options[i])
-                                ? _TestOptionState.wrong
-                                : _TestOptionState.idle,
-                    onTap: () => _handleSelect(options[i]),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-                if (_showingFeedback) ...[
-                  Text(
-                    _lastEnglishMeaning,
-                    style: TextStyle(fontSize: 13, color: AppColors.muted),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text('Tap anywhere to continue',
-                      style: TextStyle(fontSize: 13, color: AppColors.muted),
-                      textAlign: TextAlign.center),
-                ],
-                const SizedBox(height: 16),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         if (_showingFeedback)

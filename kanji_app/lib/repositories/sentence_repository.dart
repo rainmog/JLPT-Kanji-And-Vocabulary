@@ -59,6 +59,15 @@ class SentenceRepository {
   static bool _hasKanji(String text) =>
       text.codeUnits.any((c) => c >= 0x4E00 && c <= 0x9FFF);
 
+  Future<Set<String>> _getUsuallyKanaWords() async {
+    final rows = await db.query('''
+      SELECT v.word FROM vocabulary v
+      JOIN vocabulary_tags vt ON v.id = vt.vocab_id
+      WHERE vt.tag = 'usually_kana'
+    ''');
+    return {for (final r in rows) r['word'] as String};
+  }
+
   Future<Map<String, String>> _fetchVocabMeanings(Set<String> words) async {
     if (words.isEmpty) return {};
     final placeholders = List.filled(words.length, '?').join(',');
@@ -87,6 +96,22 @@ class SentenceRepository {
         (code >= 0x3400 && code <= 0x4DBF) ||
         (code >= 0xF900 && code <= 0xFAFF);
   });
+
+  static String _stripOkurigana(String surface, String reading) {
+    int i = surface.length - 1;
+    int j = reading.length - 1;
+    while (i >= 0 && j >= 0) {
+      final sc = surface.codeUnitAt(i);
+      final rc = reading.codeUnitAt(j);
+      if (sc >= 0x3041 && sc <= 0x3096 && sc == rc) {
+        i--;
+        j--;
+      } else {
+        break;
+      }
+    }
+    return j >= 0 ? reading.substring(0, j + 1) : reading;
+  }
 
   static String _readingLabel(String? on, String? kun) {
     final onStr = (on ?? '').split('・')[0].trim();
@@ -198,6 +223,32 @@ class SentenceRepository {
           }
           final mcOptions = [correctReading, ...wrong]..shuffle();
 
+          // Find targetWord for over-merged compound tokens
+          String? targetWord;
+          for (final qt in questionTokens) {
+            if (qt.isTarget && _toHiragana(qt.reading) == correctReading) {
+              targetWord = qt.surface;
+              break;
+            }
+          }
+          if (targetWord == null) {
+            for (final qt in questionTokens) {
+              if (qt.isTarget && _containsKanji(qt.surface)) {
+                final vocabRows = await db.query(
+                  'SELECT word FROM vocabulary WHERE reading = ? ORDER BY LENGTH(word) DESC LIMIT 20',
+                  [correctReading]);
+                for (final vr in vocabRows) {
+                  final vocabWord = vr['word'] as String;
+                  if (qt.surface.startsWith(vocabWord) && vocabWord.contains(kanji.character)) {
+                    targetWord = vocabWord;
+                    break;
+                  }
+                }
+                if (targetWord != null) break;
+              }
+            }
+          }
+
           allQuestions.add(SentenceQuestion(
             kanjiId: kanji.id,
             character: kanji.character,
@@ -208,6 +259,7 @@ class SentenceRepository {
             correctReading: correctReading,
             englishTranslation: row['english_translation'] as String? ?? '',
             difficulty: row['difficulty'] as int,
+            targetWord: targetWord,
           ));
         } catch (_) {
           continue;
@@ -277,6 +329,7 @@ class SentenceRepository {
     int readingWrongIdx = 0;
     int meaningWrongIdx = 0;
     final vocabCache = <String, String>{};
+    final usuallyKanaWords = await _getUsuallyKanaWords();
 
     for (final kanji in targetKanji) {
       final cap = _testDiffCap(kanji.jlptLevel);
@@ -311,6 +364,7 @@ class SentenceRepository {
             }
           }
           if (word == null || correctReading == null) continue;
+          if (usuallyKanaWords.contains(word)) continue;
 
           final wm = await _vocabMeaning(word, vocabCache);
           final seen = <String>{correctReading};
@@ -541,7 +595,7 @@ class SentenceRepository {
       rows = await db.query('''
         SELECT DISTINCT
           k.id, k.character, k.meaning,
-          s.text_kanji, s.text_structured, s.valid_readings
+          s.text_kanji, s.text_structured, s.english_translation, s.valid_readings
         FROM kanji k
         JOIN sentences s ON k.id = s.kanji_id
         JOIN user_progress p ON k.id = p.kanji_id
@@ -564,7 +618,7 @@ class SentenceRepository {
       rows = await db.query('''
         SELECT DISTINCT
           k.id, k.character, k.meaning,
-          s.text_kanji, s.text_structured, s.valid_readings
+          s.text_kanji, s.text_structured, s.english_translation, s.valid_readings
         FROM kanji k
         JOIN sentences s ON k.id = s.kanji_id
         JOIN user_progress p ON k.id = p.kanji_id
@@ -622,6 +676,7 @@ class SentenceRepository {
     final questions = <WordQuestion>[];
     var wrongIdx = 0;
     final vocabCache = <String, String>{};
+    final usuallyKanaWords = await _getUsuallyKanaWords();
 
     for (final row in rows) {
       if (questions.length >= count) break;
@@ -636,14 +691,16 @@ class SentenceRepository {
         String? correctReading;
         for (final t in textStructured) {
           final token = t as Map<String, dynamic>;
-          if (token['kanji_char'] == char && (token['surface'] as String).length > 1 && _containsKanji(token['surface'] as String)) {
-            word = token['surface'] as String;
+          final surface = token['surface'] as String;
+          if (token['kanji_char'] == char && surface.length > 1 && _containsKanji(surface)) {
+            word = surface;
             correctReading = _toHiragana(token['reading'] as String);
             break;
           }
         }
 
         if (word == null || correctReading == null) continue;
+        if (usuallyKanaWords.contains(word)) continue;
         final wm = await _vocabMeaning(word, vocabCache);
 
         List<String> mcOptions = [];
@@ -669,6 +726,7 @@ class SentenceRepository {
           correctReading: correctReading,
           sentenceContext: row['text_kanji'] as String,
           mcOptions: mcOptions,
+          englishTranslation: row['english_translation'] as String? ?? '',
           wordMeaning: wm,
         ));
       } on FormatException catch (e) {
@@ -751,14 +809,46 @@ class SentenceRepository {
         for (final t in textStructured) {
           final token = t as Map<String, dynamic>;
           final surface = token['surface'] as String;
+          if (surface == '。') continue;
           final reading = _toHiragana(token['reading'] as String);
-          final isTarget = token['kanji_char'] == char;
-          final hint = (!isTarget && _hasKanji(surface)) ? reading : null;
+          final isTarget = token['kanji_char'] == char ||
+              (_containsKanji(surface) && surface.contains(char));
+          final hint = (!isTarget && _hasKanji(surface))
+              ? _stripOkurigana(surface, reading)
+              : null;
 
           tokens.add((surface: surface, reading: reading, isTarget: isTarget, hint: hint));
         }
 
         final correctReading = _toHiragana(validReadings[0] as String);
+
+        // Find targetWord: the exact compound surface being tested.
+        // Handles tokenizer over-merges (e.g. 人口移動 when testing 人口).
+        String? targetWord;
+        for (final t in tokens) {
+          if (t.isTarget && t.reading == correctReading) {
+            targetWord = t.surface;
+            break;
+          }
+        }
+        if (targetWord == null) {
+          for (final t in tokens) {
+            if (t.isTarget && _containsKanji(t.surface)) {
+              final vocabRows = await db.query(
+                'SELECT word FROM vocabulary WHERE reading = ? ORDER BY LENGTH(word) DESC LIMIT 20',
+                [correctReading]);
+              for (final vr in vocabRows) {
+                final vocabWord = vr['word'] as String;
+                if (t.surface.startsWith(vocabWord) && vocabWord.contains(char)) {
+                  targetWord = vocabWord;
+                  break;
+                }
+              }
+              if (targetWord != null) break;
+            }
+          }
+        }
+
         var mcOptions = <String>[];
         if (multipleChoice) {
           mcOptions.addAll([correctReading, 'きれい', 'たのしい', 'さむい']);
@@ -775,6 +865,7 @@ class SentenceRepository {
           correctReading: correctReading,
           englishTranslation: translation,
           difficulty: difficulty,
+          targetWord: targetWord,
         ));
       } on FormatException catch (e) {
         print('Error decoding sentence question JSON for row $row: $e');

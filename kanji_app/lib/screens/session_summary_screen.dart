@@ -137,7 +137,7 @@ class _SessionSummaryScreenState extends ConsumerState<SessionSummaryScreen>
                     if (widget.learnedChars.isNotEmpty) ...[
                       const SizedBox(height: 30),
                       Text(
-                        'Learned this session:',
+                        'Correctly identified in this session:',
                         style: TextStyle(
                           color: AppColors.muted,
                           fontSize: 13,
@@ -180,7 +180,7 @@ class _SessionSummaryScreenState extends ConsumerState<SessionSummaryScreen>
                     if (widget.practiceCounts.isNotEmpty) ...[
                       const SizedBox(height: 24),
                       Text(
-                        'Practice Identifications',
+                        'Total times identified so far:',
                         style: TextStyle(
                           color: AppColors.muted,
                           fontSize: 13,
@@ -260,14 +260,24 @@ class _SessionSummaryScreenState extends ConsumerState<SessionSummaryScreen>
                       ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      'Study more',
-                      style: TextStyle(
-                        color: AppColors.muted,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.muted,
+                        side: BorderSide(color: AppColors.pillBg, width: 1.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(17),
+                        ),
+                      ),
+                      child: const Text(
+                        'Study More',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ),
                   ),

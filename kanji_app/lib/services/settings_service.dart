@@ -6,7 +6,15 @@ import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/app_route.dart';
 
-const englishFonts = {'Inter': 'Inter', 'System Default': 'system'};
+const englishFonts = {
+  'Inter': 'Inter',
+  'Nunito': 'Nunito',
+  'Quicksand': 'Quicksand',
+  'VT323': 'VT323',
+  'Crimson Pro': 'CrimsonPro',
+  'Space Grotesk': 'SpaceGrotesk',
+  'System Default': 'system',
+};
 const japaneseFonts = {'Noto Serif CJK JP': 'NotoSerifCJKjp', 'System Default': 'system'};
 
 class AppSettings {
@@ -33,7 +41,7 @@ class AppSettings {
 
   const AppSettings({
     this.difficultyMin = 1,
-    this.difficultyMax = 9,
+    this.difficultyMax = 3,
     this.sessionSize = 20,
     this.autoNextDelaySeconds = 3,
     this.ambientSfx = 'none',
@@ -46,7 +54,7 @@ class AppSettings {
     this.englishFont = 'Inter',
     this.japaneseFont = 'NotoSerifCJKjp',
     this.homeTrackers = const ['kanji:all', 'vocab:all'],
-    this.dailyGoal = 20,
+    this.dailyGoal = 100,
     this.autoProgressionEnabled = true,
     this.autoProgressionKanjiQuota = 15,
     this.autoProgressionVocabQuota = 30,
@@ -123,7 +131,7 @@ class AppSettings {
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
     difficultyMin: j['difficultyMin'] as int? ?? 1,
-    difficultyMax: j['difficultyMax'] as int? ?? 9,
+    difficultyMax: j['difficultyMax'] as int? ?? 3,
     sessionSize: j['sessionSize'] as int? ?? 20,
     autoNextDelaySeconds: j['autoNextDelaySeconds'] as int? ?? 3,
     ambientSfx: j['ambientSfx'] as String? ?? 'none',
@@ -136,7 +144,7 @@ class AppSettings {
     englishFont: j['englishFont'] as String? ?? 'Inter',
     japaneseFont: j['japaneseFont'] as String? ?? 'NotoSerifCJKjp',
     homeTrackers: (j['homeTrackers'] as List<dynamic>?)?.cast<String>() ?? const ['kanji:all', 'vocab:all'],
-    dailyGoal: j['dailyGoal'] as int? ?? 20,
+    dailyGoal: j['dailyGoal'] as int? ?? 100,
     autoProgressionEnabled: j['autoProgressionEnabled'] as bool? ?? true,
     autoProgressionKanjiQuota: j['autoProgressionKanjiQuota'] as int? ?? 15,
     autoProgressionVocabQuota: j['autoProgressionVocabQuota'] as int? ?? 30,

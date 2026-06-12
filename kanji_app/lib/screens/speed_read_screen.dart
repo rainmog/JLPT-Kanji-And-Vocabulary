@@ -1,13 +1,20 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/speed_read_question.dart';
 import '../services/sound_service.dart';
 import '../theme.dart';
+import '../theme/app_theme_backgrounds.dart';
+import '../theme_provider.dart';
+import '../widgets/falling_blocks_overlay.dart';
+import '../widgets/sakura_overlay.dart';
+import '../widgets/snow_overlay.dart';
+import '../widgets/space_age_overlay.dart';
 
 enum _Phase { showing, answering, feedback, done }
 
-class SpeedReadScreen extends StatefulWidget {
+class SpeedReadScreen extends ConsumerStatefulWidget {
   final List<SpeedReadQuestion> questions;
   final double flashSeconds;
 
@@ -20,10 +27,10 @@ class SpeedReadScreen extends StatefulWidget {
   static final List<({int correct, int total, String time})> history = [];
 
   @override
-  State<SpeedReadScreen> createState() => _SpeedReadScreenState();
+  ConsumerState<SpeedReadScreen> createState() => _SpeedReadScreenState();
 }
 
-class _SpeedReadScreenState extends State<SpeedReadScreen> {
+class _SpeedReadScreenState extends ConsumerState<SpeedReadScreen> {
   late List<SpeedReadQuestion> _questions;
   int _index = 0;
   _Phase _phase = _Phase.showing;
@@ -127,7 +134,7 @@ class _SpeedReadScreenState extends State<SpeedReadScreen> {
     final quit = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: AppColors.bg,
+        backgroundColor: AppColors.surface,
         title: Text('Quit?', style: TextStyle(color: AppColors.fg)),
         content: Text('Progress will be lost.', style: TextStyle(color: AppColors.muted)),
         actions: [
@@ -159,49 +166,73 @@ class _SpeedReadScreenState extends State<SpeedReadScreen> {
         if (_phase == _Phase.showing || _phase == _Phase.answering) _startFlash();
       },
       child: Scaffold(
-        backgroundColor: AppColors.bg,
-        appBar: AppBar(
-          backgroundColor: AppColors.bg,
-          automaticallyImplyLeading: false,
-          title: Text(
-            _phase == _Phase.done
-                ? 'Complete!'
-                : '${_index + 1} / ${_questions.length}',
-            style: TextStyle(color: AppColors.fg, fontSize: 16),
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.close, color: AppColors.fg),
-              onPressed: () async {
-                if (_phase == _Phase.done) { Navigator.pop(context); return; }
-                _flashTimer?.cancel();
-                final navigator = Navigator.of(context);
-                final quit = await _confirmQuit();
-                if (!mounted) return;
-                if (quit) { navigator.pop(); return; }
-                if (_phase == _Phase.showing || _phase == _Phase.answering) _startFlash();
-              },
-            ),
-          ],
-        ),
-        body: SafeArea(
-          child: _phase == _Phase.done
-              ? _ResultOverlay(
-                  correct: _correct,
-                  total: _questions.length,
-                  timeString: _timeString,
-                  history: SpeedReadScreen.history,
-                  onPlayAgain: _restart,
-                  onBack: () => Navigator.pop(context),
-                )
-              : _GameBody(
-                  question: _current,
-                  phase: _phase,
-                  flashProgress: _flashProgress,
-                  selected: _selected,
-                  onAnswer: _onAnswer,
+        backgroundColor: const {
+          AppTheme.galaxy, AppTheme.loveLetter,
+          AppTheme.lily, AppTheme.totoro, AppTheme.midnightCity,
+        }.contains(ref.watch(themeNotifier)) ? Colors.transparent : AppColors.bg,
+        body: Stack(children: [
+          const Positioned.fill(child: HomeBgLayer()),
+          const Positioned.fill(child: SakuraPetalsOverlay()),
+          const Positioned.fill(child: SpaceAgeStarsOverlay()),
+          const Positioned.fill(child: SnowOverlay()),
+          const Positioned.fill(child: FallingBlocksOverlay()),
+          SafeArea(
+          child: Column(
+            children: [
+              // Custom header
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _phase == _Phase.done
+                          ? 'Complete!'
+                          : '${_index + 1} / ${_questions.length}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.fg,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        if (_phase == _Phase.done) { Navigator.pop(context); return; }
+                        _flashTimer?.cancel();
+                        final navigator = Navigator.of(context);
+                        final quit = await _confirmQuit();
+                        if (!mounted) return;
+                        if (quit) { navigator.pop(); return; }
+                        if (_phase == _Phase.showing || _phase == _Phase.answering) _startFlash();
+                      },
+                      child: Icon(Icons.close, size: 24, color: AppColors.fg),
+                    ),
+                  ],
                 ),
+              ),
+              // Body content
+              Expanded(
+                child: _phase == _Phase.done
+                    ? _ResultOverlay(
+                        correct: _correct,
+                        total: _questions.length,
+                        timeString: _timeString,
+                        history: SpeedReadScreen.history,
+                        onPlayAgain: _restart,
+                        onBack: () => Navigator.pop(context),
+                      )
+                    : _GameBody(
+                        question: _current,
+                        phase: _phase,
+                        flashProgress: _flashProgress,
+                        selected: _selected,
+                        onAnswer: _onAnswer,
+                      ),
+              ),
+            ],
+          ),
         ),
+        ]),
       ),
     );
   }
@@ -226,89 +257,160 @@ class _GameBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final isShowing = phase == _Phase.showing;
     final displayFontSize = question.display.length <= 2 ? 72.0 : 48.0;
-    final dimFontSize = question.display.length <= 2 ? 36.0 : 24.0;
 
     return Column(
       children: [
-        // Flash card area
+        // Flash card area — completely invisible when not showing
         Expanded(
-          flex: 3,
           child: Center(
-            child: AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 200),
-              style: TextStyle(
-                color: isShowing ? AppColors.fg : Colors.transparent,
-                fontSize: displayFontSize,
-                fontWeight: FontWeight.bold,
+            child: AnimatedOpacity(
+              opacity: isShowing ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 150),
+              child: Text(
+                question.display,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.fg,
+                  fontSize: displayFontSize,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: AppFonts.japaneseFont,
+                  fontFamilyFallback: AppFonts.japaneseFallback,
+                ),
               ),
-              child: Text(question.display, textAlign: TextAlign.center),
             ),
           ),
         ),
 
         // Countdown bar
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(2),
+            borderRadius: BorderRadius.circular(99),
             child: LinearProgressIndicator(
               value: isShowing ? flashProgress : 0,
+              minHeight: 5,
               backgroundColor: AppColors.pillBg,
-              color: AppColors.accent,
-              minHeight: 4,
+              valueColor: AlwaysStoppedAnimation(AppColors.accent),
             ),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 14),
 
-        // MC options
-        Expanded(
-          flex: 4,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: GridView.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 2.2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              children: question.options.map((opt) {
-                Color bg = AppColors.btnBg;
-                Color border = AppColors.pillBg;
-                if (phase == _Phase.feedback) {
-                  if (opt == question.correct) {
-                    bg = Colors.green.withValues(alpha: 0.2);
-                    border = Colors.green.withValues(alpha: 0.7);
-                  } else if (opt == selected) {
-                    bg = Colors.red.withValues(alpha: 0.15);
-                    border = Colors.red.withValues(alpha: 0.7);
-                  }
-                }
-                return GestureDetector(
-                  onTap: phase == _Phase.answering ? () => onAnswer(opt) : null,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    decoration: BoxDecoration(
-                      color: bg,
-                      borderRadius: BorderRadius.circular(AppColors.buttonRadius),
-                      border: Border.all(color: border, width: 1.5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        opt,
-                        style: TextStyle(color: AppColors.fg, fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+        // MC options pinned towards bottom
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  _OptionButton(
+                    opt: question.options[0],
+                    correct: question.correct,
+                    selected: selected,
+                    phase: phase,
+                    onAnswer: onAnswer,
                   ),
-                );
-              }).toList(),
+                  const SizedBox(width: 10),
+                  _OptionButton(
+                    opt: question.options[1],
+                    correct: question.correct,
+                    selected: selected,
+                    phase: phase,
+                    onAnswer: onAnswer,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  _OptionButton(
+                    opt: question.options[2],
+                    correct: question.correct,
+                    selected: selected,
+                    phase: phase,
+                    onAnswer: onAnswer,
+                  ),
+                  const SizedBox(width: 10),
+                  _OptionButton(
+                    opt: question.options[3],
+                    correct: question.correct,
+                    selected: selected,
+                    phase: phase,
+                    onAnswer: onAnswer,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _OptionButton extends StatelessWidget {
+  final String opt;
+  final String correct;
+  final String? selected;
+  final _Phase phase;
+  final void Function(String) onAnswer;
+
+  const _OptionButton({
+    required this.opt,
+    required this.correct,
+    required this.selected,
+    required this.phase,
+    required this.onAnswer,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Color bg = AppColors.surface;
+    Color border = AppColors.pillBg;
+    Color textColor = AppColors.fg;
+
+    if (phase == _Phase.feedback) {
+      if (opt == correct) {
+        bg = AppColors.correct;
+        border = AppColors.correct;
+        textColor = Colors.white;
+      } else if (opt == selected) {
+        bg = AppColors.incorrect;
+        border = AppColors.incorrect;
+        textColor = Colors.white;
+      } else {
+        // dim non-selected, non-correct options
+        textColor = AppColors.muted.withValues(alpha: 0.5);
+      }
+    }
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: phase == _Phase.answering ? () => onAnswer(opt) : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          height: 80,
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: border, width: 1.5),
+          ),
+          child: Center(
+            child: Text(
+              opt,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                fontFamily: AppFonts.japaneseFont,
+                fontFamilyFallback: AppFonts.japaneseFallback,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
-        const SizedBox(height: 16),
-      ],
+      ),
     );
   }
 }
@@ -336,96 +438,145 @@ class _ResultOverlay extends StatelessWidget {
     final pct = total > 0 ? (correct * 100 / total).round() : 0;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-      child: Container(
-        padding: const EdgeInsets.all(28),
-        decoration: BoxDecoration(
-          color: AppColors.btnBg,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.pillBg),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Complete!',
-              style: TextStyle(color: AppColors.fg, fontSize: 22, fontWeight: FontWeight.bold),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 8),
+          Text(
+            'Complete!',
+            style: TextStyle(
+              color: AppColors.fg,
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
             ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _Stat(label: 'Score', value: '$correct/$total'),
-                const SizedBox(width: 32),
-                _Stat(label: 'Accuracy', value: '$pct%'),
-                const SizedBox(width: 32),
-                _Stat(label: 'Time', value: timeString),
-              ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '$correct/$total',
+            style: TextStyle(
+              color: AppColors.accent,
+              fontSize: 48,
+              fontWeight: FontWeight.w800,
             ),
-
-            if (previous.isNotEmpty) ...[
-              const SizedBox(height: 20),
-              Divider(color: AppColors.pillBg),
-              const SizedBox(height: 12),
-              Text('Previous games', style: TextStyle(color: AppColors.muted, fontSize: 12)),
-              const SizedBox(height: 8),
-              ...previous.map((e) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 50,
-                      child: Text('${e.correct}/${e.total}',
-                          style: TextStyle(color: AppColors.fg, fontSize: 13),
-                          textAlign: TextAlign.right),
-                    ),
-                    const SizedBox(width: 12),
-                    SizedBox(
-                      width: 40,
-                      child: Text(e.time,
-                          style: TextStyle(color: AppColors.muted, fontSize: 13)),
-                    ),
-                  ],
-                ),
-              )),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '$pct% correct',
+            style: TextStyle(color: AppColors.muted, fontSize: 15),
+          ),
+          const SizedBox(height: 20),
+          // Stat pills row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _StatPill(label: 'Score', value: '$correct/$total'),
+              const SizedBox(width: 10),
+              _StatPill(label: 'Accuracy', value: '$pct%'),
+              const SizedBox(width: 10),
+              _StatPill(label: 'Time', value: timeString),
             ],
+          ),
 
-            const SizedBox(height: 28),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: onPlayAgain,
-                child: const Text('Play Again'),
-              ),
-            ),
+          if (previous.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            Divider(color: AppColors.pillBg),
             const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.pillBg),
-                onPressed: onBack,
-                child: Text('Back', style: TextStyle(color: AppColors.muted)),
+            Text(
+              'Previous games',
+              style: TextStyle(color: AppColors.muted, fontSize: 12),
+            ),
+            const SizedBox(height: 8),
+            ...previous.map((e) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 50,
+                    child: Text('${e.correct}/${e.total}',
+                        style: TextStyle(color: AppColors.muted, fontSize: 13),
+                        textAlign: TextAlign.right),
+                  ),
+                  const SizedBox(width: 12),
+                  SizedBox(
+                    width: 40,
+                    child: Text(e.time,
+                        style: TextStyle(color: AppColors.muted, fontSize: 13)),
+                  ),
+                ],
+              ),
+            )),
+          ],
+
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.accent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(17),
+                ),
+              ),
+              onPressed: onPlayAgain,
+              child: const Text(
+                'Play Again',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: TextButton(
+              onPressed: onBack,
+              child: Text(
+                'Back',
+                style: TextStyle(color: AppColors.muted, fontSize: 15),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _Stat extends StatelessWidget {
+class _StatPill extends StatelessWidget {
   final String label;
   final String value;
-  const _Stat({required this.label, required this.value});
+  const _StatPill({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Text(value,
-          style: TextStyle(color: AppColors.accent, fontSize: 22, fontWeight: FontWeight.bold)),
-      Text(label, style: TextStyle(color: AppColors.muted, fontSize: 11)),
-    ]);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.pillBg, width: 1),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              color: AppColors.accent,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(color: AppColors.muted, fontSize: 11),
+          ),
+        ],
+      ),
+    );
   }
 }

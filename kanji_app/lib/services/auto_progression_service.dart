@@ -37,52 +37,89 @@ class AutoProgressionService {
     int addedVocab = 0;
     int addedKana = 0;
 
-    // ── Kanji fill ────────────────────────────────────────────────────────
-    final currentKanjiTargets = (await kanjiRepo.getTargetKanjiList()).length;
-    final kanjiDeficit = (settings.autoProgressionKanjiQuota - currentKanjiTargets)
-        .clamp(0, settings.autoProgressionKanjiQuota);
+    // ── Staged fill: hiragana first → katakana+vocab → kanji+vocab ───────
+    // Stage is determined by kana state so we check that first.
+    final hiraganaProgress = await kanaRepo.getProgress(type: 'hiragana');
+    final allHiraganaLearned = hiraganaProgress.learned >= hiraganaProgress.total;
 
-    if (kanjiDeficit > 0) {
-      final nextKanji = await kanjiRepo.getNextUnlearned(kanjiDeficit);
-      if (nextKanji.isNotEmpty) {
-        await kanjiRepo.bulkSetTarget(nextKanji.map((k) => k.id).toList());
-        addedKanji = nextKanji.length;
-      }
-    }
-
-    // ── Vocab fill ────────────────────────────────────────────────────────
-    final currentVocabTargets = await vocabRepo.getTargetCount();
-    final vocabDeficit = (settings.autoProgressionVocabQuota - currentVocabTargets)
-        .clamp(0, settings.autoProgressionVocabQuota);
-
-    if (vocabDeficit > 0) {
-      final nextVocab = await vocabRepo.getNextUntargetedVocab(vocabDeficit);
-      if (nextVocab.isNotEmpty) {
-        final db = await dbService.database;
-        final batch = db.batch();
-        final now = DateTime.now().millisecondsSinceEpoch;
-        for (final v in nextVocab) {
-          batch.rawInsert(
-            'INSERT OR IGNORE INTO vocabulary_targets (vocab_id, added_at) VALUES (?, ?)',
-            [v.id, now],
-          );
-        }
-        await batch.commit(noResult: true);
-        addedVocab = nextVocab.length;
-      }
-    }
-
-    // ── Kana fill (only if any kana are unlearned) ────────────────────────
-    final kanaAllLearned = await kanaRepo.allKanaLearned();
-    if (!kanaAllLearned) {
-      final currentKanaTargets = await kanaRepo.getTargetedCount();
-      if (currentKanaTargets < 10) {
-        final need = 10 - currentKanaTargets;
-        final nextKana = await kanaRepo.getNextUntargetedKana(need);
+    if (!allHiraganaLearned) {
+      // Stage 1: only fill hiragana targets (up to 15)
+      final hiraganaTargetCount = (await kanaRepo.getTargeted(type: 'hiragana')).length;
+      if (hiraganaTargetCount < 15) {
+        final need = 15 - hiraganaTargetCount;
+        final nextKana = await kanaRepo.getNextUntargetedKana(need, type: 'hiragana');
         for (final ch in nextKana) {
           await kanaRepo.setStatus(ch.id, 'target');
         }
         addedKana = nextKana.length;
+      }
+    } else {
+      final katakanaProgress = await kanaRepo.getProgress(type: 'katakana');
+      final allKatakanaLearned = katakanaProgress.learned >= katakanaProgress.total;
+
+      if (!allKatakanaLearned) {
+        // Stage 2: fill katakana (up to 15) + vocab; skip kanji
+        final katakanaTargetCount = (await kanaRepo.getTargeted(type: 'katakana')).length;
+        if (katakanaTargetCount < 15) {
+          final need = 15 - katakanaTargetCount;
+          final nextKana = await kanaRepo.getNextUntargetedKana(need, type: 'katakana');
+          for (final ch in nextKana) {
+            await kanaRepo.setStatus(ch.id, 'target');
+          }
+          addedKana = nextKana.length;
+        }
+
+        final currentVocabTargets2 = await vocabRepo.getTargetCount();
+        final vocabDeficit2 = (settings.autoProgressionVocabQuota - currentVocabTargets2)
+            .clamp(0, settings.autoProgressionVocabQuota);
+        if (vocabDeficit2 > 0) {
+          final nextVocab = await vocabRepo.getNextUntargetedVocab(vocabDeficit2);
+          if (nextVocab.isNotEmpty) {
+            final db = await dbService.database;
+            final batch = db.batch();
+            final now = DateTime.now().millisecondsSinceEpoch;
+            for (final v in nextVocab) {
+              batch.rawInsert(
+                'INSERT OR IGNORE INTO vocabulary_targets (vocab_id, added_at) VALUES (?, ?)',
+                [v.id, now],
+              );
+            }
+            await batch.commit(noResult: true);
+            addedVocab = nextVocab.length;
+          }
+        }
+      } else {
+        // Stage 3: all kana learned — fill kanji + vocab normally
+        final currentKanjiTargets = (await kanjiRepo.getTargetKanjiList()).length;
+        final kanjiDeficit = (settings.autoProgressionKanjiQuota - currentKanjiTargets)
+            .clamp(0, settings.autoProgressionKanjiQuota);
+        if (kanjiDeficit > 0) {
+          final nextKanji = await kanjiRepo.getNextUnlearned(kanjiDeficit);
+          if (nextKanji.isNotEmpty) {
+            await kanjiRepo.bulkSetTarget(nextKanji.map((k) => k.id).toList());
+            addedKanji = nextKanji.length;
+          }
+        }
+
+        final currentVocabTargets = await vocabRepo.getTargetCount();
+        final vocabDeficit = (settings.autoProgressionVocabQuota - currentVocabTargets)
+            .clamp(0, settings.autoProgressionVocabQuota);
+        if (vocabDeficit > 0) {
+          final nextVocab = await vocabRepo.getNextUntargetedVocab(vocabDeficit);
+          if (nextVocab.isNotEmpty) {
+            final db = await dbService.database;
+            final batch = db.batch();
+            final now = DateTime.now().millisecondsSinceEpoch;
+            for (final v in nextVocab) {
+              batch.rawInsert(
+                'INSERT OR IGNORE INTO vocabulary_targets (vocab_id, added_at) VALUES (?, ?)',
+                [v.id, now],
+              );
+            }
+            await batch.commit(noResult: true);
+            addedVocab = nextVocab.length;
+          }
+        }
       }
     }
 

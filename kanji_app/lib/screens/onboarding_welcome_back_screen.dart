@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme.dart';
+import '../theme_provider.dart';
 import '../utils/app_route.dart';
-import 'home_screen.dart';
+import 'main_shell.dart';
 
-class OnboardingWelcomeBackScreen extends StatelessWidget {
+class OnboardingWelcomeBackScreen extends ConsumerWidget {
   const OnboardingWelcomeBackScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = ref.watch(themeColorsProvider);
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: colors.bg,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -24,29 +27,30 @@ class OnboardingWelcomeBackScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.fg,
+                    color: colors.fg,
                   ),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   'Your data has been loaded.',
-                  style: TextStyle(fontSize: 16, color: AppColors.muted),
+                  style: TextStyle(fontSize: 16, color: colors.muted),
                 ),
                 const SizedBox(height: 40),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: AppColors.bg,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppColors.buttonRadius),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: GestureDetector(
+                    onTap: () => Navigator.pushReplacement(context, AppRoute.to(const MainShell())),
+                    child: Container(
+                      height: 56,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: colors.accent,
+                        borderRadius: BorderRadius.circular(17),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text("Let's go", style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Colors.white)),
                     ),
                   ),
-                  onPressed: () => Navigator.pushReplacement(
-                    context,
-                    AppRoute.to(const HomeScreen()),
-                  ),
-                  child: const Text("Let's go", style: TextStyle(fontSize: 17)),
                 ),
               ],
             ),

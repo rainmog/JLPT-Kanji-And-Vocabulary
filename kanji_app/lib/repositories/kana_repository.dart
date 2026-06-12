@@ -261,6 +261,14 @@ class KanaRepository {
     return (code >= 0x3041 && code <= 0x3096) || // hiragana
            (code >= 0x30A1 && code <= 0x30F6);    // katakana
   }
+
+  Future<int> getHighPracticeTargetCount(int threshold) async {
+    final rows = await dbService.query(
+      "SELECT COUNT(*) as cnt FROM kana_progress WHERE status='target' AND COALESCE(practice_correct_count,0) > ?",
+      [threshold],
+    );
+    return rows.first['cnt'] as int? ?? 0;
+  }
 }
 
 final kanaRepo = KanaRepository();

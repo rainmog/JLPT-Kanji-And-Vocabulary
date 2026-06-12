@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'theme.dart';
 import 'theme_provider.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_shell.dart';
 import 'widgets/startup_logo_overlay.dart';
 import 'screens/onboarding_welcome_screen.dart';
 import 'services/onboarding_service.dart';
@@ -50,7 +50,7 @@ class _AppRootState extends ConsumerState<_AppRoot> {
   @override
   Widget build(BuildContext context) {
     if (!_splashDone) {
-      return Stack(children: [
+      return Stack(fit: StackFit.expand, children: [
         Container(color: AppColors.bg),
         const StartupLogoOverlay(),
       ]);
@@ -58,8 +58,8 @@ class _AppRootState extends ConsumerState<_AppRoot> {
     if (_onboardingComplete == false) {
       return const OnboardingWelcomeScreen();
     }
-    return Stack(children: [
-      const HomeScreen(),
+    return Stack(fit: StackFit.expand, children: [
+      const MainShell(),
       const StartupLogoOverlay(),
     ]);
   }

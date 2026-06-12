@@ -13,7 +13,8 @@
     "option_1_display": "しゅんじゅん",
     "option_2_display": "じゅんじゅん",
     "option_3_display": "しゅんしゅん",
-    "option_4_display": "じゅんしゅん"
+    "option_4_display": "じゅんしゅん",
+    "question_translation": "His **hesitant** (逡巡; read: **しゅんじゅん**) attitude prolonged the problem."
   },
   {
     "level": 1,
@@ -29,7 +30,8 @@
     "option_1_display": "こうがい",
     "option_2_display": "かんがい",
     "option_3_display": "こうかい",
-    "option_4_display": "かんかい"
+    "option_4_display": "かんかい",
+    "question_translation": "His **passionate** (慷慨; read: **こうがい**) speech moved the audience."
   },
   {
     "level": 1,
@@ -45,7 +47,8 @@
     "option_1_display": "きたん",
     "option_2_display": "きはん",
     "option_3_display": "いたん",
-    "option_4_display": "いはん"
+    "option_4_display": "いはん",
+    "question_translation": "The remark was evaluated as a **candid** (忌憚; read: **きたん**) opinion."
   },
   {
     "level": 1,
@@ -61,7 +64,8 @@
     "option_1_display": "けつじつ",
     "option_2_display": "けっみ",
     "option_3_display": "みのり",
-    "option_4_display": "けっか"
+    "option_4_display": "けっか",
+    "question_translation": "Long years of effort **bore fruit** (結実; read: **けつじつ**)."
   },
   {
     "level": 1,
@@ -77,7 +81,8 @@
     "option_1_display": "まさつ",
     "option_2_display": "まかつ",
     "option_3_display": "まつ",
-    "option_4_display": "もさつ"
+    "option_4_display": "もさつ",
+    "question_translation": "She expressed her opinion without fearing **friction** (摩擦; read: **まさつ**)."
   },
   {
     "level": 1,
@@ -93,7 +98,8 @@
     "option_1_display": "ぜいじゃく",
     "option_2_display": "きじゃく",
     "option_3_display": "ぜいよわ",
-    "option_4_display": "きよわ"
+    "option_4_display": "きよわ",
+    "question_translation": "The policy is built on a **fragile** (脆弱; read: **ぜいじゃく**) foundation."
   },
   {
     "level": 1,
@@ -105,7 +111,8 @@
     "option_3": "票流",
     "option_4": "評留",
     "correct_option": 1,
-    "question_stem_display": "その{国|くに}では（ひょうりゅう）{者|しゃ}を{支援|しえん}する{制度|せいど}がある。"
+    "question_stem_display": "その{国|くに}では（ひょうりゅう）{者|しゃ}を{支援|しえん}する{制度|せいど}がある。",
+    "question_translation": "In that country, there is a system to support people who are **adrift** (漂流; read: ひょうりゅう)."
   },
   {
     "level": 1,
@@ -117,7 +124,8 @@
     "option_3": "違板",
     "option_4": "違犯",
     "correct_option": 1,
-    "question_stem_display": "{彼|かれ}の{行為|こうい}は{法律|ほうりつ}に（いはん）している。"
+    "question_stem_display": "{彼|かれ}の{行為|こうい}は{法律|ほうりつ}に（いはん）している。",
+    "question_translation": "His actions **violate** (違反; read: いはん) the law."
   },
   {
     "level": 1,
@@ -129,7 +137,8 @@
     "option_3": "本七",
     "option_4": "凡質",
     "correct_option": 1,
-    "question_stem_display": "その{問題|もんだい}の（ほんしつ）をとらえることが{重要|じゅうよう}だ。"
+    "question_stem_display": "その{問題|もんだい}の（ほんしつ）をとらえることが{重要|じゅうよう}だ。",
+    "question_translation": "Grasping the **essence** (本質; read: ほんしつ) of the problem is important."
   },
   {
     "level": 1,
@@ -141,7 +150,8 @@
     "option_3": "盲想",
     "option_4": "猛想",
     "correct_option": 1,
-    "question_stem_display": "{彼|かれ}の{計画|けいかく}は（もうそう）にすぎない。"
+    "question_stem_display": "{彼|かれ}の{計画|けいかく}は（もうそう）にすぎない。",
+    "question_translation": "His plan is nothing but **delusion** (妄想; read: もうそう)."
   },
   {
     "level": 1,
@@ -157,7 +167,8 @@
     "option_1_display": "{要請|ようせい}",
     "option_2_display": "{要求|ようきゅう}",
     "option_3_display": "{要望|ようぼう}",
-    "option_4_display": "{要因|よういん}"
+    "option_4_display": "{要因|よういん}",
+    "question_translation": "The new system was designed to reflect society's **demands**."
   },
   {
     "level": 1,
@@ -173,7 +184,8 @@
     "option_1_display": "{俯瞰的|ふかんてき}",
     "option_2_display": "{主観的|しゅかんてき}",
     "option_3_display": "{客観的|きゃっかんてき}",
-    "option_4_display": "{感覚的|かんかくてき}"
+    "option_4_display": "{感覚的|かんかくてき}",
+    "question_translation": "Viewing the problem from a **bird's-eye** perspective will be the key to solving it."
   },
   {
     "level": 1,
@@ -189,7 +201,8 @@
     "option_1_display": "{一石|いっせき}",
     "option_2_display": "{異論|いろん}",
     "option_3_display": "{疑義|ぎぎ}",
-    "option_4_display": "{疑問|ぎもん}"
+    "option_4_display": "{疑問|ぎもん}",
+    "question_translation": "Her thesis **posed a challenge** to existing theories."
   },
   {
     "level": 1,
@@ -205,7 +218,8 @@
     "option_1_display": "{不屈|ふくつ}",
     "option_2_display": "{不滅|ふめつ}",
     "option_3_display": "{不変|ふへん}",
-    "option_4_display": "{不断|ふだん}"
+    "option_4_display": "{不断|ふだん}",
+    "question_translation": "The artist faced difficulties with an **indomitable** spirit."
   },
   {
     "level": 1,
@@ -221,7 +235,8 @@
     "option_1_display": "{多大|ただい}な",
     "option_2_display": "{大変|たいへん}な",
     "option_3_display": "{甚大|じんだい}な",
-    "option_4_display": "{莫大|ばくだい}な"
+    "option_4_display": "{莫大|ばくだい}な",
+    "question_translation": "The philosopher's thought still has a **tremendous** influence today."
   },
   {
     "level": 1,
@@ -237,7 +252,8 @@
     "option_1_display": "{変動|へんどう}",
     "option_2_display": "{変革|へんかく}",
     "option_3_display": "{変化|へんか}",
-    "option_4_display": "{変遷|へんせん}"
+    "option_4_display": "{変遷|へんせん}",
+    "question_translation": "There are many diverse factors complexly intertwined in economic **fluctuations**."
   },
   {
     "level": 1,
@@ -253,7 +269,8 @@
     "option_1_display": "{画期的|かっきてき}",
     "option_2_display": "{革命的|かくめいてき}",
     "option_3_display": "{革新的|かくしんてき}",
-    "option_4_display": "{先駆的|せんくてき}"
+    "option_4_display": "{先駆的|せんくてき}",
+    "question_translation": "That discovery was a **groundbreaking** event in the history of science."
   },
   {
     "level": 1,
@@ -269,7 +286,8 @@
     "option_1_display": "{変遷|へんせん}",
     "option_2_display": "{変化|へんか}",
     "option_3_display": "{変動|へんどう}",
-    "option_4_display": "{変革|へんかく}"
+    "option_4_display": "{変革|へんかく}",
+    "question_translation": "That rule has undergone many **changes** over time."
   },
   {
     "level": 1,
@@ -285,7 +303,8 @@
     "option_1_display": "{取|と}り{消|け}された",
     "option_2_display": "{更新|こうしん}された",
     "option_3_display": "{締結|ていけつ}された",
-    "option_4_display": "{延長|えんちょう}された"
+    "option_4_display": "{延長|えんちょう}された",
+    "question_translation": "That contract was **nullified** (破棄; read: はき)."
   },
   {
     "level": 1,
@@ -301,7 +320,8 @@
     "option_1_display": "{自分|じぶん}だけが{正|ただ}しいと{思|おも}っている",
     "option_2_display": "{独立|どくりつ}して{考|かんが}えている",
     "option_3_display": "{革新的|かくしんてき}な{意見|いけん}を{持|も}っている",
-    "option_4_display": "{他者|たしゃ}の{意見|いけん}を{参考|さんこう}にしている"
+    "option_4_display": "{他者|たしゃ}の{意見|いけん}を{参考|さんこう}にしている",
+    "question_translation": "There is criticism that his claim is **self-righteous** (独善的)."
   },
   {
     "level": 1,
@@ -317,7 +337,8 @@
     "option_1_display": "{回|まわ}り{道|みち}のような",
     "option_2_display": "{直接的|ちょくせつてき}な",
     "option_3_display": "{効率的|こうりつてき}な",
-    "option_4_display": "{革新的|かくしんてき}な"
+    "option_4_display": "{革新的|かくしんてき}な",
+    "question_translation": "That policy is taking a **roundabout** (迂遠) approach."
   },
   {
     "level": 1,
@@ -333,7 +354,8 @@
     "option_1_display": "つじつまが{合|あ}わない{部分|ぶぶん}がある",
     "option_2_display": "{非常|ひじょう}に{一貫|いっかん}している",
     "option_3_display": "{深|ふか}い{考|かんが}えがある",
-    "option_4_display": "{理解|りかい}しにくい"
+    "option_4_display": "{理解|りかい}しにくい",
+    "question_translation": "Her words and actions contain **contradictions** (矛盾)."
   },
   {
     "level": 1,
@@ -349,7 +371,8 @@
     "option_1_display": "{考|かんが}えが{足|た}りず{急|いそ}ぎすぎた",
     "option_2_display": "{非常|ひじょう}に{正確|せいかく}だった",
     "option_3_display": "{慎重|しんちょう}すぎた",
-    "option_4_display": "{予算|よさん}を{超|こ}えた"
+    "option_4_display": "{予算|よさん}を{超|こ}えた",
+    "question_translation": "That judgment was later criticized as **hasty** (拙速)."
   },
   {
     "level": 1,
@@ -365,7 +388,8 @@
     "option_1_display": "{無謀|むぼう}な{勇気|ゆうき}",
     "option_2_display": "{本物|ほんもの}の{勇気|ゆうき}",
     "option_3_display": "{慎重|しんちょう}な{判断|はんだん}",
-    "option_4_display": "{臆病|おくびょう}な{行動|こうどう}"
+    "option_4_display": "{臆病|おくびょう}な{行動|こうどう}",
+    "question_translation": "That action was called **reckless courage** (蛮勇)."
   },
   {
     "level": 1,
@@ -381,7 +405,8 @@
     "option_1_display": "めったにいないような",
     "option_2_display": "{有名|ゆうめい}な",
     "option_3_display": "{若|わか}い",
-    "option_4_display": "{謙虚|けんきょ}な"
+    "option_4_display": "{謙虚|けんきょ}な",
+    "question_translation": "He is known as a **once-in-a-generation** genius (稀代)."
   },
   {
     "level": 1,
@@ -397,7 +422,8 @@
     "option_1_display": "{理解|りかい}するのが{難|むずか}しい",
     "option_2_display": "{質|しつ}が{高|たか}い",
     "option_3_display": "{歴史的|れきしてき}{価値|かち}がある",
-    "option_4_display": "{表現|ひょうげん}が{美|うつく}しい"
+    "option_4_display": "{表現|ひょうげん}が{美|うつく}しい",
+    "question_translation": "That work was described as **difficult to understand** (難解)."
   },
   {
     "level": 1,
@@ -413,7 +439,8 @@
     "option_1_display": "{最|もっと}も{重要|じゅうよう}な{部分|ぶぶん}",
     "option_2_display": "{最初|さいしょ}の{部分|ぶぶん}",
     "option_3_display": "{結論|けつろん}の{部分|ぶぶん}",
-    "option_4_display": "{参考文献|さんこうぶんけん}の{部分|ぶぶん}"
+    "option_4_display": "{参考文献|さんこうぶんけん}の{部分|ぶぶん}",
+    "question_translation": "It is difficult to grasp the **core** (核心) of that paper."
   },
   {
     "level": 1,
@@ -429,7 +456,8 @@
     "option_1_display": "の{間|あいだ}でも",
     "option_2_display": "の{中|なか}でも",
     "option_3_display": "において",
-    "option_4_display": "にとっても"
+    "option_4_display": "にとっても",
+    "question_translation": "**Even among** experts, opinions are divided on this issue."
   },
   {
     "level": 1,
@@ -445,7 +473,8 @@
     "option_1_display": "{甲斐|かい}",
     "option_2_display": "おかげ",
     "option_3_display": "せい",
-    "option_4_display": "{結果|けっか}"
+    "option_4_display": "{結果|けっか}",
+    "question_translation": "All the effort was **in vain**, and no results came out."
   },
   {
     "level": 1,
@@ -461,7 +490,8 @@
     "option_1_display": "うえに",
     "option_2_display": "{反面|はんめん}",
     "option_3_display": "{一方|いっぽう}で",
-    "option_4_display": "だけでなく"
+    "option_4_display": "だけでなく",
+    "question_translation": "**In addition to** being a genius, he also doesn't neglect effort."
   },
   {
     "level": 1,
@@ -477,7 +507,8 @@
     "option_1_display": "と",
     "option_2_display": "が",
     "option_3_display": "ので",
-    "option_4_display": "から"
+    "option_4_display": "から",
+    "question_translation": "**No matter how** busy you are, you should at least contact them."
   },
   {
     "level": 1,
@@ -493,7 +524,8 @@
     "option_1_display": "のも{無理|むり}はない",
     "option_2_display": "ことはない",
     "option_3_display": "べきではない",
-    "option_4_display": "わけがない"
+    "option_4_display": "わけがない",
+    "question_translation": "It's **no wonder** she's angry. She was said such terrible things."
   },
   {
     "level": 1,
@@ -509,7 +541,8 @@
     "option_1_display": "ことは{確|たし}かだが",
     "option_2_display": "が",
     "option_3_display": "とはいえ",
-    "option_4_display": "のみならず"
+    "option_4_display": "のみならず",
+    "question_translation": "The success was, **granted** there was some luck, also due to effort."
   },
   {
     "level": 1,
@@ -525,7 +558,8 @@
     "option_1_display": "はともかく",
     "option_2_display": "については",
     "option_3_display": "{対|たい}して",
-    "option_4_display": "{関|かん}して"
+    "option_4_display": "{関|かん}して",
+    "question_translation": "**Regardless of** his way of speaking, if the content is correct, it can be accepted."
   },
   {
     "level": 1,
@@ -541,7 +575,8 @@
     "option_1_display": "こと",
     "option_2_display": "もの",
     "option_3_display": "ところ",
-    "option_4_display": "はず"
+    "option_4_display": "はず",
+    "question_translation": "No matter how much you apologize, there are **things** that cannot be undone."
   },
   {
     "level": 1,
@@ -557,7 +592,8 @@
     "option_1_display": "{踏|ふ}まえて",
     "option_2_display": "みながら",
     "option_3_display": "もとに",
-    "option_4_display": "{通|つう}じて"
+    "option_4_display": "{通|つう}じて",
+    "question_translation": "**Based on** this result, the next countermeasures should be considered."
   },
   {
     "level": 1,
@@ -573,7 +609,8 @@
     "option_1_display": "{乏|とぼ}しいだけに",
     "option_2_display": "あるからこそ",
     "option_3_display": "ないにしても",
-    "option_4_display": "あればあるほど"
+    "option_4_display": "あればあるほど",
+    "question_translation": "**Because** the claim **lacks** evidence, it is unconvincing."
   },
   {
     "level": 1,
@@ -589,7 +626,8 @@
     "option_1_display": "であるのみならず",
     "option_2_display": "だからこそ",
     "option_3_display": "なのに",
-    "option_4_display": "であるから"
+    "option_4_display": "であるから",
+    "question_translation": "**Not only** technically skilled, her work also excels in emotional expression."
   },
   {
     "level": 1,
@@ -605,7 +643,8 @@
     "option_1_display": "せずにはいられない",
     "option_2_display": "するにはあたらない",
     "option_3_display": "すべきにあたる",
-    "option_4_display": "するに{及|およ}ばない"
+    "option_4_display": "するに{及|およ}ばない",
+    "question_translation": "We **must** address this problem urgently."
   },
   {
     "level": 1,
@@ -621,7 +660,8 @@
     "option_1_display": "{見方|みかた}・",
     "option_2_display": "{立場|たちば}の",
     "option_3_display": "{考|かんが}え{方|かた}の",
-    "option_4_display": "{読|よ}み{方|かた}・"
+    "option_4_display": "{読|よ}み{方|かた}・",
+    "question_translation": "His statement can have the opposite meaning **depending on** the perspective and interpretation."
   },
   {
     "level": 1,
@@ -637,7 +677,8 @@
     "option_1_display": "{後悔|こうかい}してもしきれない",
     "option_2_display": "{後悔|こうかい}してならない",
     "option_3_display": "{後悔|こうかい}するわけにはいかない",
-    "option_4_display": "{後悔|こうかい}せざるを{得|え}ない"
+    "option_4_display": "{後悔|こうかい}せざるを{得|え}ない",
+    "question_translation": "That decision is now something I **regret endlessly**."
   },
   {
     "level": 1,
@@ -653,7 +694,8 @@
     "option_1_display": "に{照|て}らしてみると",
     "option_2_display": "から{見|み}ると",
     "option_3_display": "によると",
-    "option_4_display": "の{観点|かんてん}から"
+    "option_4_display": "の{観点|かんてん}から",
+    "question_translation": "**In light of** the law, such actions are clearly problematic."
   },
   {
     "level": 1,
@@ -669,7 +711,8 @@
     "option_1_display": "があってこそ",
     "option_2_display": "があるので",
     "option_3_display": "があれば",
-    "option_4_display": "があるから"
+    "option_4_display": "があるから",
+    "question_translation": "She is the type who performs well **only when** under pressure."
   },
   {
     "level": 1,
@@ -685,7 +728,8 @@
     "option_1_display": "{急|きゅう}を{要|よう}するだけあって",
     "option_2_display": "{急|いそ}がばまわれで",
     "option_3_display": "{急|いそ}いでも{仕方|しかた}がないが",
-    "option_4_display": "{急|いそ}ぐだけに"
+    "option_4_display": "{急|いそ}ぐだけに",
+    "question_translation": "**Because** the matter **is urgent**, we need to respond quickly."
   },
   {
     "level": 1,
@@ -702,7 +746,8 @@
     "option_1_display": "{否定|ひてい}する",
     "option_2_display": "{余地|よち}が",
     "option_3_display": "{頭|あたま}から",
-    "option_4_display": "わけで"
+    "option_4_display": "わけで",
+    "question_translation": "I don't think there is **room** to accept his claim."
   },
   {
     "level": 1,
@@ -719,7 +764,8 @@
     "option_1_display": "{努力|どりょく}",
     "option_2_display": "{一朝一夕|いっちょういっせき}に",
     "option_3_display": "{程度|ていど}の",
-    "option_4_display": "{並|なみ}の"
+    "option_4_display": "{並|なみ}の",
+    "question_translation": "This problem cannot be solved **overnight**."
   },
   {
     "level": 1,
@@ -736,7 +782,8 @@
     "option_1_display": "{厳|きび}しい",
     "option_2_display": "{状況|じょうきょう}の",
     "option_3_display": "{中|なか}にあっても",
-    "option_4_display": "{試練|しれん}という"
+    "option_4_display": "{試練|しれん}という",
+    "question_translation": "**Even amid** difficulties, she tackled it with all her effort."
   },
   {
     "level": 1,
@@ -753,7 +800,8 @@
     "option_1_display": "{国民|こくみん}の",
     "option_2_display": "を{踏|ふ}まえ",
     "option_3_display": "{意見|いけん}",
-    "option_4_display": "{多様|たよう}な"
+    "option_4_display": "{多様|たよう}な",
+    "question_translation": "That system was born after **the people's** repeated discussions."
   },
   {
     "level": 1,
@@ -770,7 +818,8 @@
     "option_1_display": "{困難|こんなん}に",
     "option_2_display": "{屈|くっ}することなく",
     "option_3_display": "いかなる",
-    "option_4_display": "も"
+    "option_4_display": "も",
+    "question_translation": "Scientists continued pursuing the truth **without yielding** to adversity."
   },
   {
     "level": 1,
@@ -787,7 +836,8 @@
     "option_1_display": "されたうえで",
     "option_2_display": "{十分|じゅうぶん}に",
     "option_3_display": "{軽率|けいそつ}に",
-    "option_4_display": "{検討|けんとう}が"
+    "option_4_display": "{検討|けんとう}が",
+    "question_translation": "His decision was not made **rashly**."
   },
   {
     "level": 1,
@@ -804,7 +854,8 @@
     "option_1_display": "の{観点|かんてん}から",
     "option_2_display": "{現代社会|げんだいしゃかい}",
     "option_3_display": "{現状|げんじょう}に{照|て}らし",
-    "option_4_display": "の"
+    "option_4_display": "の",
+    "question_translation": "This treaty needs to be fundamentally reviewed **in light of the current situation**."
   },
   {
     "level": 1,
@@ -821,7 +872,8 @@
     "option_1_display": "{慎重|しんちょう}に",
     "option_2_display": "{各種|かくしゅ}データを",
     "option_3_display": "{分析|ぶんせき}した{末|すえ}に",
-    "option_4_display": "{収集|しゅうしゅう}・"
+    "option_4_display": "{収集|しゅうしゅう}・",
+    "question_translation": "Researchers reached their conclusion by **collecting and analyzing** data."
   },
   {
     "level": 1,
@@ -838,7 +890,8 @@
     "option_1_display": "{時代|じだい}を{超|こ}えた",
     "option_2_display": "のみならず",
     "option_3_display": "{学術的|がくじゅつてき}にも",
-    "option_4_display": "{普遍的|ふへんてき}で"
+    "option_4_display": "{普遍的|ふへんてき}で",
+    "question_translation": "That philosophy book holds **timeless** value."
   },
   {
     "level": 1,
@@ -855,7 +908,8 @@
     "option_1_display": "{諸要因|しょようういん}が",
     "option_2_display": "{表面的|ひょうめんてき}",
     "option_3_display": "と{見|み}えて",
-    "option_4_display": "な{事象|じしょう}の{下|もと}で"
+    "option_4_display": "な{事象|じしょう}の{下|もと}で",
+    "question_translation": "That issue is complicated, with **various factors** intricately intertwined."
   },
   {
     "level": 1,
@@ -875,7 +929,9 @@
     "option_1_display": "ウ→ア→イ→エ→オ",
     "option_2_display": "イ→ウ→ア→エ→オ",
     "option_3_display": "ア→ウ→イ→エ→オ",
-    "option_4_display": "エ→ア→ウ→イ→オ"
+    "option_4_display": "エ→ア→ウ→イ→オ",
+    "question_translation": "Rearrange the following sentences into a logical order:\nA. According to this view, people speaking different languages perceive the world from different perspectives.\nB. On the other hand, there is a counterargument that thinking can exist independently from language.\nC. The 'Linguistic Relativity Hypothesis' claims that thinking depends on language.\nD. Evidence: infants understand concepts before acquiring language.\nE. This debate remains unsettled today, and research from both sides continues.\n\nCorrect order: **C→A→B→D→E**",
+    "passage_translation": "The relationship between language and thought is a fundamental question that has been discussed among philosophers and linguists for many years."
   },
   {
     "level": 1,
@@ -895,7 +951,9 @@
     "option_1_display": "イ→ア→ウ→エ",
     "option_2_display": "ア→イ→ウ→エ",
     "option_3_display": "ウ→ア→イ→エ",
-    "option_4_display": "イ→ウ→ア→エ"
+    "option_4_display": "イ→ウ→ア→エ",
+    "question_translation": "Rearrange the following sentences into a logical order:\nA. However, in today's information-overloaded world, it's difficult for voters to judge based on accurate information.\nB. The ideal of democracy is that all citizens can participate equally in politics.\nC. Additionally, the rise of populism threatens democratic functions.\nD. To address these challenges, media literacy education is considered important.\n\nCorrect order: **B→A→C→D**",
+    "passage_translation": "Democracy is a political system that forms the foundation of modern society, but many of its challenges have been pointed out."
   },
   {
     "level": 1,
@@ -916,7 +974,9 @@
     "option_1_display": "{知識|ちしき}の{量|りょう}が{足|た}りないと{認|みと}めること",
     "option_2_display": "{自分|じぶん}が{何|なに}を{知|し}らないかを{知|し}ることが{知|ち}の{出発点|しゅっぱつてん}であること",
     "option_3_display": "{知識|ちしき}より{経験|けいけん}が{大切|たいせつ}だということ",
-    "option_4_display": "{知|し}ることをあきらめることが{知恵|ちえ}だということ"
+    "option_4_display": "{知|し}ることをあきらめることが{知恵|ちえ}だということ",
+    "question_translation": "What does 'knowledge of ignorance' mean?",
+    "passage_translation": "Philosophy is often thought of as a distant discipline, but its questions exist in our daily lives. Questions such as \"Why do we live?\" \"What is right?\" and \"What is beauty?\" are things most people have thought about at least once. Philosophy is the act of confronting those questions and continuing to think logically about them. The important thing is not reaching an answer but continuing to ask questions. Just as Socrates advocated \"knowledge of ignorance,\" knowing what we do not know becomes the starting point of knowledge. Even in modern times, new problems such as AI and bioethics are being posed to philosophy, and it is said that philosophical thinking gives us the power to respond to changes in society."
   },
   {
     "level": 1,
@@ -937,7 +997,9 @@
     "option_1_display": "{答|こた}えを{見|み}つけることを{目指|めざ}す{学問|がくもん}",
     "option_2_display": "{問|と}いと{向|む}き{合|あ}い{論理的|ろんりてき}に{考|かんが}え{続|つづ}ける{営|いとな}み",
     "option_3_display": "{過去|かこ}の{偉人|いじん}の{考|かんが}えを{学|まな}ぶ{学問|がくもん}",
-    "option_4_display": "{宗教|しゅうきょう}と{倫理|りんり}を{結|むす}びつける{学問|がくもん}"
+    "option_4_display": "{宗教|しゅうきょう}と{倫理|りんり}を{結|むす}びつける{学問|がくもん}",
+    "question_translation": "Which is the most appropriate definition of philosophy in this text?",
+    "passage_translation": "Philosophy is often thought of as a distant discipline, but its questions exist in our daily lives. Questions such as \"Why do we live?\" \"What is right?\" and \"What is beauty?\" are things most people have thought about at least once. Philosophy is the act of confronting those questions and continuing to think logically about them. The important thing is not reaching an answer but continuing to ask questions. Just as Socrates advocated \"knowledge of ignorance,\" knowing what we do not know becomes the starting point of knowledge. Even in modern times, new problems such as AI and bioethics are being posed to philosophy, and it is said that philosophical thinking gives us the power to respond to changes in society."
   },
   {
     "level": 1,
@@ -958,7 +1020,9 @@
     "option_1_display": "{農業|のうぎょう}の{機械化|きかいか}",
     "option_2_display": "AIによる{意思決定|いしけってい}",
     "option_3_display": "{人為的|じんいてき}な{遺伝子選択|いでんしせんたく}",
-    "option_4_display": "プライバシーの{侵害|しんがい}"
+    "option_4_display": "プライバシーの{侵害|しんがい}",
+    "question_translation": "Which problem related to genetic engineering technology is described?",
+    "passage_translation": "Notice to Customers\nWe sincerely apologize, but due to circumstances, we will close at 3 p.m. today. We will reopen tomorrow at 10 a.m. as usual. We apologize for any inconvenience this may cause."
   },
   {
     "level": 1,
@@ -979,7 +1043,9 @@
     "option_1_display": "{技術|ぎじゅつ}の{可能性|かのうせい}のみを{追求|ついきゅう}すること",
     "option_2_display": "{社会|しゃかい}への{影響|えいきょう}を{考慮|こうりょ}した{責任|せきにん}ある{研究|けんきゅう}",
     "option_3_display": "{倫理問題|りんりもんだい}への{取|と}り{組|く}みを{政府|せいふ}に{任|まか}せること",
-    "option_4_display": "{研究成果|けんきゅうせいか}を{社会|しゃかい}に{公開|こうかい}しないこと"
+    "option_4_display": "{研究成果|けんきゅうせいか}を{社会|しゃかい}に{公開|こうかい}しないこと",
+    "question_translation": "Which of the following is mentioned as something required of scientists?",
+    "passage_translation": "Notice to Customers\nWe sincerely apologize, but due to circumstances, we will close at 3 p.m. today. We will reopen tomorrow at 10 a.m. as usual. We apologize for any inconvenience this may cause."
   },
   {
     "level": 1,
@@ -1000,7 +1066,9 @@
     "option_1_display": "{科学技術|かがくぎじゅつ}の{発展|はってん}を{止|と}めること",
     "option_2_display": "{社会全体|しゃかいぜんたい}で{議論|ぎろん}し{恩恵|おんけい}を{最大化|さいだいか}しリスクを{最小化|さいしょうか}する{枠組|わくぐ}みを{作|つく}ること",
     "option_3_display": "{科学者|かがくしゃ}の{研究|けんきゅう}を{規制|きせい}すること",
-    "option_4_display": "AIと{遺伝子技術|いでんしぎじゅつ}を{禁止|きんし}すること"
+    "option_4_display": "AIと{遺伝子技術|いでんしぎじゅつ}を{禁止|きんし}すること",
+    "question_translation": "What is the final argument presented in this text?",
+    "passage_translation": "Notice to Customers\nWe sincerely apologize, but due to circumstances, we will close at 3 p.m. today. We will reopen tomorrow at 10 a.m. as usual. We apologize for any inconvenience this may cause."
   },
   {
     "level": 1,
@@ -1021,7 +1089,9 @@
     "option_1_display": "{経済的|けいざいてき}{利益|りえき}が{大|おお}きいから",
     "option_2_display": "{長|なが}い{歴史|れきし}の{中|なか}で{磨|みが}かれた{技術|ぎじゅつ}や{価値観|かちかん}が{凝縮|ぎょうしゅく}されているから",
     "option_3_display": "{外国|がいこく}{文化|ぶんか}の{影響|えいきょう}を{防|ふせ}ぐため",
-    "option_4_display": "{政府|せいふ}の{政策|せいさく}として{義務|ぎむ}づけられているから"
+    "option_4_display": "{政府|せいふ}の{政策|せいさく}として{義務|ぎむ}づけられているから",
+    "question_translation": "Which of the following is mentioned as a reason why the transmission of traditional culture is important?",
+    "passage_translation": "Folk tales are stories that originally were heard by just a small number of people, and one or two of those people would remember and tell them to the next generation, and then passed down through the generations. It's natural for the same story to change. Depending on how the listeners react, the interesting parts are told in more detail, boring parts are left out, and the story takes on a proper form as a tale. That's why they should be interesting."
   },
   {
     "level": 1,
@@ -1042,7 +1112,9 @@
     "option_1_display": "{伝統|でんとう}をそのまま{守|まも}り{続|つづ}けること",
     "option_2_display": "{外来|がいらい}{文化|ぶんか}を{取|と}り{入|い}れて{変化|へんか}させること",
     "option_3_display": "{核|かく}となる{価値|かち}を{守|まも}りながら{柔軟|じゅうなん}に{適応|てきおう}すること",
-    "option_4_display": "{文化|ぶんか}の{統一|とういつ}を{進|すす}めること"
+    "option_4_display": "{文化|ぶんか}の{統一|とういつ}を{進|すす}めること",
+    "question_translation": "Which of the following is closest to the author's view on how culture should be?",
+    "passage_translation": "Folk tales are stories that originally were heard by just a small number of people, and one or two of those people would remember and tell them to the next generation, and then passed down through the generations. It's natural for the same story to change. Depending on how the listeners react, the interesting parts are told in more detail, boring parts are left out, and the story takes on a proper form as a tale. That's why they should be interesting."
   },
   {
     "level": 1,
@@ -1063,7 +1135,9 @@
     "option_1_display": "すべての{文化|ぶんか}が{統一|とういつ}される",
     "option_2_display": "{異文化|いぶんか}との{交流|こうりゅう}が{文化|ぶんか}の{融合|ゆうごう}や{新|あたら}たな{文化|ぶんか}を{生|う}む",
     "option_3_display": "{伝統文化|でんとうぶんか}が{滅|ほろ}びる",
-    "option_4_display": "{文化|ぶんか}の{交流|こうりゅう}が{減少|げんしょう}する"
+    "option_4_display": "{文化|ぶんか}の{交流|こうりゅう}が{減少|げんしょう}する",
+    "question_translation": "Which of the following is mentioned regarding the impact that globalization has on culture?",
+    "passage_translation": "Folk tales are stories that originally were heard by just a small number of people, and one or two of those people would remember and tell them to the next generation, and then passed down through the generations. It's natural for the same story to change. Depending on how the listeners react, the interesting parts are told in more detail, boring parts are left out, and the story takes on a proper form as a tale. That's why they should be interesting."
   },
   {
     "level": 1,
@@ -1084,7 +1158,9 @@
     "option_1_display": "{大量|たいりょう}の{情報|じょうほう}が{世界中|せかいじゅう}に{拡散|かくさん}する{現象|げんしょう}",
     "option_2_display": "{自分|じぶん}の{意見|いけん}を{強化|きょうか}する{情報|じょうほう}だけを{受|う}け{取|と}りやすくなる{現象|げんしょう}",
     "option_3_display": "フェイクニュースが{急速|きゅうそく}に{広|ひろ}まる{現象|げんしょう}",
-    "option_4_display": "アルゴリズムが{個人情報|こじんじょうほう}を{収集|しゅうしゅう}する{現象|げんしょう}"
+    "option_4_display": "アルゴリズムが{個人情報|こじんじょうほう}を{収集|しゅうしゅう}する{現象|げんしょう}",
+    "question_translation": "What kind of phenomenon is the 'echo chamber'?",
+    "passage_translation": "I've loved reading books since childhood, and I used to go to the library every week. Now that I'm an adult, that habit hasn't changed. The other day, I found a book I had read long ago in the library and reread it. My impression of it was different from when I was a child. I realized once again that even the same book can be felt differently depending on the reader's age and experience."
   },
   {
     "level": 1,
@@ -1105,7 +1181,9 @@
     "option_1_display": "インターネットの{普及|ふきゅう}がもたらす{経済的|けいざいてき}{恩恵|おんけい}",
     "option_2_display": "フェイクニュースの{取|と}り{締|し}まりを{強化|きょうか}すること",
     "option_3_display": "{個人|こじん}がメディアリテラシーを{持|も}ち{情報|じょうほう}を{自律的|じりつてき}に{判断|はんだん}すること",
-    "option_4_display": "アルゴリズムの{改善|かいぜん}によって{問題|もんだい}を{解決|かいけつ}すること"
+    "option_4_display": "アルゴリズムの{改善|かいぜん}によって{問題|もんだい}を{解決|かいけつ}すること",
+    "question_translation": "What is most emphasized in this text?",
+    "passage_translation": "I've loved reading books since childhood, and I used to go to the library every week. Now that I'm an adult, that habit hasn't changed. The other day, I found a book I had read long ago in the library and reread it. My impression of it was different from when I was a child. I realized once again that even the same book can be felt differently depending on the reader's age and experience."
   },
   {
     "level": 1,
@@ -1126,6 +1204,8 @@
     "option_1_display": "コンピューターの{使|つか}い{方|かた}を{学|まな}ぶこと",
     "option_2_display": "{知識|ちしき}の{習得|しゅうとく}を{最優先|さいゆうせん}にすること",
     "option_3_display": "{情報|じょうほう}を{読|よ}み{解|と}く{力|ちから}を{育|そだ}てること",
-    "option_4_display": "フェイクニュースの{作成|さくせい}を{防|ふせ}ぐこと"
+    "option_4_display": "フェイクニュースの{作成|さくせい}を{防|ふせ}ぐこと",
+    "question_translation": "What is mentioned as something that needs urgent attention in educational settings?",
+    "passage_translation": "I've loved reading books since childhood, and I used to go to the library every week. Now that I'm an adult, that habit hasn't changed. The other day, I found a book I had read long ago in the library and reread it. My impression of it was different from when I was a child. I realized once again that even the same book can be felt differently depending on the reader's age and experience."
   }
 ]
