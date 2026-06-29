@@ -5,6 +5,7 @@ tools/data/*
 !tools/data/n3_questions.json
 !tools/data/n4_questions.json
 !tools/data/n5_questions.json
+!tools/data/compound_glosses.json
 tools/kanjidic2.xml
 tools/compact/
 tools/dev_artifacts/

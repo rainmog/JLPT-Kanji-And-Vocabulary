@@ -79,13 +79,111 @@ class SentenceRepository {
     return {for (final r in rows) r['word'] as String: r['meanings'] as String};
   }
 
-  Future<String> _vocabMeaning(String word, Map<String, String> cache) async {
-    if (cache.containsKey(word)) return cache[word]!;
+  Future<String> _vocabLookup(String word) async {
     final rows = await db.query(
       'SELECT meanings FROM vocabulary WHERE word = ? LIMIT 1', [word]);
-    final m = rows.isNotEmpty ? rows.first['meanings'] as String : '';
+    return rows.isNotEmpty ? rows.first['meanings'] as String : '';
+  }
+
+  Future<String> _glossLookup(String word) async {
+    final rows = await db.query(
+      'SELECT meanings FROM compound_glosses WHERE word = ? LIMIT 1', [word]);
+    return rows.isNotEmpty ? rows.first['meanings'] as String : '';
+  }
+
+  Future<String> _vocabMeaning(String word, Map<String, String> cache) async {
+    if (cache.containsKey(word)) return cache[word]!;
+    // Lookup tiers, most precise first. Deinflection candidates are validated
+    // against real rows, so a bad deinflection yields no match (never a guess).
+    final candidates = [word, ..._deinflectCandidates(word)];
+    var m = '';
+    for (final c in candidates) {
+      m = await _vocabLookup(c);
+      if (m.isNotEmpty) break;
+    }
+    if (m.isEmpty) {
+      // Compounds outside the curated deck (偉業 …) → JMdict/API gloss table.
+      for (final c in candidates) {
+        m = await _glossLookup(c);
+        if (m.isNotEmpty) break;
+      }
+    }
     cache[word] = m;
     return m;
+  }
+
+  static const Map<String, String> _iRowToU = {
+    'き': 'く', 'ぎ': 'ぐ', 'し': 'す', 'ち': 'つ', 'に': 'ぬ',
+    'ひ': 'ふ', 'び': 'ぶ', 'み': 'む', 'り': 'る', 'い': 'う',
+  };
+  static const Map<String, String> _aRowToU = {
+    'か': 'く', 'が': 'ぐ', 'さ': 'す', 'た': 'つ', 'な': 'ぬ',
+    'ば': 'ぶ', 'ま': 'む', 'ら': 'る', 'わ': 'う', 'は': 'う',
+  };
+
+  /// Candidate dictionary forms for an inflected surface. Over-generates on
+  /// purpose; callers validate each candidate against the vocab table.
+  static List<String> _deinflectCandidates(String s) {
+    final out = <String>{};
+
+    // Progressive (ている/てた …) → reduce to plain te-form, then recurse.
+    for (final suf in ['ています', 'ていました', 'ていた', 'ている', 'てた', 'てる']) {
+      if (s.endsWith(suf)) {
+        out.addAll(_deinflectCandidates(s.substring(0, s.length - suf.length) + 'て'));
+        break;
+      }
+    }
+
+    // te / ta forms (2-char endings) with godan stem changes.
+    if (s.length >= 2) {
+      final last2 = s.substring(s.length - 2);
+      final stem = s.substring(0, s.length - 2);
+      const teTa = {
+        'して': ['する', 'す'], 'した': ['する', 'す'],
+        'いて': ['く'], 'いた': ['く'],
+        'いで': ['ぐ'], 'いだ': ['ぐ'],
+        'んで': ['む', 'ぶ', 'ぬ'], 'んだ': ['む', 'ぶ', 'ぬ'],
+        'って': ['る', 'う', 'つ'], 'った': ['る', 'う', 'つ'],
+      };
+      final r = teTa[last2];
+      if (r != null) for (final e in r) out.add(stem + e);
+    }
+    // Ichidan te / ta (食べて → 食べる).
+    if (s.endsWith('て') || s.endsWith('た')) out.add(s.substring(0, s.length - 1) + 'る');
+
+    // Polite ます forms.
+    for (final suf in ['まして', 'ました', 'ません', 'ます']) {
+      if (s.endsWith(suf)) {
+        final base = s.substring(0, s.length - suf.length);
+        out.add(base + 'る'); // ichidan
+        if (base.isNotEmpty) {
+          final u = _iRowToU[base[base.length - 1]];
+          if (u != null) out.add(base.substring(0, base.length - 1) + u); // godan
+        }
+        break;
+      }
+    }
+
+    // Negative ない / なかった.
+    for (final suf in ['なかった', 'ない']) {
+      if (s.endsWith(suf)) {
+        final base = s.substring(0, s.length - suf.length);
+        out.add(base + 'る'); // ichidan
+        if (base.isNotEmpty) {
+          final u = _aRowToU[base[base.length - 1]];
+          if (u != null) out.add(base.substring(0, base.length - 1) + u); // godan
+        }
+        break;
+      }
+    }
+
+    // i-adjective inflections.
+    if (s.endsWith('かった')) out.add(s.substring(0, s.length - 3) + 'い');
+    if (s.endsWith('くて')) out.add(s.substring(0, s.length - 2) + 'い');
+    if (s.endsWith('く')) out.add(s.substring(0, s.length - 1) + 'い');
+
+    out.remove(s);
+    return out.toList();
   }
 
   static String _toHiragana(String s) => String.fromCharCodes(
@@ -369,6 +467,7 @@ class SentenceRepository {
           if (!seenCompoundWords.add(word)) continue; // skip repeated compound
 
           final wm = await _vocabMeaning(word, vocabCache);
+          if (wm.isEmpty) continue; // skip tokenizer artifacts with no known meaning
           final seen = <String>{correctReading};
           final wrong = <String>[];
           while (wrong.length < 3 && compoundWrongIdx < compoundWrongPool.length) {
@@ -705,6 +804,7 @@ class SentenceRepository {
         if (usuallyKanaWords.contains(word)) continue;
         if (!seenWords.add(word)) continue; // skip repeated compound
         final wm = await _vocabMeaning(word, vocabCache);
+        if (wm.isEmpty) continue; // skip tokenizer artifacts with no known meaning
 
         List<String> mcOptions = [];
         if (multipleChoice) {

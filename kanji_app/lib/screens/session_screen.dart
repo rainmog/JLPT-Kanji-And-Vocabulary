@@ -363,7 +363,10 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
           ),
         ),
         if (_showingFeedback) ...[
-          _MeaningCard(meaning: q.wordMeaning, translation: ''),
+          _MeaningCard(
+            meaning: q.wordMeaning,
+            translation: q.wordMeaning.isEmpty ? q.englishTranslation : '',
+          ),
           const SizedBox(height: 12),
         ],
         if (isMC)

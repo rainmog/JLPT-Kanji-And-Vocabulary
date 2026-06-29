@@ -136,6 +136,10 @@ def build(out_path: Path | str = None):
     CREATE INDEX idx_kana_type ON kana(type);
     CREATE INDEX idx_kana_row ON kana(row);
     CREATE INDEX idx_kana_words_type ON kana_words(type);
+    CREATE TABLE compound_glosses (
+        word TEXT PRIMARY KEY,
+        meanings TEXT NOT NULL
+    );
     """)
 
     with open(BASE / 'data' / 'kanji.json', encoding='utf-8') as f:
@@ -435,6 +439,16 @@ def build(out_path: Path | str = None):
         )
         word_count += 1
     print(f'Inserted {word_count} kana words')
+
+    # Compound glosses (sentence compounds absent from vocab; JMdict + API meanings)
+    glosses_path = BASE / 'data' / 'compound_glosses.json'
+    if glosses_path.exists():
+        gloss_data = json.loads(glosses_path.read_text())
+        c.executemany('INSERT OR IGNORE INTO compound_glosses (word, meanings) VALUES (?,?)',
+                      list(gloss_data.items()))
+        print(f'Inserted {len(gloss_data)} compound glosses')
+    else:
+        print('WARNING: tools/data/compound_glosses.json not found — compound_glosses empty')
 
     conn.commit()
     conn.close()

@@ -1,10 +1,10 @@
 # Kanji App Dev Notes
 
-## Current State (2026-06-14)
+## Current State (2026-06-30)
 
 **App**: Flutter 3.44.0, offline-first kanji + vocabulary study app  
 **Data**: 2230 kanji (N5=80, N4=166, N3=367, N2=373, N1=1244); 9 sentences each; 7173 vocab (N5=657, N4=588, N3=1625, N2=1589, N1=920, Other=1794)  
-**DB**: SQLite 28.0 MB; `_assetDbVersion=7`; 695 vocab tagged `usually_kana`; 1794 vocab level 0 ("other" — not in Core 6k, browsable via Other button in select vocab)  
+**DB**: SQLite 28.6 MB; `_assetDbVersion=8`; 695 vocab tagged `usually_kana`; 1794 vocab level 0 ("other" — not in Core 6k, browsable via Other button in select vocab); 10919 `compound_glosses` (sentence compounds absent from vocab)  
 **Repo**: https://github.com/rainmog/JLPT-Kanji-And-Vocabulary (private). APK: `kanji_app/build/app/outputs/flutter-apk/app-release.apk`.
 
 ---
@@ -17,6 +17,7 @@ Run in order when rebuilding:
 python3 tools/dedup_vocab.py          # deduplicate vocab.json (keep easiest level per word)
 python3 tools/parse_jmdict.py tools/JMdict_e.gz   # POS + usually_kana tags → vocab_pos_tags.json
 ANTHROPIC_API_KEY=... python3 tools/translate_jlpt.py  # JLPT translations (skip if n*_questions.json already have them)
+python3 tools/build_compound_glosses.py --jmdict-only  # non-vocab compound meanings → compound_glosses.json (JMdict; drop --jmdict-only for API pass)
 python3 tools/build_db.py             # merges all sources → kanji.db
 ```
 
@@ -73,11 +74,11 @@ pyftsubset kanji_app/assets/fonts/NotoSerifCJKjp-Regular.otf \
 
 ### Key services / repos
 
-- **sentence_repository.dart**: `buildMixedTestQuestions` — 2 `WordQuestion` + 1 `KanjiQuestion` per kanji. Skips `usually_kana` compounds. `_containsKanji()` guards kana-surface tokens. `buildSentenceQuestions` — `isTarget` uses `surface.contains(char)` to catch compounds where `kanji_char` != target (e.g. 庭園 when target is 園). `_stripOkurigana()` trims trailing shared hiragana from furigana hints (食べる → た, 難しい → むずか). Period tokens (。) filtered out for display consistency.
+- **sentence_repository.dart**: `_vocabMeaning` resolves a compound's English meaning via tiers — exact vocab → deinflected vocab (`_deinflectCandidates`, mirrors `tools/build_compound_glosses.py`) → `compound_glosses` table (exact + deinflected). Both `WordQuestion` builders now **meaning-gate**: `if (wm.isEmpty) continue` — a surface with no resolvable meaning is dropped as a question, so tokenizer artifacts (number+counter, particle-glued, dangling stems) never appear and every feedback popup has a meaning. `buildMixedTestQuestions` — 2 `WordQuestion` + 1 `KanjiQuestion` per kanji. Skips `usually_kana` compounds. `_containsKanji()` guards kana-surface tokens. `buildSentenceQuestions` — `isTarget` uses `surface.contains(char)` to catch compounds where `kanji_char` != target (e.g. 庭園 when target is 園). `_stripOkurigana()` trims trailing shared hiragana from furigana hints (食べる → た, 難しい → むずか). Period tokens (。) filtered out for display consistency.
 - **vocab_repository.dart**: `VocabWord.isUsuallyKana`, `VocabWord.levelLabel`. Orders by `jlpt_level DESC, id ASC`.
 - **settings_service.dart**: `homeTrackers`, `dailyGoal` (default 100), `autoProgressionEnabled/Quota`, `completedKanjiLevels/VocabLevels`, `jlptGoal` (0=not set, 1–5 for N1–N5), audio/appearance.
 - **auto_progression_service.dart**: fills targets up to quota; detects completed levels. Called from `HomeScreen.initState`.
-- **database_service.dart**: `_assetDbVersion=7`. Bump when shipping new `kanji.db`. Saves/restores `user_progress`; runtime tables survive via `_runMigrations`.
+- **database_service.dart**: `_assetDbVersion=8`. Bump when shipping new `kanji.db`. Saves/restores `user_progress`; runtime tables survive via `_runMigrations`.
 - **history_repository.dart**: `getHistory({testType?, level?, limit})` — optional `level` filter applied in Dart after fetch (avoids SQL type mismatch).
 
 ### Design system
@@ -110,6 +111,7 @@ vocabulary_tags(vocab_id, tag)   -- includes 'usually_kana' for 695 entries
 jlpt_questions(id, level, section, question_type, ...)
 kana(id, character, type, romaji, acceptable_romaji, row, counterpart)
 kana_words(id, word, romaji, acceptable_romaji, meaning, type)
+compound_glosses(word PK, meanings)   -- sentence compounds absent from vocab (JMdict + hand-authored)
 
 -- Runtime (created by _runMigrations, not in asset DB):
 user_progress(kanji_id PK, status, consecutive_correct, total_seen, total_correct, practice_correct_count)
@@ -148,7 +150,7 @@ D8–D9 in general practice only. Falls back uncapped if <3 sentences within cap
 8. **DB race condition**: `_initFuture` static pattern prevents concurrent `_init()` calls.
 9. **`INSERT OR IGNORE` + `lastrowid`**: unreliable on conflict. Always `SELECT id WHERE ...` after.
 10. **JLPT save/resume**: `buildSession` uses `ORDER BY RANDOM()`. Save `vocabIds`/`grammarIds`/`readingIds`; use `buildSessionFromIds` on resume.
-11. **Asset DB versioning**: `_assetDbVersion=7`. Bump to ship new `kanji.db`. Runtime tables survive regardless.
+11. **Asset DB versioning**: `_assetDbVersion=8`. Bump to ship new `kanji.db`. Runtime tables survive regardless.
 12. **Kana-surface compounds**: 位→くらい etc. `_containsKanji()` guards against pure-kana surfaces.
 13. **user_progress UPSERT**: use `INSERT ... ON CONFLICT DO UPDATE`. Plain UPDATE fails silently for new users.
 14. **Timer callbacks**: check `if (!mounted) return` before setState/Navigator.
@@ -167,6 +169,7 @@ D8–D9 in general practice only. Falls back uncapped if <3 sentences within cap
 27. **Per-JLPT-level progress totals**: `kanjiRepo.getProgressByLevel`/`getProgressByTag` must `LEFT JOIN user_progress` (not inner). Inner join makes the denominator count only kanji that already have a progress row, so untouched levels (N3/N2/N1) read 0/0 and the top ring shows only targeted count instead of 2230. `getActiveLevel` depends on these totals being the full deck.
 28. **spacedShuffle** (`lib/utils/spaced_shuffle.dart`): `spacedShuffle<T>(items, keyOf, {minGap=3, rng})` — greedy placement so the same key is never back-to-back (gap of `minGap` where the pool allows, else largest-gap fallback). Applied to test/word/sentence/mixed question builders + vocab/kana practice queues. Compound dedup in word/mixed builders uses a `seen` set so a compound appears once per test.
 29. **Not-enough-targets popup**: `confirmShortSession` (`lib/widgets/short_session_dialog.dart`) clamps + confirms when available targets < requested session size. Wired at vocab (words×2), kana (char pool), and kanji `wordpractice` launch points — modes where the shortfall is predictable.
+30. **Compound meanings + meaning-gating**: compound `WordQuestion` feedback popup was blank when the surface wasn't in the curated vocab deck (偉業 etc.). Fix: `_vocabMeaning` resolves via exact vocab → deinflected vocab → `compound_glosses` table; both word builders now `continue` when no meaning resolves, so tokenizer artifacts (number+counter, particle-glued, dangling stems) are dropped as questions and every popup has a meaning. `compound_glosses` built by `tools/build_compound_glosses.py` (JMdict + optional Claude API pass; the `--jmdict-only` run is resumable and keeps hand-authored glosses). Deinflector logic is duplicated in the Python tool and the Dart repo — keep them in sync.
 
 ---
 

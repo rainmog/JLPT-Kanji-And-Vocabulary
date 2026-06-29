@@ -8,7 +8,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseService {
   // Bump when shipping a new kanji.db asset (e.g. N1 sentences added).
   // Users will get the new content; user_progress is preserved across the rebuild.
-  static const int _assetDbVersion = 7;
+  static const int _assetDbVersion = 8;
   static const String _prefDbVersion = 'db_asset_version';
 
   static Future<Database>? _initFuture;
