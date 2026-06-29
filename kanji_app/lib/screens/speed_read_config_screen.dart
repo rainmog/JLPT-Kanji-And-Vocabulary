@@ -78,7 +78,18 @@ class _SpeedReadConfigScreenState extends ConsumerState<SpeedReadConfigScreen> {
               .take(3)
               .toList();
           final opts = [v.reading, ...wrong]..shuffle(rng);
-          return SpeedReadQuestion(display: v.word, correct: v.reading, options: opts);
+          final meanings = v.meanings
+              .split(RegExp(r'[;,]'))
+              .map((s) => s.trim())
+              .where((s) => s.isNotEmpty)
+              .take(2)
+              .join(', ');
+          return SpeedReadQuestion(
+            display: v.word,
+            correct: v.reading,
+            options: opts,
+            meaning: meanings.isEmpty ? null : meanings,
+          );
         }).toList();
 
       case SpeedReadContext.kana:

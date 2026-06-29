@@ -1,5 +1,6 @@
 import 'dart:convert';
 import '../services/database_service.dart';
+import '../utils/learning_constants.dart';
 
 class KanaCharacter {
   final int id;
@@ -220,6 +221,36 @@ class KanaRepository {
       ids,
     );
     return {for (final r in rows) r['kana_id'] as int: r['cnt'] as int};
+  }
+
+  /// Practice-mode learning: adjust practice_progress (+1 correct / -1 wrong,
+  /// floored at 0) and promote to learned when threshold reached.
+  /// Returns true if this call promoted the item.
+  Future<PracticeResult> recordPracticeProgress(int kanaId, {required bool isCorrect}) async {
+    if (isCorrect) {
+      await dbService.execute('''
+        INSERT INTO kana_progress (kana_id, status, practice_progress)
+        VALUES (?, 'target', 1)
+        ON CONFLICT(kana_id) DO UPDATE SET practice_progress = practice_progress + 1
+      ''', [kanaId]);
+    } else {
+      await dbService.execute('''
+        UPDATE kana_progress
+        SET practice_progress = MAX(0, practice_progress - 1)
+        WHERE kana_id = ?
+      ''', [kanaId]);
+    }
+    final rows = await dbService.query(
+      'SELECT status, practice_progress FROM kana_progress WHERE kana_id=?', [kanaId]
+    );
+    if (rows.isEmpty) return (promoted: false, learned: false, progress: 0);
+    final status = rows.first['status'] as String?;
+    final progress = rows.first['practice_progress'] as int? ?? 0;
+    if (status != 'learned' && progress >= kPracticeLearnThreshold) {
+      await setStatus(kanaId, 'learned');
+      return (promoted: true, learned: true, progress: progress);
+    }
+    return (promoted: false, learned: status == 'learned', progress: progress);
   }
 
   // Words

@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/progress_repository.dart';
 import '../repositories/vocab_repository.dart';
+import '../services/settings_service.dart';
 import '../services/sound_service.dart';
 import '../theme.dart';
 import '../utils/app_route.dart';
 import '../utils/romaji_converter.dart';
+import '../utils/learning_constants.dart';
+import '../utils/spaced_shuffle.dart';
 import '../utils/vocab_answer_validator.dart';
 import 'session_summary_screen.dart';
 import '../widgets/ruby_text.dart';
@@ -99,6 +102,10 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
 
   int _correctCount = 0;
 
+  // Practice-mode learning results, keyed by word id (latest wins).
+  final Map<int, PracticeResult> _practiceResults = {};
+  Future<void>? _lastRecord;
+
   // Animation
   late AnimationController _promptCtrl;
   late Animation<double> _promptScale;
@@ -133,8 +140,9 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
     final learned = await progressRepo.getLearnedKanjiCharacters();
     if (!mounted) return;
     setState(() {
-      // Show each word twice; shuffle so repetitions are interleaved.
-      _queue = [...widget.words, ...widget.words]..shuffle();
+      // Show each word twice; space repeats so the same word is never
+      // back-to-back (gap of 3 other questions where the pool allows).
+      _queue = spacedShuffle([...widget.words, ...widget.words], (w) => w.id, minGap: 3);
       _learnedKanji = learned;
       _loading = false;
     });
@@ -178,6 +186,14 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
     return option == _current.meanings;
   }
 
+  void _recordPractice(bool correct) {
+    if (ref.read(settingsProvider).learnedVia != 'practice') return;
+    final id = _current.id;
+    _lastRecord = vocabRepo
+        .recordPracticeProgress(id, isCorrect: correct)
+        .then((r) => _practiceResults[id] = r);
+  }
+
   void _handleMcSelect(String option) {
     if (_showingFeedback) return;
     final correct = _isOptionCorrect(option);
@@ -185,6 +201,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
       vocabRepo.incrementPracticeCount(_current.id); // fire-and-forget
       _correctCount++;
     }
+    _recordPractice(correct);
     setState(() {
       _selectedOption = option;
       _showingFeedback = true;
@@ -205,6 +222,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
       vocabRepo.incrementPracticeCount(_current.id); // fire-and-forget
       _correctCount++;
     }
+    _recordPractice(correct);
     setState(() {
       _showingFeedback = true;
       _lastCorrect = correct;
@@ -219,17 +237,28 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
   Future<void> _next() async {
     _autoNextTimer?.cancel();
     if (_currentIndex >= _queue.length - 1) {
+      await _lastRecord;
       if (!mounted) return;
       final ids = _queue.map((w) => w.id).toList();
       final counts = await vocabRepo.getPracticeCountsForIds(ids);
       final seen = <int>{};
       final practiceCounts = <({String display, int count})>[];
+      final practiceProgress = <({String display, bool learned, int remaining})>[];
       for (final w in _queue) {
         if (seen.add(w.id)) {
           practiceCounts.add((display: w.word, count: counts[w.id] ?? 0));
+          final r = _practiceResults[w.id];
+          if (r != null) {
+            practiceProgress.add((
+              display: w.word,
+              learned: r.learned,
+              remaining: (kPracticeLearnThreshold - r.progress).clamp(0, kPracticeLearnThreshold),
+            ));
+          }
         }
       }
       practiceCounts.sort((a, b) => b.count.compareTo(a.count));
+      practiceProgress.sort((a, b) => (a.learned ? 0 : a.remaining).compareTo(b.learned ? 0 : b.remaining));
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -238,6 +267,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
           total: _queue.length,
           learnedChars: const [],
           practiceCounts: practiceCounts,
+          practiceProgress: practiceProgress,
         )),
       );
       return;

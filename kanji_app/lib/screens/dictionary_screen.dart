@@ -5,6 +5,7 @@ import '../repositories/progress_repository.dart';
 import '../services/database_service.dart';
 import '../theme.dart';
 import 'kanji_detail_screen.dart';
+import 'home_screen.dart' show allProgressProvider;
 import '../utils/app_route.dart';
 
 final _dictionaryProvider = FutureProvider.family<List<Kanji>, List<int>?>((ref, jlptLevels) async {
@@ -86,6 +87,7 @@ class _DictionaryScreenState extends ConsumerState<DictionaryScreen> {
                 if (_addLearnedMode) {
                   await progressRepo.markLearned(k.id);
                   ref.invalidate(_learnedKanjiProvider);
+                  ref.invalidate(allProgressProvider);
                 } else {
                   Navigator.push(context, AppRoute.to(KanjiDetailScreen(kanji: k)));
                 }

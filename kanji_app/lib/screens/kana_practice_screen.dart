@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/kana_repository.dart';
+import '../services/settings_service.dart';
 import '../services/sound_service.dart';
 import '../theme.dart';
+import '../utils/learning_constants.dart';
+import '../utils/spaced_shuffle.dart';
 import '../utils/app_route.dart';
 import '../widgets/scale_on_press.dart';
 
@@ -24,7 +28,7 @@ class _KanaQuestion {
   const _KanaQuestion({this.char, this.word, required this.type});
 }
 
-class KanaPracticeScreen extends StatefulWidget {
+class KanaPracticeScreen extends ConsumerStatefulWidget {
   final List<KanaCharacter> chars;
   final List<KanaCharacter> allChars;
   final List<KanaWord> words;
@@ -43,10 +47,10 @@ class KanaPracticeScreen extends StatefulWidget {
   });
 
   @override
-  State<KanaPracticeScreen> createState() => _KanaPracticeScreenState();
+  ConsumerState<KanaPracticeScreen> createState() => _KanaPracticeScreenState();
 }
 
-class _KanaPracticeScreenState extends State<KanaPracticeScreen>
+class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
     with SingleTickerProviderStateMixin {
   final _rng = Random();
   List<_KanaQuestion> _queue = [];
@@ -55,6 +59,9 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen>
 
   List<String> _options = [];
   String? _selectedOption;
+  // Practice-mode learning results keyed by char id (latest wins).
+  final Map<int, PracticeResult> _practiceResults = {};
+  Future<void>? _lastRecord;
   final _controller = TextEditingController();
   bool _showingFeedback = false;
   Timer? _autoNextTimer;
@@ -94,7 +101,8 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen>
         pool.add(_KanaQuestion(char: ch, type: KanaQuizType.kanaToRomajiMC));
         pool.add(_KanaQuestion(char: ch, type: KanaQuizType.romajiToKanaMC));
       }
-      pool.shuffle(_rng);
+      // Space the two copies of each char so the same one is never back-to-back.
+      pool = spacedShuffle(pool, _questionKey, minGap: 3, rng: _rng);
     } else {
       final qt = widget.quizType;
       final isWord = qt == KanaQuizType.wordToRomajiType;
@@ -129,6 +137,9 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen>
     _prepareQuestion();
     setState(() {});
   }
+
+  Object _questionKey(_KanaQuestion q) =>
+      q.char?.id ?? (q.word != null ? 'w${q.word!.id}' : identityHashCode(q));
 
   _KanaQuestion get _current => _queue[_currentIndex];
 
@@ -292,6 +303,14 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen>
     if (!widget.testMode && correct && _current.char != null) {
       kanaRepo.incrementPracticeCount(_current.char!.id); // fire-and-forget
     }
+    if (!widget.testMode &&
+        _current.char != null &&
+        ref.read(settingsProvider).learnedVia == 'practice') {
+      final id = _current.char!.id;
+      _lastRecord = kanaRepo
+          .recordPracticeProgress(id, isCorrect: correct)
+          .then((r) => _practiceResults[id] = r);
+    }
   }
 
   void _next() {
@@ -322,6 +341,8 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen>
       }
     }
 
+    await _lastRecord;
+
     List<({String display, int count})> practiceCounts = const [];
     if (!widget.testMode && charItems.isNotEmpty) {
       final ids = charItems.map((c) => c.id).toList();
@@ -329,6 +350,22 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen>
       final list = charItems.map((c) => (display: c.display, count: counts[c.id] ?? 0)).toList();
       list.sort((a, b) => b.count.compareTo(a.count));
       practiceCounts = list;
+    }
+
+    List<({String display, bool learned, int remaining})> practiceProgress = const [];
+    if (!widget.testMode && _practiceResults.isNotEmpty) {
+      final list = <({String display, bool learned, int remaining})>[];
+      for (final c in charItems) {
+        final r = _practiceResults[c.id];
+        if (r == null) continue;
+        list.add((
+          display: c.display,
+          learned: r.learned,
+          remaining: (kPracticeLearnThreshold - r.progress).clamp(0, kPracticeLearnThreshold),
+        ));
+      }
+      list.sort((a, b) => (a.learned ? 0 : a.remaining).compareTo(b.learned ? 0 : b.remaining));
+      practiceProgress = list;
     }
 
     if (!mounted) return;
@@ -339,6 +376,7 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen>
         total: total,
         testMode: widget.testMode,
         practiceCounts: practiceCounts,
+        practiceProgress: practiceProgress,
       )),
     );
   }
@@ -674,12 +712,14 @@ class _KanaResultScreen extends StatelessWidget {
   final int total;
   final bool testMode;
   final List<({String display, int count})> practiceCounts;
+  final List<({String display, bool learned, int remaining})> practiceProgress;
 
   const _KanaResultScreen({
     required this.correct,
     required this.total,
     required this.testMode,
     this.practiceCounts = const [],
+    this.practiceProgress = const [],
   });
 
   @override
@@ -690,9 +730,9 @@ class _KanaResultScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(children: [
           Expanded(
-            child: Center(
+            child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
                 child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -722,6 +762,62 @@ class _KanaResultScreen extends StatelessWidget {
                           style:
                               TextStyle(fontSize: 13, color: AppColors.muted),
                           textAlign: TextAlign.center,
+                        ),
+                      ],
+                      if (practiceProgress.isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        Builder(builder: (_) {
+                          final newlyLearned =
+                              practiceProgress.where((p) => p.learned).length;
+                          return Text(
+                            newlyLearned > 0
+                                ? '$newlyLearned reached Learned!'
+                                : 'Learning progress',
+                            style: TextStyle(
+                              color: newlyLearned > 0 ? AppColors.correct : AppColors.muted,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          );
+                        }),
+                        const SizedBox(height: 10),
+                        Container(
+                          constraints: const BoxConstraints(maxHeight: 180),
+                          decoration: BoxDecoration(
+                            color: AppColors.pillBg,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: practiceProgress.map((item) => Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(item.display, style: TextStyle(
+                                      fontSize: 20, color: AppColors.kanjiColor,
+                                      fontFamily: AppFonts.japaneseFont,
+                                      fontFamilyFallback: AppFonts.japaneseFallback,
+                                    )),
+                                    if (item.learned)
+                                      Row(mainAxisSize: MainAxisSize.min, children: [
+                                        Icon(Icons.check_circle, size: 16, color: AppColors.correct),
+                                        const SizedBox(width: 4),
+                                        Text('Learned', style: TextStyle(
+                                          fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.correct,
+                                        )),
+                                      ])
+                                    else
+                                      Text('${item.remaining} more to learn', style: TextStyle(
+                                        fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.muted,
+                                      )),
+                                  ],
+                                ),
+                              )).toList(),
+                            ),
+                          ),
                         ),
                       ],
                       if (practiceCounts.isNotEmpty) ...[

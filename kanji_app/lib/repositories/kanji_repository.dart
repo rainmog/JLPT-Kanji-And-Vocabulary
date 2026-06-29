@@ -169,7 +169,7 @@ class KanjiRepository {
         COUNT(*) as total,
         SUM(CASE WHEN p.status='learned' THEN 1 ELSE 0 END) as learned
       FROM kanji_tags kt
-      JOIN user_progress p ON kt.kanji_id = p.kanji_id
+      LEFT JOIN user_progress p ON kt.kanji_id = p.kanji_id
       GROUP BY kt.tag
       ORDER BY kt.tag
     ''');
@@ -197,7 +197,7 @@ class KanjiRepository {
       SELECT k.jlpt_level,
         SUM(CASE WHEN p.status='learned' THEN 1 ELSE 0 END) as learned,
         COUNT(*) as total
-      FROM kanji k JOIN user_progress p ON k.id = p.kanji_id
+      FROM kanji k LEFT JOIN user_progress p ON k.id = p.kanji_id
       GROUP BY k.jlpt_level
     ''');
     return {

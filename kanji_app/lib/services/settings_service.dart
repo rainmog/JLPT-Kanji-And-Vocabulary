@@ -38,6 +38,8 @@ class AppSettings {
   final int autoProgressionVocabQuota;
   final List<int> completedKanjiLevels;
   final List<int> completedVocabLevels;
+  final int jlptGoal; // 0 = not set, 2–5 for N2–N5, 1 for N1
+  final String learnedVia; // 'test' (default) | 'practice'
 
   const AppSettings({
     this.difficultyMin = 1,
@@ -60,6 +62,8 @@ class AppSettings {
     this.autoProgressionVocabQuota = 30,
     this.completedKanjiLevels = const [],
     this.completedVocabLevels = const [],
+    this.jlptGoal = 0,
+    this.learnedVia = 'test',
   });
 
   AppSettings copyWith({
@@ -83,6 +87,8 @@ class AppSettings {
     int? autoProgressionVocabQuota,
     List<int>? completedKanjiLevels,
     List<int>? completedVocabLevels,
+    int? jlptGoal,
+    String? learnedVia,
   }) => AppSettings(
     difficultyMin: difficultyMin ?? this.difficultyMin,
     difficultyMax: difficultyMax ?? this.difficultyMax,
@@ -104,6 +110,8 @@ class AppSettings {
     autoProgressionVocabQuota: autoProgressionVocabQuota ?? this.autoProgressionVocabQuota,
     completedKanjiLevels: completedKanjiLevels ?? this.completedKanjiLevels,
     completedVocabLevels: completedVocabLevels ?? this.completedVocabLevels,
+    jlptGoal: jlptGoal ?? this.jlptGoal,
+    learnedVia: learnedVia ?? this.learnedVia,
   );
 
   Map<String, dynamic> toJson() => {
@@ -127,6 +135,8 @@ class AppSettings {
     'autoProgressionVocabQuota': autoProgressionVocabQuota,
     'completedKanjiLevels': completedKanjiLevels,
     'completedVocabLevels': completedVocabLevels,
+    'jlptGoal': jlptGoal,
+    'learnedVia': learnedVia,
   };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -150,6 +160,8 @@ class AppSettings {
     autoProgressionVocabQuota: j['autoProgressionVocabQuota'] as int? ?? 30,
     completedKanjiLevels: (j['completedKanjiLevels'] as List<dynamic>?)?.cast<int>() ?? const [],
     completedVocabLevels: (j['completedVocabLevels'] as List<dynamic>?)?.cast<int>() ?? const [],
+    jlptGoal: j['jlptGoal'] as int? ?? 0,
+    learnedVia: j['learnedVia'] as String? ?? 'test',
   );
 }
 

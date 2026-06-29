@@ -393,7 +393,7 @@ class _JlptTestSessionScreenState extends ConsumerState<JlptTestSessionScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 58,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: colors.accent,

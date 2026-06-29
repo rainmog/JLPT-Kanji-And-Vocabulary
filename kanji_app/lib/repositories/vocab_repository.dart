@@ -1,5 +1,6 @@
 import 'dart:convert';
 import '../services/database_service.dart';
+import '../utils/learning_constants.dart';
 
 class VocabWord {
   final int id;
@@ -219,6 +220,36 @@ class VocabRepository {
       ids,
     );
     return {for (final r in rows) r['vocab_id'] as int: r['cnt'] as int};
+  }
+
+  /// Practice-mode learning: adjust practice_progress (+1 correct / -1 wrong,
+  /// floored at 0) and promote to learned when threshold reached.
+  /// Returns true if this call promoted the item.
+  Future<PracticeResult> recordPracticeProgress(int vocabId, {required bool isCorrect}) async {
+    if (isCorrect) {
+      await dbService.execute('''
+        INSERT INTO vocabulary_progress (vocab_id, practice_progress)
+        VALUES (?, 1)
+        ON CONFLICT(vocab_id) DO UPDATE SET practice_progress = practice_progress + 1
+      ''', [vocabId]);
+    } else {
+      await dbService.execute('''
+        UPDATE vocabulary_progress
+        SET practice_progress = MAX(0, practice_progress - 1)
+        WHERE vocab_id = ?
+      ''', [vocabId]);
+    }
+    final rows = await dbService.query(
+      'SELECT learned_at, practice_progress FROM vocabulary_progress WHERE vocab_id=?', [vocabId]
+    );
+    if (rows.isEmpty) return (promoted: false, learned: false, progress: 0);
+    final learnedAt = rows.first['learned_at'];
+    final progress = rows.first['practice_progress'] as int? ?? 0;
+    if (learnedAt == null && progress >= kPracticeLearnThreshold) {
+      await markLearned(vocabId);
+      return (promoted: true, learned: true, progress: progress);
+    }
+    return (promoted: false, learned: learnedAt != null, progress: progress);
   }
 
   Future<Map<int, ({int learned, int total})>> getProgressByLevel() async {

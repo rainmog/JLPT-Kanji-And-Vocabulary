@@ -12,7 +12,7 @@ import '../widgets/sakura_overlay.dart';
 import '../widgets/snow_overlay.dart';
 import '../widgets/space_age_overlay.dart';
 
-enum _Phase { showing, answering, feedback, done }
+enum _Phase { showing, answering, feedback, ready, done }
 
 class SpeedReadScreen extends ConsumerStatefulWidget {
   final List<SpeedReadQuestion> questions;
@@ -41,14 +41,18 @@ class _SpeedReadScreenState extends ConsumerState<SpeedReadScreen> {
   final _stopwatch = Stopwatch();
 
   static const _tickInterval = Duration(milliseconds: 50);
-  static const _feedbackDelay = Duration(milliseconds: 600);
+  static const _readyDelay = Duration(milliseconds: 2000);
 
   @override
   void initState() {
     super.initState();
     _questions = List.of(widget.questions);
     _stopwatch.start();
-    _startFlash();
+    _phase = _Phase.ready;
+    Future.delayed(_readyDelay, () {
+      if (!mounted) return;
+      _startFlash();
+    });
   }
 
   @override
@@ -99,21 +103,28 @@ class _SpeedReadScreenState extends ConsumerState<SpeedReadScreen> {
       _selected = answer;
       _phase = _Phase.feedback;
     });
-    Future.delayed(_feedbackDelay, () {
-      if (!mounted) return;
-      final next = _index + 1;
-      if (next >= _questions.length) {
-        _stopwatch.stop();
-        final entry = (correct: _correct, total: _questions.length, time: _timeString);
-        SpeedReadScreen.history.insert(0, entry);
-        if (SpeedReadScreen.history.length > 5) SpeedReadScreen.history.removeLast();
-        setState(() => _phase = _Phase.done);
-        soundService.playTestComplete();
-      } else {
-        setState(() => _index = next);
+  }
+
+  void _advanceFromFeedback() {
+    if (_phase != _Phase.feedback) return;
+    final next = _index + 1;
+    if (next >= _questions.length) {
+      _stopwatch.stop();
+      final entry = (correct: _correct, total: _questions.length, time: _timeString);
+      SpeedReadScreen.history.insert(0, entry);
+      if (SpeedReadScreen.history.length > 5) SpeedReadScreen.history.removeLast();
+      setState(() => _phase = _Phase.done);
+      soundService.playTestComplete();
+    } else {
+      setState(() {
+        _index = next;
+        _phase = _Phase.ready;
+      });
+      Future.delayed(_readyDelay, () {
+        if (!mounted) return;
         _startFlash();
-      }
-    });
+      });
+    }
   }
 
   void _restart() {
@@ -221,12 +232,16 @@ class _SpeedReadScreenState extends ConsumerState<SpeedReadScreen> {
                         onPlayAgain: _restart,
                         onBack: () => Navigator.pop(context),
                       )
-                    : _GameBody(
-                        question: _current,
-                        phase: _phase,
-                        flashProgress: _flashProgress,
-                        selected: _selected,
-                        onAnswer: _onAnswer,
+                    : GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: _phase == _Phase.feedback ? _advanceFromFeedback : null,
+                        child: _GameBody(
+                          question: _current,
+                          phase: _phase,
+                          flashProgress: _flashProgress,
+                          selected: _selected,
+                          onAnswer: _onAnswer,
+                        ),
                       ),
               ),
             ],
@@ -260,25 +275,40 @@ class _GameBody extends StatelessWidget {
 
     return Column(
       children: [
-        // Flash card area — completely invisible when not showing
+        // Flash card area
         Expanded(
-          child: Center(
-            child: AnimatedOpacity(
-              opacity: isShowing ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 150),
-              child: Text(
-                question.display,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.fg,
-                  fontSize: displayFontSize,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: AppFonts.japaneseFont,
-                  fontFamilyFallback: AppFonts.japaneseFallback,
+          child: switch (phase) {
+            _Phase.ready => const Center(child: _ReadyDots()),
+            _Phase.feedback when question.meaning != null => _FeedbackCard(
+                display: question.display,
+                displayFontSize: displayFontSize,
+                correct: question.correct,
+                meaning: question.meaning!,
+              ),
+            _Phase.feedback => Center(
+                child: Text(
+                  'Tap to continue',
+                  style: TextStyle(color: AppColors.muted, fontSize: 13),
                 ),
               ),
-            ),
-          ),
+            _ => Center(
+                child: AnimatedOpacity(
+                  opacity: isShowing ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 150),
+                  child: Text(
+                    question.display,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppColors.fg,
+                      fontSize: displayFontSize,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: AppFonts.japaneseFont,
+                      fontFamilyFallback: AppFonts.japaneseFallback,
+                    ),
+                  ),
+                ),
+              ),
+          },
         ),
 
         // Countdown bar
@@ -411,6 +441,138 @@ class _OptionButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _FeedbackCard extends StatelessWidget {
+  final String display;
+  final double displayFontSize;
+  final String correct;
+  final String meaning;
+
+  const _FeedbackCard({
+    required this.display,
+    required this.displayFontSize,
+    required this.correct,
+    required this.meaning,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              display,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.fg,
+                fontSize: displayFontSize,
+                fontWeight: FontWeight.w700,
+                fontFamily: AppFonts.japaneseFont,
+                fontFamilyFallback: AppFonts.japaneseFallback,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.pillBg),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    correct,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.fg,
+                      fontFamily: AppFonts.japaneseFont,
+                      fontFamilyFallback: AppFonts.japaneseFallback,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    meaning,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.muted,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Tap to continue',
+              style: TextStyle(
+                color: AppColors.muted.withValues(alpha: 0.5),
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReadyDots extends StatefulWidget {
+  const _ReadyDots();
+  @override
+  State<_ReadyDots> createState() => _ReadyDotsState();
+}
+
+class _ReadyDotsState extends State<_ReadyDots> {
+  int _dots = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (t) {
+      if (!mounted) { t.cancel(); return; }
+      setState(() => _dots++);
+      if (_dots >= 3) t.cancel();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (i) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: AnimatedOpacity(
+          opacity: i < _dots ? 1.0 : 0.15,
+          duration: const Duration(milliseconds: 100),
+          child: Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              color: AppColors.accent,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      )),
     );
   }
 }

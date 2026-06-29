@@ -21,12 +21,15 @@ class OnboardingAutoProgressionScreen extends ConsumerStatefulWidget {
 class _OnboardingAutoProgressionScreenState
     extends ConsumerState<OnboardingAutoProgressionScreen> {
   late bool _enabled;
+  late String _learnedVia;
   bool _loading = false;
 
   @override
   void initState() {
     super.initState();
-    _enabled = ref.read(settingsProvider).autoProgressionEnabled;
+    final s = ref.read(settingsProvider);
+    _enabled = s.autoProgressionEnabled;
+    _learnedVia = s.learnedVia;
   }
 
   Future<void> _finish() async {
@@ -35,7 +38,7 @@ class _OnboardingAutoProgressionScreenState
       // 1. Save auto-progression toggle
       final settings = ref.read(settingsProvider);
       await ref.read(settingsProvider.notifier).update(
-        settings.copyWith(autoProgressionEnabled: _enabled),
+        settings.copyWith(autoProgressionEnabled: _enabled, learnedVia: _learnedVia),
       );
 
       // 2. Apply level setup
@@ -81,6 +84,66 @@ class _OnboardingAutoProgressionScreenState
   String get _levelLabel {
     if (widget.level == null) return 'Clean Start';
     return 'JLPT N${widget.level}';
+  }
+
+  Widget _styleCard({
+    required bool selected,
+    required IconData icon,
+    required String title,
+    required String body,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.accent.withValues(alpha: 0.08) : AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected ? AppColors.accent : AppColors.pillBg,
+            width: selected ? 2 : 1.5,
+          ),
+        ),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.accent.withValues(alpha: 0.13),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            alignment: Alignment.center,
+            child: Icon(icon, size: 20, color: AppColors.accent),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 15.5,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.fg,
+                    ),
+                  ),
+                ),
+                if (selected)
+                  Icon(Icons.check_circle, size: 20, color: AppColors.accent),
+              ]),
+              const SizedBox(height: 5),
+              Text(
+                body,
+                style: TextStyle(fontSize: 13, color: AppColors.muted, height: 1.5),
+              ),
+            ]),
+          ),
+        ]),
+      ),
+    );
   }
 
   @override
@@ -141,6 +204,41 @@ class _OnboardingAutoProgressionScreenState
                     color: AppColors.muted,
                   ),
                 ),
+                const SizedBox(height: 28),
+
+                // ── Learning style selector ──────────────────────────────
+                Text(
+                  'How you learn',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.fg,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Choose how an item becomes "learned". You can change this later in Settings.',
+                  style: TextStyle(fontSize: 13.5, color: AppColors.muted, height: 1.5),
+                ),
+                const SizedBox(height: 14),
+                _styleCard(
+                  selected: _learnedVia == 'test',
+                  icon: Icons.quiz_outlined,
+                  title: 'Learn by Testing',
+                  body: 'Take tests to prove what you know. Answer an item correctly in '
+                      'a test and it becomes learned.',
+                  onTap: () => setState(() => _learnedVia = 'test'),
+                ),
+                const SizedBox(height: 10),
+                _styleCard(
+                  selected: _learnedVia == 'practice',
+                  icon: Icons.school_outlined,
+                  title: 'Learn by Practicing',
+                  body: 'No separate tests. Items become learned as you answer them '
+                      'correctly in practice. Slip-ups just slow you down.',
+                  onTap: () => setState(() => _learnedVia = 'practice'),
+                ),
+
                 const SizedBox(height: 28),
 
                 // Explanation card

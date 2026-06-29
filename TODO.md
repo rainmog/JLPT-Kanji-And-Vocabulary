@@ -39,3 +39,9 @@
 - Practice preview screen: descriptive text per item type (kanji/vocab/kana) ✓ 2026-06-12
 - JLPT paragraph_reorder lockout fixed: now renders as multiple choice (was drag-and-drop with impossible 5-slot/4-chip N1 question) ✓ 2026-06-12
 - JLPT translation UI + data: 568 questions + 35 passages translated, DB v7, installed ✓ 2026-06-12
+- Home screen redesign: JLPT goal card with 3-state tap cycle (remaining/% /fraction), tracker bars removed, session card tightened (22/13px, bumpers 0.034/0.030), `jlptGoal` setting (0=off, 1–5), all 3 sections always shown in goal card with placeholders, result screen invalidates providers + navigates to MainShell ✓ 2026-06-14
+- Parallel learned system: `learnedVia` test|practice; practice promotes via `practice_progress` counter (threshold 4, +1/−1), onboarding selector + settings row + "What is this?" sheet, Test button hidden in practice mode ✓ 2026-06-29
+- Practice complete screens show per-item learning progress (Learned ✓ / "N more to learn") across kanji/vocab/kana; summary screens made scrollable to fix overflow ✓ 2026-06-29
+- Repeat-gap fix: `spacedShuffle` util prevents back-to-back repeats; compounds appear once per test ✓ 2026-06-29
+- Not-enough-targets popup at vocab/kana/kanji-wordpractice launch ✓ 2026-06-29
+- Progress totals bug fixed: `getProgressByLevel`/`getProgressByTag` LEFT JOIN so N3/N2/N1 denominators + top ring show full deck (was counting only targeted) ✓ 2026-06-29

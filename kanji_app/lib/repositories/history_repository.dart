@@ -72,10 +72,14 @@ class HistoryRepository {
 
   Future<List<TestHistoryEntry>> getHistory({
     String? testType,
+    int? level,
     int limit = 200,
   }) async {
-    final where = testType != null ? 'WHERE test_type=?' : '';
-    final args = testType != null ? [testType] : <dynamic>[];
+    final conditions = <String>[];
+    final args = <dynamic>[];
+    if (testType != null) { conditions.add('test_type=?'); args.add(testType); }
+    if (level != null) { conditions.add('level=?'); args.add(level); }
+    final where = conditions.isEmpty ? '' : 'WHERE ${conditions.join(' AND ')}';
     final rows = await dbService.query(
       'SELECT * FROM test_history $where ORDER BY timestamp DESC LIMIT $limit',
       args,

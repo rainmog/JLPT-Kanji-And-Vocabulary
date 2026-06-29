@@ -1,4 +1,5 @@
 import '../services/database_service.dart';
+import '../utils/learning_constants.dart';
 
 class ProgressRepository {
   Future<Map<String, dynamic>?> getProgress(int kanjiId) async {
@@ -111,6 +112,36 @@ class ProgressRepository {
       VALUES (?, 1)
       ON CONFLICT(kanji_id) DO UPDATE SET practice_correct_count = practice_correct_count + 1
     ''', [kanjiId]);
+  }
+
+  /// Practice-mode learning: adjust practice_progress (+1 correct / -1 wrong,
+  /// floored at 0) and promote to 'learned' when threshold reached.
+  /// Returns true if this call promoted the item.
+  Future<PracticeResult> recordPracticeProgress(int kanjiId, {required bool isCorrect}) async {
+    if (isCorrect) {
+      await dbService.execute('''
+        INSERT INTO user_progress (kanji_id, status, practice_progress)
+        VALUES (?, 'target', 1)
+        ON CONFLICT(kanji_id) DO UPDATE SET practice_progress = practice_progress + 1
+      ''', [kanjiId]);
+    } else {
+      await dbService.execute('''
+        UPDATE user_progress
+        SET practice_progress = MAX(0, practice_progress - 1)
+        WHERE kanji_id = ?
+      ''', [kanjiId]);
+    }
+    final rows = await dbService.query(
+      'SELECT status, practice_progress FROM user_progress WHERE kanji_id=?', [kanjiId]
+    );
+    if (rows.isEmpty) return (promoted: false, learned: false, progress: 0);
+    final status = rows.first['status'] as String?;
+    final progress = rows.first['practice_progress'] as int? ?? 0;
+    if (status != 'learned' && progress >= kPracticeLearnThreshold) {
+      await markLearned(kanjiId);
+      return (promoted: true, learned: true, progress: progress);
+    }
+    return (promoted: false, learned: status == 'learned', progress: progress);
   }
 
   Future<Map<int, int>> getPracticeCountsForIds(List<int> ids) async {

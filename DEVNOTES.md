@@ -1,6 +1,6 @@
 # Kanji App Dev Notes
 
-## Current State (2026-06-12)
+## Current State (2026-06-14)
 
 **App**: Flutter 3.44.0, offline-first kanji + vocabulary study app  
 **Data**: 2230 kanji (N5=80, N4=166, N3=367, N2=373, N1=1244); 9 sentences each; 7173 vocab (N5=657, N4=588, N3=1625, N2=1589, N1=920, Other=1794)  
@@ -63,7 +63,7 @@ pyftsubset kanji_app/assets/fonts/NotoSerifCJKjp-Regular.otf \
 
 ## Architecture
 
-**Navigation**: `MainShell` root with persistent bottom nav bar (4 tabs: Study & Test, Progress, Dictionary, JLPT). Tab 3 (JLPT) loads `JlptTestScreen`. All other screens push/pop via `AppRoute.to()` (180ms fade). `KBackHeader` and `KSetupHeader` both auto-hide back button when `Navigator.canPop` is false (tab context).
+**Navigation**: `MainShell` root with persistent bottom nav bar (4 tabs: Study & Test, Progress, Dictionary, JLPT). Tab 3 (JLPT) loads `JlptTestScreen`. All other screens push/pop via `AppRoute.to()` (180ms fade). `KBackHeader` and `KSetupHeader` both auto-hide back button when `Navigator.canPop` is false (tab context). Screens that should return to the nav bar (e.g. `JlptTestResultScreen`) must use `Navigator.pushAndRemoveUntil(context, AppRoute.to(const MainShell()), (_) => false)` — never `HomeScreen()` directly.
 
 **All screens on KDesign** except: `kanji_detail_screen`, `test_session_screen`.
 
@@ -75,9 +75,10 @@ pyftsubset kanji_app/assets/fonts/NotoSerifCJKjp-Regular.otf \
 
 - **sentence_repository.dart**: `buildMixedTestQuestions` — 2 `WordQuestion` + 1 `KanjiQuestion` per kanji. Skips `usually_kana` compounds. `_containsKanji()` guards kana-surface tokens. `buildSentenceQuestions` — `isTarget` uses `surface.contains(char)` to catch compounds where `kanji_char` != target (e.g. 庭園 when target is 園). `_stripOkurigana()` trims trailing shared hiragana from furigana hints (食べる → た, 難しい → むずか). Period tokens (。) filtered out for display consistency.
 - **vocab_repository.dart**: `VocabWord.isUsuallyKana`, `VocabWord.levelLabel`. Orders by `jlpt_level DESC, id ASC`.
-- **settings_service.dart**: `homeTrackers`, `dailyGoal` (default 100), `autoProgressionEnabled/Quota`, `completedKanjiLevels/VocabLevels`, audio/appearance.
+- **settings_service.dart**: `homeTrackers`, `dailyGoal` (default 100), `autoProgressionEnabled/Quota`, `completedKanjiLevels/VocabLevels`, `jlptGoal` (0=not set, 1–5 for N1–N5), audio/appearance.
 - **auto_progression_service.dart**: fills targets up to quota; detects completed levels. Called from `HomeScreen.initState`.
-- **database_service.dart**: `_assetDbVersion=6`. Bump when shipping new `kanji.db`. Saves/restores `user_progress`; runtime tables survive via `_runMigrations`.
+- **database_service.dart**: `_assetDbVersion=7`. Bump when shipping new `kanji.db`. Saves/restores `user_progress`; runtime tables survive via `_runMigrations`.
+- **history_repository.dart**: `getHistory({testType?, level?, limit})` — optional `level` filter applied in Dart after fetch (avoids SQL type mismatch).
 
 ### Design system
 
@@ -153,10 +154,19 @@ D8–D9 in general practice only. Falls back uncapped if <3 sentences within cap
 14. **Timer callbacks**: check `if (!mounted) return` before setState/Navigator.
 15. **Vocab level 0**: "other" (not in Core 6k). Waller overrides skipped for level 0. Browsable via "Other" button in select vocab screen.
 16. **Sentence `isTarget` for compounds**: `kanji_char` in `text_structured` points to one kanji per token (usually first). For multi-kanji compounds, check `surface.contains(char)` as fallback — otherwise 庭園 shows standalone 園 when target is 園.
-17. **Hero card (home screen)**: Variant C outline design — white `surface` card, `1.5px line` border, `shadowSm`. "Start studying" button carries the accent gradient. Goal ring uses `colors.accent` fill + `KDesign.soft` track. `_GoalRing` and `_ShimmerButton` both require `ThemeColors colors` param.
+17. **Hero card (home screen)**: Variant C outline design — white `surface` card, `1.5px line` border, `shadowSm`. "Start studying" button carries the accent gradient. Goal ring uses `colors.accent` fill + `KDesign.soft` track. `_GoalRing` and `_ShimmerButton` both require `ThemeColors colors` param. Session card target counts use `fontSize: 22` (number) / `13` (label).
+21. **JLPT goal card**: `_JlptGoalCard` — 3-state tap cycle (remaining / % / fraction) for kanji+vocab progress toward goal. Shows most recent section test results; always renders all 3 sections (vocab/grammar/reading) when any data exists. Public providers: `allProgressProvider` (renamed from private) and `jlptTestDataProvider(level)` — both must be invalidated when test data changes. `jlptTestDataProvider` is `autoDispose.family` but survives while `MainShell` tabs stay mounted; callers must explicitly `ref.invalidate()` after test completion.
+22. **JLPT result screen navigation**: `JlptTestResultScreen` wraps Scaffold in `PopScope(canPop: false)`. Both back-press and "Back to Home" button call `_invalidateAndPop` — invalidates `allProgressProvider` + `jlptTestDataProvider(level)` then navigates to `MainShell`. Never navigate to `HomeScreen()` directly from result screens (loses nav bar).
 18. **`paragraph_reorder` = multiple choice**: Options are composite ordering strings (e.g. "ウ→ア→イ→エ"), not individual chips. Do NOT route to `_SentenceReorderWidget` — only `sentence_reorder` uses the drag-and-drop UI. N1 paragraph_reorder has 5-part `correct_order` which made the drag UI impossible to complete (5 slots, 4 chips).
 19. **Practice session kanji count**: `sentence`/`word` modes pick proportionally fewer kanji than questions (10q→4k, 20q→5k, 30q→6k, 40q→8k) — each kanji contributes multiple questions. `wordpractice` mode keeps 1:1 (1 question per kanji). Vocab selects `count/2` words; `VocabPracticeScreen` shows each word twice (queue doubled + shuffled).
 20. **JLPT translations**: `question_translation` + `passage_translation` columns in `jlpt_questions`. 568/568 questions + 35 passages translated (2026-06-12). UI renders `**bold**` markdown in translations via `_translationText()` in `jlpt_test_session_screen.dart`. Passage interstitial shows after EVERY passage group (including the last). Re-generate fill-blank translations: run `tools/apply_translations.py` (no API needed) or re-run `tools/translate_jlpt.py` (needs `ANTHROPIC_API_KEY`) then `build_db.py`. `translate_jlpt.py` now clears `___` translations and passes `correct_answer` so blanks are filled with English + bold.
+23. **Speed read feedback**: after answering, stays in `_Phase.feedback` until user taps. Vocab mode shows word + reading + top-2 meanings card; kana mode shows "Tap to continue" only (romaji already visible in options). `_advanceFromFeedback()` handles next/done logic. `_FeedbackCard` widget in `speed_read_screen.dart`. `SpeedReadQuestion.meaning` is nullable — null for kana.
+24. **Speed read ready phase**: `_Phase.ready` (2000ms) fires between questions — 3 dots animate in at 500ms intervals to draw eyes back to center before the kanji flashes.
+25. **Practice preview list**: `PracticePreviewScreen` uses `ListView.separated` (was grid). Each row: 60×60 character box left, readings + meaning right, JLPT chip. Tap row opens full info sheet. Vocab font size adapts: 26px for ≤3 chars, 18px longer.
+26. **Parallel learned system**: `AppSettings.learnedVia` = `'test'` (default) | `'practice'`. In practice mode items reach `learned` via a decrementing counter (`practice_progress` column on user_progress/vocabulary_progress/kana_progress): +1 per correct practice answer, −1 (floored 0) per wrong, promote at `kPracticeLearnThreshold=4` (`lib/utils/learning_constants.dart`). Repos' `recordPracticeProgress` return `PracticeResult` record `(promoted, learned, progress)`. Practice screens collect latest result per item id and `await` the final write before navigating to the summary, which renders a per-item "Learning progress" section (Learned ✓ / "N more to learn"). Practice-mode hides the home-screen Test button entirely; mark-as-known stays in both modes. Column added via guarded ALTERs in `_runMigrations` — **no `_assetDbVersion` bump** (a bump rebuilds the DB and only preserves kanji `user_progress`, wiping vocab/kana progress).
+27. **Per-JLPT-level progress totals**: `kanjiRepo.getProgressByLevel`/`getProgressByTag` must `LEFT JOIN user_progress` (not inner). Inner join makes the denominator count only kanji that already have a progress row, so untouched levels (N3/N2/N1) read 0/0 and the top ring shows only targeted count instead of 2230. `getActiveLevel` depends on these totals being the full deck.
+28. **spacedShuffle** (`lib/utils/spaced_shuffle.dart`): `spacedShuffle<T>(items, keyOf, {minGap=3, rng})` — greedy placement so the same key is never back-to-back (gap of `minGap` where the pool allows, else largest-gap fallback). Applied to test/word/sentence/mixed question builders + vocab/kana practice queues. Compound dedup in word/mixed builders uses a `seen` set so a compound appears once per test.
+29. **Not-enough-targets popup**: `confirmShortSession` (`lib/widgets/short_session_dialog.dart`) clamps + confirms when available targets < requested session size. Wired at vocab (words×2), kana (char pool), and kanji `wordpractice` launch points — modes where the shortfall is predictable.
 
 ---
 

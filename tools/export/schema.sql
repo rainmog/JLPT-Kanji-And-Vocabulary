@@ -24,7 +24,9 @@ CREATE TABLE jlpt_questions (
         option_2_display TEXT,
         option_3_display TEXT,
         option_4_display TEXT,
-        correct_order TEXT
+        correct_order TEXT,
+        question_translation TEXT,
+        passage_translation TEXT
     );
 
 CREATE TABLE kana (

@@ -6,6 +6,7 @@ import '../theme_provider.dart';
 import '../widgets/k_setup.dart';
 import '../widgets/scale_on_press.dart';
 import '../widgets/item_info_sheet.dart';
+import 'home_screen.dart' show allProgressProvider;
 
 class SelectTargetKanaScreen extends ConsumerStatefulWidget {
   final String type; // 'hiragana' | 'katakana'
@@ -149,6 +150,7 @@ class _SelectTargetKanaScreenState extends ConsumerState<SelectTargetKanaScreen>
     for (final id in _selectedForLearned) {
       await kanaRepo.setStatus(id, 'learned');
     }
+    ref.invalidate(allProgressProvider);
     setState(() {
       _selectedForLearned.clear();
       _selectLearnedMode = false;

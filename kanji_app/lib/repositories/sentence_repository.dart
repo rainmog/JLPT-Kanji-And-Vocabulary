@@ -1,6 +1,7 @@
 import 'dart:convert';
 import '../services/database_service.dart';
 import '../models/quiz_models.dart';
+import '../utils/spaced_shuffle.dart';
 import 'kanji_repository.dart';
 
 class SentenceToken {
@@ -267,8 +268,7 @@ class SentenceRepository {
       }
     }
 
-    allQuestions.shuffle();
-    return allQuestions;
+    return spacedShuffle(allQuestions, (q) => q.kanjiId, minGap: 3);
   }
 
   /// Builds 2 WordQuestions (compound) + 1 KanjiQuestion (on/kun) per kanji.
@@ -330,6 +330,7 @@ class SentenceRepository {
     int meaningWrongIdx = 0;
     final vocabCache = <String, String>{};
     final usuallyKanaWords = await _getUsuallyKanaWords();
+    final seenCompoundWords = <String>{}; // a compound appears at most once per test
 
     for (final kanji in targetKanji) {
       final cap = _testDiffCap(kanji.jlptLevel);
@@ -365,6 +366,7 @@ class SentenceRepository {
           }
           if (word == null || correctReading == null) continue;
           if (usuallyKanaWords.contains(word)) continue;
+          if (!seenCompoundWords.add(word)) continue; // skip repeated compound
 
           final wm = await _vocabMeaning(word, vocabCache);
           final seen = <String>{correctReading};
@@ -432,8 +434,7 @@ class SentenceRepository {
       ));
     }
 
-    allQuestions.shuffle();
-    return allQuestions;
+    return spacedShuffle(allQuestions, (q) => q.kanjiId, minGap: 3);
   }
 
   Future<List<Sentence>> getSentences({
@@ -677,6 +678,7 @@ class SentenceRepository {
     var wrongIdx = 0;
     final vocabCache = <String, String>{};
     final usuallyKanaWords = await _getUsuallyKanaWords();
+    final seenWords = <String>{}; // a compound appears at most once per session
 
     for (final row in rows) {
       if (questions.length >= count) break;
@@ -701,6 +703,7 @@ class SentenceRepository {
 
         if (word == null || correctReading == null) continue;
         if (usuallyKanaWords.contains(word)) continue;
+        if (!seenWords.add(word)) continue; // skip repeated compound
         final wm = await _vocabMeaning(word, vocabCache);
 
         List<String> mcOptions = [];
@@ -735,7 +738,7 @@ class SentenceRepository {
       }
     }
 
-    return questions;
+    return spacedShuffle(questions, (q) => q.kanjiId, minGap: 3);
   }
 
   /// Build Mode 3: Sentence questions
@@ -873,7 +876,7 @@ class SentenceRepository {
       }
     }
 
-    return questions;
+    return spacedShuffle(questions, (q) => q.kanjiId, minGap: 3);
   }
 
   Future<List<Kanji>> pickKanjiForSession({

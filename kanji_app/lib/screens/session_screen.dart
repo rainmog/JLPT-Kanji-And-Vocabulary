@@ -11,6 +11,7 @@ import '../repositories/progress_repository.dart';
 import '../services/settings_service.dart';
 import '../services/sound_service.dart';
 import '../utils/app_route.dart';
+import '../utils/learning_constants.dart';
 
 final _learnedKanjiProvider = FutureProvider.autoDispose<Set<String>>((ref) {
   return progressRepo.getLearnedKanjiCharacters();
@@ -749,6 +750,22 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
       }
       practiceCounts.sort((a, b) => b.count.compareTo(a.count));
 
+      // Practice-mode learning progress per kanji (de-duplicated).
+      await controller.flushPracticeRecords();
+      final seenP = <int>{};
+      final practiceProgress = <({String display, bool learned, int remaining})>[];
+      for (final q in session.questions) {
+        if (!seenP.add(q.kanjiId)) continue;
+        final r = controller.practiceResults[q.kanjiId];
+        if (r == null) continue;
+        practiceProgress.add((
+          display: q.character,
+          learned: r.learned,
+          remaining: (kPracticeLearnThreshold - r.progress).clamp(0, kPracticeLearnThreshold),
+        ));
+      }
+      practiceProgress.sort((a, b) => (a.learned ? 0 : a.remaining).compareTo(b.learned ? 0 : b.remaining));
+
       progressRepo.logSession(
         mode: session.mode,
         kanjiIds: ids,
@@ -767,6 +784,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
               .map((a) => a.question.character)
               .toList(),
           practiceCounts: practiceCounts,
+          practiceProgress: practiceProgress,
         )),
       );
       return;

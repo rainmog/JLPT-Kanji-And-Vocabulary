@@ -4,6 +4,8 @@ import '../repositories/sentence_repository.dart';
 import '../repositories/kanji_repository.dart';
 import '../repositories/progress_repository.dart';
 import '../services/database_service.dart' show DatabaseService, dbService;
+import '../services/settings_service.dart';
+import '../utils/learning_constants.dart';
 
 /// Riverpod provider for DatabaseService singleton
 final databaseServiceProvider = Provider<DatabaseService>((ref) {
@@ -48,6 +50,13 @@ class QuizState {
 class QuizController extends Notifier<QuizState> {
   late DatabaseService _dbService;
   late SentenceRepository _sentenceRepo;
+
+  // Practice-mode learning results keyed by kanji id (latest wins).
+  final Map<int, PracticeResult> practiceResults = {};
+  Future<void>? _lastPracticeRecord;
+
+  /// Awaits the most recent practice-progress write (for summary screens).
+  Future<void> flushPracticeRecords() => _lastPracticeRecord ?? Future.value();
 
   @override
   QuizState build() {
@@ -161,6 +170,12 @@ class QuizController extends Notifier<QuizState> {
       progressRepo.incrementPracticeCount(kanjiId); // fire-and-forget
     } else {
       await progressRepo.recordIncorrect(kanjiId);
+    }
+    // Practice-mode learning: promote via decrementing progress counter.
+    if (ref.read(settingsProvider).learnedVia == 'practice') {
+      _lastPracticeRecord = progressRepo
+          .recordPracticeProgress(kanjiId, isCorrect: isCorrect)
+          .then((r) => practiceResults[kanjiId] = r);
     }
   }
 

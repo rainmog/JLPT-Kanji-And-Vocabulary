@@ -214,7 +214,7 @@ class _DualRingsCard extends StatelessWidget {
           label: 'Vocab',
           learned: vocabLearned,
           total: vocabTotal,
-          color: const Color(0xFF4E9D69),
+          color: colors.accent,
           colors: colors,
         )),
       ]),

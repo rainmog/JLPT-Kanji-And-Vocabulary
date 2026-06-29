@@ -7,7 +7,8 @@ import '../theme.dart';
 import '../theme_provider.dart';
 import '../utils/app_route.dart';
 import '../widgets/k_setup.dart';
-import 'home_screen.dart';
+import 'home_screen.dart' show allProgressProvider, jlptTestDataProvider;
+import 'main_shell.dart';
 
 class JlptTestResultScreen extends ConsumerStatefulWidget {
   final JlptTestSession session;
@@ -65,6 +66,12 @@ class _JlptTestResultScreenState extends ConsumerState<JlptTestResultScreen> {
   int _correct(List<JlptQuestion> qs) =>
       qs.where((q) => widget.answers[q.id] == q.correctOption).length;
 
+  void _invalidateAndPop(BuildContext context) {
+    ref.invalidate(allProgressProvider);
+    ref.invalidate(jlptTestDataProvider(widget.session.level));
+    Navigator.pushAndRemoveUntil(context, AppRoute.to(const MainShell()), (_) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = ref.watch(themeColorsProvider);
@@ -78,7 +85,13 @@ class _JlptTestResultScreenState extends ConsumerState<JlptTestResultScreen> {
         .where((q) => widget.answers[q.id] != q.correctOption)
         .toList();
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _invalidateAndPop(context);
+      },
+      child: Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
         child: Column(
@@ -226,8 +239,7 @@ class _JlptTestResultScreenState extends ConsumerState<JlptTestResultScreen> {
                           borderRadius: BorderRadius.circular(17),
                         ),
                       ),
-                      onPressed: () => Navigator.pushAndRemoveUntil(
-                          context, AppRoute.to(const HomeScreen()), (_) => false),
+                      onPressed: () => _invalidateAndPop(context),
                       child: const Text(
                         'Back to Home',
                         style: TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800),
@@ -240,6 +252,7 @@ class _JlptTestResultScreenState extends ConsumerState<JlptTestResultScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 }

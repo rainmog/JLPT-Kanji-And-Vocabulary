@@ -9,6 +9,9 @@ class SessionSummaryScreen extends ConsumerStatefulWidget {
   final int total;
   final List<String> learnedChars;
   final List<({String display, int count})> practiceCounts;
+  // Practice-mode learning progress: each item's display char/word, whether it
+  // reached 'learned' this session, and how many more correct answers remain.
+  final List<({String display, bool learned, int remaining})> practiceProgress;
 
   const SessionSummaryScreen({
     super.key,
@@ -16,6 +19,7 @@ class SessionSummaryScreen extends ConsumerStatefulWidget {
     required this.total,
     required this.learnedChars,
     this.practiceCounts = const [],
+    this.practiceProgress = const [],
   });
 
   @override
@@ -60,7 +64,8 @@ class _SessionSummaryScreenState extends ConsumerState<SessionSummaryScreen>
         child: Column(
           children: [
             Expanded(
-              child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -174,6 +179,77 @@ class _SessionSummaryScreenState extends ConsumerState<SessionSummaryScreen>
                             ),
                           );
                         }).toList(),
+                      ),
+                    ],
+
+                    if (widget.practiceProgress.isNotEmpty) ...[
+                      const SizedBox(height: 30),
+                      Builder(builder: (_) {
+                        final newlyLearned =
+                            widget.practiceProgress.where((p) => p.learned).length;
+                        return Text(
+                          newlyLearned > 0
+                              ? '$newlyLearned reached Learned!'
+                              : 'Learning progress',
+                          style: TextStyle(
+                            color: newlyLearned > 0 ? AppColors.correct : AppColors.muted,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 10),
+                      Container(
+                        constraints: const BoxConstraints(maxHeight: 200),
+                        decoration: BoxDecoration(
+                          color: AppColors.pillBg,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: widget.practiceProgress.map((item) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item.display,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: AppColors.kanjiColor,
+                                      fontFamily: AppFonts.japaneseFont,
+                                      fontFamilyFallback: AppFonts.japaneseFallback,
+                                    ),
+                                  ),
+                                  if (item.learned)
+                                    Row(mainAxisSize: MainAxisSize.min, children: [
+                                      Icon(Icons.check_circle, size: 16, color: AppColors.correct),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Learned',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w800,
+                                          color: AppColors.correct,
+                                        ),
+                                      ),
+                                    ])
+                                  else
+                                    Text(
+                                      '${item.remaining} more to learn',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.muted,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            )).toList(),
+                          ),
+                        ),
                       ),
                     ],
 

@@ -5,6 +5,7 @@ import '../services/sound_service.dart';
 import '../theme_provider.dart';
 import '../utils/app_route.dart';
 import '../widgets/k_setup.dart';
+import '../widgets/short_session_dialog.dart';
 import 'matching_game_config_screen.dart';
 import 'practice_preview_screen.dart';
 import 'vocab_practice_screen.dart';
@@ -52,6 +53,16 @@ class _VocabPracticeConfigScreenState extends ConsumerState<VocabPracticeConfigS
     final words = allWords.length > wordCount
         ? (List<VocabWord>.from(allWords)..shuffle()).sublist(0, wordCount)
         : allWords;
+    // Not-enough-targets: confirm a shorter session.
+    if (words.length < wordCount) {
+      final ok = await confirmShortSession(
+        context,
+        colors: ref.read(themeColorsProvider),
+        available: words.length * 2,
+        requested: _count,
+      );
+      if (!ok || !mounted) return;
+    }
     soundService.playSelectButton();
     Navigator.push(context, AppRoute.to(PracticePreviewScreen(
       items: VocabPreviewItems(words),

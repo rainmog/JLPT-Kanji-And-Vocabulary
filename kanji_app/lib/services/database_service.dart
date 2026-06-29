@@ -132,6 +132,9 @@ class DatabaseService {
       'ALTER TABLE vocabulary_progress ADD COLUMN practice_correct_count INTEGER DEFAULT 0',
       'ALTER TABLE kana_progress ADD COLUMN practice_correct_count INTEGER DEFAULT 0',
       'ALTER TABLE session_log ADD COLUMN question_count INTEGER DEFAULT 0',
+      'ALTER TABLE user_progress ADD COLUMN practice_progress INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE vocabulary_progress ADD COLUMN practice_progress INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE kana_progress ADD COLUMN practice_progress INTEGER NOT NULL DEFAULT 0',
     ]) {
       try {
         await db.execute(migration);

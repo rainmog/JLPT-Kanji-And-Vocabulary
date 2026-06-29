@@ -7,6 +7,7 @@ import '../services/sound_service.dart';
 import '../theme_provider.dart';
 import '../utils/app_route.dart';
 import '../widgets/k_setup.dart';
+import '../widgets/short_session_dialog.dart';
 import 'matching_game_config_screen.dart';
 import 'practice_preview_screen.dart';
 import 'session_screen.dart';
@@ -77,6 +78,23 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
 
     if (!mounted) return;
     setState(() => _loading = false);
+
+    if (kanjiList.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No target kanji. Add targets first.')),
+      );
+      return;
+    }
+    // wordpractice is 1 question per kanji — warn if fewer targets than asked.
+    if (_mode == 'wordpractice' && kanjiList.length < _count) {
+      final ok = await confirmShortSession(
+        context,
+        colors: ref.read(themeColorsProvider),
+        available: kanjiList.length,
+        requested: _count,
+      );
+      if (!ok || !mounted) return;
+    }
 
     Navigator.push(context, AppRoute.to(PracticePreviewScreen(
       items: KanjiPreviewItems(kanjiList),

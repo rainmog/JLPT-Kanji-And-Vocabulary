@@ -10,6 +10,64 @@ import '../theme_provider.dart';
 import '../widgets/k_setup.dart';
 import 'onboarding_welcome_screen.dart';
 
+void _showLearningStyleInfo(BuildContext context, ThemeColors colors) {
+  Widget styleBlock(IconData icon, String title, String body) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Icon(icon, size: 20, color: colors.accent),
+            const SizedBox(width: 10),
+            Text(title, style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.w800, color: colors.fg)),
+          ]),
+          const SizedBox(height: 8),
+          Text(body, style: TextStyle(
+            fontSize: 14, color: KDesign.inkSoft(colors), height: 1.55)),
+        ],
+      );
+
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: colors.bg,
+    showDragHandle: true,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (ctx) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('Learning styles', style: TextStyle(
+            fontSize: 20, fontWeight: FontWeight.w800, color: colors.fg)),
+          const SizedBox(height: 6),
+          Text(
+            'How an item becomes "learned". Switch any time — your progress is kept.',
+            style: TextStyle(fontSize: 13.5, color: colors.muted, height: 1.5),
+          ),
+          const SizedBox(height: 20),
+          styleBlock(Icons.quiz_outlined, 'By Testing',
+            'Take tests to prove what you know. Answer an item correctly in a test '
+            'and it becomes learned. Practice stays low-pressure — it never changes '
+            'your learned status.'),
+          const SizedBox(height: 20),
+          styleBlock(Icons.school_outlined, 'By Practicing',
+            'No separate tests — the Test button is hidden. Items become learned as '
+            'you answer them correctly in practice. Each correct answer moves an item '
+            'closer; a wrong answer nudges it back one step, so steady accuracy is '
+            'what counts.'),
+          const SizedBox(height: 20),
+          Text(
+            'In both styles you can still mark an item as known instantly with the '
+            '"Mark as known" button.',
+            style: TextStyle(fontSize: 13, color: colors.muted, height: 1.5),
+          ),
+        ]),
+      ),
+    ),
+  );
+}
+
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -146,18 +204,6 @@ class SettingsScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    KSettingRow(
-                      icon: Icons.bar_chart_rounded,
-                      label: 'Show progress bar',
-                      sub: 'Shows progress tracking bar on home screen',
-                      colors: colors,
-                      separator: true,
-                      trailing: KToggle(
-                        value: s.showTrackerPicker,
-                        colors: colors,
-                        onChanged: (v) => notifier.update(s.copyWith(showTrackerPicker: v)),
-                      ),
-                    ),
                     _DropdownRow(
                       icon: Icons.text_fields_rounded,
                       label: 'English font',
@@ -169,11 +215,81 @@ class SettingsScreen extends ConsumerWidget {
                   ],
                 ),
 
+                // ── Main Page ──────────────────────────────────────────
+                KSectionLabel(text: 'Main Page', colors: colors),
+                KPanel(
+                  colors: colors,
+                  children: [
+                    KSettingRow(
+                      icon: Icons.bar_chart_rounded,
+                      label: 'Show JLPT goal card',
+                      sub: 'Shows goal progress card on home screen',
+                      colors: colors,
+                      trailing: KToggle(
+                        value: s.showTrackerPicker,
+                        colors: colors,
+                        onChanged: (v) => notifier.update(s.copyWith(showTrackerPicker: v)),
+                      ),
+                    ),
+                    _DropdownRow(
+                      icon: Icons.flag_rounded,
+                      label: 'JLPT goal',
+                      value: s.jlptGoal == 0 ? 'none' : 'N${s.jlptGoal}',
+                      items: const {'Not set': 'none', 'N5': 'N5', 'N4': 'N4', 'N3': 'N3', 'N2': 'N2', 'N1': 'N1'},
+                      colors: colors,
+                      onChanged: (v) {
+                        if (v == null) return;
+                        final goal = v == 'none' ? 0 : int.parse(v.substring(1));
+                        notifier.update(s.copyWith(jlptGoal: goal));
+                      },
+                    ),
+                  ],
+                ),
+
                 // ── Study ──────────────────────────────────────────────
                 KSectionLabel(text: 'Study', colors: colors),
                 KPanel(
                   colors: colors,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Row(children: [
+                          Expanded(
+                            child: Text(
+                              'LEARNING STYLE',
+                              style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.0,
+                                color: Color(0xFF9A7E86),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => _showLearningStyleInfo(context, colors),
+                            child: Row(children: [
+                              Icon(Icons.help_outline_rounded, size: 15, color: colors.accent),
+                              const SizedBox(width: 4),
+                              Text(
+                                'What is this?',
+                                style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.w700, color: colors.accent,
+                                ),
+                              ),
+                            ]),
+                          ),
+                        ]),
+                        const SizedBox(height: 10),
+                        KSeg(
+                          options: const [
+                            KSegOption(id: 'test', label: 'By Testing'),
+                            KSegOption(id: 'practice', label: 'By Practicing'),
+                          ],
+                          value: s.learnedVia,
+                          onChanged: (v) => notifier.update(s.copyWith(learnedVia: v)),
+                          colors: colors,
+                        ),
+                      ]),
+                    ),
                     KSettingRow(
                       icon: Icons.auto_awesome_rounded,
                       label: 'Automatic progression',
@@ -209,15 +325,32 @@ class SettingsScreen extends ConsumerWidget {
                         onChanged: (v) => notifier.update(s.copyWith(autoProgressionVocabQuota: v)),
                       ),
                     ],
-                    KSetupField(
-                      label: 'Sentence difficulty  ·  ${s.difficultyMin}–${s.difficultyMax}',
-                      hint: 'Applies to kanji and vocabulary sentence practice.',
-                      child: KDualRange(
-                        lo: s.difficultyMin,
-                        hi: s.difficultyMax,
-                        onChanged: (a, b) => notifier.update(s.copyWith(difficultyMin: a, difficultyMax: b)),
-                        colors: colors,
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(
+                          'SENTENCE DIFFICULTY  ·  ${s.difficultyMin}–${s.difficultyMax}',
+                          style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.0,
+                            color: Color(0xFF9A7E86),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        KDualRange(
+                          lo: s.difficultyMin,
+                          hi: s.difficultyMax,
+                          onChanged: (a, b) => notifier.update(s.copyWith(difficultyMin: a, difficultyMax: b)),
+                          colors: colors,
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Applies to kanji and vocabulary sentence practice.',
+                          style: TextStyle(
+                            fontSize: 12.5, fontWeight: FontWeight.w600,
+                            color: Color(0xFFC7B4BA),
+                          ),
+                        ),
+                      ]),
                     ),
                   ],
                 ),
@@ -356,6 +489,10 @@ class SettingsScreen extends ConsumerWidget {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+
+    if (context.mounted) {
+      await ref.read(settingsProvider.notifier).update(const AppSettings());
+    }
 
     if (context.mounted) {
       Navigator.of(context).pushAndRemoveUntil(

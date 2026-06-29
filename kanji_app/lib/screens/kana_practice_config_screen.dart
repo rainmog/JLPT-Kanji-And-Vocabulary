@@ -5,6 +5,7 @@ import '../services/sound_service.dart';
 import '../theme_provider.dart';
 import '../utils/app_route.dart';
 import '../widgets/k_setup.dart';
+import '../widgets/short_session_dialog.dart';
 import 'kana_practice_screen.dart';
 import 'matching_game_config_screen.dart';
 import 'practice_preview_screen.dart';
@@ -76,6 +77,17 @@ class _KanaPracticeConfigScreenState extends ConsumerState<KanaPracticeConfigScr
         );
         return;
       }
+    }
+
+    // Not-enough-targets: the char pool caps the session length.
+    if (words.isEmpty && targeted.length < _count) {
+      final ok = await confirmShortSession(
+        context,
+        colors: ref.read(themeColorsProvider),
+        available: targeted.length,
+        requested: _count,
+      );
+      if (!ok || !mounted) return;
     }
 
     final allChars = await kanaRepo.getAll(type: type);

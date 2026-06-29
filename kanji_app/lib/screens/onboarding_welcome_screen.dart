@@ -279,12 +279,6 @@ class _TutorialPage1 extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 14),
-          Text(
-            'You can turn a “target” into a “learned” kanji or vocabulary by correctly answering it in test mode. You can take tests to progress whenever you are ready.',
-            style: TextStyle(fontSize: 13, color: AppColors.muted, height: 1.4),
-            textAlign: TextAlign.center,
-          ),
         ],
       ),
     );
