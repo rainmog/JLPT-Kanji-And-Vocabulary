@@ -2,10 +2,12 @@
 
 ## Current State (2026-06-30)
 
-**App**: Flutter 3.44.0, offline-first kanji + vocabulary study app  
-**Data**: 2230 kanji (N5=80, N4=166, N3=367, N2=373, N1=1244); 9 sentences each; 7173 vocab (N5=657, N4=588, N3=1625, N2=1589, N1=920, Other=1794)  
-**DB**: SQLite 28.6 MB; `_assetDbVersion=8`; 695 vocab tagged `usually_kana`; 1794 vocab level 0 ("other" — not in Core 6k, browsable via Other button in select vocab); 10919 `compound_glosses` (sentence compounds absent from vocab)  
-**Repo**: https://github.com/rainmog/JLPT-Kanji-And-Vocabulary (private). APK: `kanji_app/build/app/outputs/flutter-apk/app-release.apk`.
+**App**: Flutter 3.44.0, offline-first kanji + vocabulary study app — **v1.0.4+9** (`pubspec.yaml`)  
+**Data**: 2230 kanji (N5=80, N4=166, N3=367, N2=373, N1=1244); 9 sentences each; 7173 vocab (N5=657, N4=588, N3=1625, N2=1589, N1=920, Other=1794); JLPT questions N5=465  
+**DB**: SQLite ~28 MB; `_assetDbVersion=9`; 695 vocab tagged `usually_kana`; 1794 vocab level 0 ("other" — not in Core 6k, browsable via Other button in select vocab); 10919 `compound_glosses` (sentence compounds absent from vocab)  
+**Repo**: https://github.com/rainmog/JLPT-Kanji-And-Vocabulary (**public**). AAB (Play upload): `kanji_app/build/app/outputs/bundle/release/app-release.aab`. APK: `kanji_app/build/app/outputs/flutter-apk/app-release.apk`.
+
+> **Release rule**: every release **must bump the version build number** (`version: x.y.z+N` in `pubspec.yaml`) — increment `N` by at least 1 each build, because Google Play rejects a reused `versionCode`. Do this **unprompted** whenever building a release AAB/APK. Last uploaded versionCode: **8** → next free is **9+**.
 
 ---
 
@@ -78,7 +80,7 @@ pyftsubset kanji_app/assets/fonts/NotoSerifCJKjp-Regular.otf \
 - **vocab_repository.dart**: `VocabWord.isUsuallyKana`, `VocabWord.levelLabel`. Orders by `jlpt_level DESC, id ASC`.
 - **settings_service.dart**: `homeTrackers`, `dailyGoal` (default 100), `autoProgressionEnabled/Quota`, `completedKanjiLevels/VocabLevels`, `jlptGoal` (0=not set, 1–5 for N1–N5), audio/appearance.
 - **auto_progression_service.dart**: fills targets up to quota; detects completed levels. Called from `HomeScreen.initState`.
-- **database_service.dart**: `_assetDbVersion=8`. Bump when shipping new `kanji.db`. Saves/restores `user_progress`; runtime tables survive via `_runMigrations`.
+- **database_service.dart**: `_assetDbVersion=9`. Bump when shipping new `kanji.db`. On bump, saves/restores **all six user-state tables** (`_userTables`: user_progress, vocabulary_progress, vocabulary_targets, kana_progress, session_log, test_history); content tables come fresh from the asset; `_runMigrations` ensures schema before restore.
 - **history_repository.dart**: `getHistory({testType?, level?, limit})` — optional `level` filter applied in Dart after fetch (avoids SQL type mismatch).
 
 ### Design system
@@ -143,14 +145,14 @@ D8–D9 in general practice only. Falls back uncapped if <3 sentences within cap
 1. **JLPT levels inverted**: 1=N1 hardest, 5=N5 easiest throughout.
 2. **N5 vocab ≠ N5 kanji**: 赤/花/空 are N5 vocab but N4 kanji level. Intentional.
 3. **Romaji 'n'**: trailing 'n' stays 'n'. Use "nn" or "n"+consonant for ん.
-4. **DB rebuilds** from scratch drop all runtime tables. Version bumps preserve `user_progress`.
+4. **DB rebuilds** from scratch drop all runtime tables. Version bumps preserve **all user-state tables** (`_userTables`), not just `user_progress`.
 5. **AppColors not const**: getters into mutable `_currentTheme`. Never `const TextStyle(color: AppColors.X)`.
 6. **`late final` in Riverpod notifiers**: re-navigation rebuilds notifier → `LateInitializationError`. Use `late`.
-7. **Cached DB**: copied to `getApplicationDocumentsDirectory()` on first run. Stale check: kanji count ≥2230 AND vocab count >0. Version bump triggers safe re-copy + progress restore.
+7. **Cached DB**: copied to `getApplicationDocumentsDirectory()` on first run. Stale check: kanji count ≥2230 AND vocab count >0. Version bump triggers safe re-copy + restore of all user-state tables.
 8. **DB race condition**: `_initFuture` static pattern prevents concurrent `_init()` calls.
 9. **`INSERT OR IGNORE` + `lastrowid`**: unreliable on conflict. Always `SELECT id WHERE ...` after.
 10. **JLPT save/resume**: `buildSession` uses `ORDER BY RANDOM()`. Save `vocabIds`/`grammarIds`/`readingIds`; use `buildSessionFromIds` on resume.
-11. **Asset DB versioning**: `_assetDbVersion=8`. Bump to ship new `kanji.db`. Runtime tables survive regardless.
+11. **Asset DB versioning**: `_assetDbVersion=9`. Bump to ship new `kanji.db`. All user-state tables (`_userTables`) survive the rebuild.
 12. **Kana-surface compounds**: 位→くらい etc. `_containsKanji()` guards against pure-kana surfaces.
 13. **user_progress UPSERT**: use `INSERT ... ON CONFLICT DO UPDATE`. Plain UPDATE fails silently for new users.
 14. **Timer callbacks**: check `if (!mounted) return` before setState/Navigator.
@@ -165,7 +167,7 @@ D8–D9 in general practice only. Falls back uncapped if <3 sentences within cap
 23. **Speed read feedback**: after answering, stays in `_Phase.feedback` until user taps. Vocab mode shows word + reading + top-2 meanings card; kana mode shows "Tap to continue" only (romaji already visible in options). `_advanceFromFeedback()` handles next/done logic. `_FeedbackCard` widget in `speed_read_screen.dart`. `SpeedReadQuestion.meaning` is nullable — null for kana.
 24. **Speed read ready phase**: `_Phase.ready` (2000ms) fires between questions — 3 dots animate in at 500ms intervals to draw eyes back to center before the kanji flashes.
 25. **Practice preview list**: `PracticePreviewScreen` uses `ListView.separated` (was grid). Each row: 60×60 character box left, readings + meaning right, JLPT chip. Tap row opens full info sheet. Vocab font size adapts: 26px for ≤3 chars, 18px longer.
-26. **Parallel learned system (spaced points)**: `AppSettings.learnedVia` = `'test'` (default) | `'practice'`. In practice mode items reach `learned` by accumulating **points** (columns `practice_points`/`practice_day`/`practice_seen_today`/`practice_correct_today` on user_progress/vocabulary_progress/kana_progress). Scoring (`applyPracticeAnswer` in `lib/utils/learning_constants.dart`, shared by all 3 repos): **first correct of the calendar day +5, each further correct +1, wrong −1 (floored 0)**; promote at `kPracticePointsToLearn=20`. Day boundary = local midnight (`practiceDayKey`). **Daily appearance cap** `kPracticeDailyCap=4`: an item is dropped from the practice pool once `practice_seen_today>=cap` (learned items are never capped), which guarantees a **≥3-day** minimum to learn (5+1+1+1 = 8/day). When the pool is capped out, sessions **top up with already-learned items as review** (they award no real progress): kanji via `SentenceRepository.pickKanjiForSession` (the single chokepoint — cap-exclusion + learned top-up in SQL; all kanji practice modes funnel through it as `fixedKanjiIds`), vocab via `vocabRepo.getCappedIds`+`getLearnedVocab` in `vocab_practice_config_screen`, kana via `kanaRepo.getCappedIds` filter in `kana_practice_config_screen` (`getTargeted` already returns learned chars). Repos' `recordPracticeProgress` return `PracticeResult` = `(promoted, learned, points, seenToday)`; summary shows "N pts to go". The onboarding "How practice learning works" card (`onboarding_auto_progression_screen`, shown when Practice is selected) explains the points to users. Migration: new columns default 0/NULL via guarded ALTERs in `_runMigrations` (in-progress items restart at 0 points, learned untouched) — **no `_assetDbVersion` bump** (a bump rebuilds the DB and only preserves kanji `user_progress`, wiping vocab/kana progress). Test coverage: `test/utils/learning_constants_test.dart`. Practice-mode hides the home-screen Test button entirely; mark-as-known stays in both modes.
+26. **Parallel learned system (spaced points)**: `AppSettings.learnedVia` = `'test'` (default) | `'practice'`. In practice mode items reach `learned` by accumulating **points** (columns `practice_points`/`practice_day`/`practice_seen_today`/`practice_correct_today` on user_progress/vocabulary_progress/kana_progress). Scoring (`applyPracticeAnswer` in `lib/utils/learning_constants.dart`, shared by all 3 repos): **first correct of the calendar day +5, each further correct +1, wrong −1 (floored 0)**; promote at `kPracticePointsToLearn=20`. Day boundary = local midnight (`practiceDayKey`). **Daily appearance cap** `kPracticeDailyCap=4`: an item is dropped from the practice pool once `practice_seen_today>=cap` (learned items are never capped), which guarantees a **≥3-day** minimum to learn (5+1+1+1 = 8/day). When the pool is capped out, sessions **top up with already-learned items as review** (they award no real progress): kanji via `SentenceRepository.pickKanjiForSession` (the single chokepoint — cap-exclusion + learned top-up in SQL; all kanji practice modes funnel through it as `fixedKanjiIds`), vocab via `vocabRepo.getCappedIds`+`getLearnedVocab` in `vocab_practice_config_screen`, kana via `kanaRepo.getCappedIds` filter in `kana_practice_config_screen` (`getTargeted` already returns learned chars). Repos' `recordPracticeProgress` return `PracticeResult` = `(promoted, learned, points, seenToday)`; summary shows "N pts to go". The onboarding "How practice learning works" card (`onboarding_auto_progression_screen`, shown when Practice is selected) explains the points to users. Migration: new columns default 0/NULL via guarded ALTERs in `_runMigrations` (in-progress items restart at 0 points, learned untouched). A version bump is now **progress-safe** (v9 preserves all `_userTables`, incl. vocab/kana progress), so shipping this was bundled with the DB bump. Test coverage: `test/utils/learning_constants_test.dart`. Practice-mode hides the home-screen Test button entirely; mark-as-known stays in both modes.
 27. **Per-JLPT-level progress totals**: `kanjiRepo.getProgressByLevel`/`getProgressByTag` must `LEFT JOIN user_progress` (not inner). Inner join makes the denominator count only kanji that already have a progress row, so untouched levels (N3/N2/N1) read 0/0 and the top ring shows only targeted count instead of 2230. `getActiveLevel` depends on these totals being the full deck.
 28. **spacedShuffle** (`lib/utils/spaced_shuffle.dart`): `spacedShuffle<T>(items, keyOf, {minGap=3, rng})` — greedy placement so the same key is never back-to-back (gap of `minGap` where the pool allows, else largest-gap fallback). Applied to test/word/sentence/mixed question builders + vocab/kana practice queues. Compound dedup in word/mixed builders uses a `seen` set so a compound appears once per test.
 29. **Not-enough-targets popup**: `confirmShortSession` (`lib/widgets/short_session_dialog.dart`) clamps + confirms when available targets < requested session size. Wired at vocab (words×2), kana (char pool), and kanji `wordpractice` launch points — modes where the shortfall is predictable.
@@ -185,6 +187,9 @@ python3 tools/build_db.py
 cd kanji_app && flutter run
 cd kanji_app && flutter run -d linux
 cd kanji_app && flutter analyze --no-pub
-cd kanji_app && flutter build apk --release
+cd kanji_app && flutter build apk --release       # sideload APK
+cd kanji_app && flutter build appbundle --release # Play upload (.aab) — BUMP version+N first!
 cd kanji_app && flutter install
 ```
+
+**Before any release build**: bump the build number in `pubspec.yaml` (`version: x.y.z+N` → `+N+1`). Play rejects a reused `versionCode`. Signing via `kanji_app/android/key.properties` (gitignored) → keystore at `/home/david/kanji-release.jks`.
