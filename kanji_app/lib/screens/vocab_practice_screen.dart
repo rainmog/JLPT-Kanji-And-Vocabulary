@@ -252,7 +252,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
             practiceProgress.add((
               display: w.word,
               learned: r.learned,
-              remaining: (kPracticeLearnThreshold - r.progress).clamp(0, kPracticeLearnThreshold),
+              remaining: (kPracticePointsToLearn - r.points).clamp(0, kPracticePointsToLearn),
             ));
           }
         }

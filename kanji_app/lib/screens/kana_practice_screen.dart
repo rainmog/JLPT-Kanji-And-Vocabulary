@@ -361,7 +361,7 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
         list.add((
           display: c.display,
           learned: r.learned,
-          remaining: (kPracticeLearnThreshold - r.progress).clamp(0, kPracticeLearnThreshold),
+          remaining: (kPracticePointsToLearn - r.points).clamp(0, kPracticePointsToLearn),
         ));
       }
       list.sort((a, b) => (a.learned ? 0 : a.remaining).compareTo(b.learned ? 0 : b.remaining));
@@ -810,7 +810,7 @@ class _KanaResultScreen extends StatelessWidget {
                                         )),
                                       ])
                                     else
-                                      Text('${item.remaining} more to learn', style: TextStyle(
+                                      Text('${item.remaining} pts to go', style: TextStyle(
                                         fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.muted,
                                       )),
                                   ],

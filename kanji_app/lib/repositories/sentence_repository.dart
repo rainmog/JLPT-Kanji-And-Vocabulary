@@ -1,6 +1,7 @@
 import 'dart:convert';
 import '../services/database_service.dart';
 import '../models/quiz_models.dart';
+import '../utils/learning_constants.dart';
 import '../utils/spaced_shuffle.dart';
 import 'kanji_repository.dart';
 
@@ -987,18 +988,34 @@ class SentenceRepository {
     required bool reviewOnly,
     bool orderByPracticeCount = false,
   }) async {
+    final today = practiceDayKey();
     final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
-    final args = <dynamic>[...jlptLevels];
+    // Args are ordered to match SQL text position: JOIN (tags) → WHERE (levels …).
     String tagJoin = '';
+    final tagArgs = <dynamic>[];
     if (tags.isNotEmpty) {
       tagJoin = 'JOIN kanji_tags kt ON k.id = kt.kanji_id AND kt.tag IN (${List.filled(tags.length, '?').join(',')})';
-      args.addAll(tags);
+      tagArgs.addAll(tags);
     }
-    args.add(count);
 
     final orderBy = orderByPracticeCount
         ? 'ORDER BY COALESCE(p.practice_correct_count, 0) DESC'
         : 'ORDER BY RANDOM()';
+
+    // In practice (targetOnly), drop items that already hit today's appearance
+    // cap so they can't be shown a 5th time — this is what keeps an item from
+    // being learned in under 3 days.
+    final statusClause = targetOnly
+        ? "AND p.status = 'target' AND NOT (p.practice_day = ? AND p.practice_seen_today >= ?)"
+        : reviewOnly
+            ? "AND p.status = 'learned'"
+            : "AND p.status != 'learned'";
+    final args = <dynamic>[
+      ...tagArgs,
+      ...jlptLevels,
+      if (targetOnly) ...[today, kPracticeDailyCap],
+      count,
+    ];
 
     final rows = await db.query('''
       SELECT DISTINCT k.id, k.character, k.jlpt_level, k.on_reading, k.kun_reading, k.meaning, k.stroke_count
@@ -1006,12 +1023,36 @@ class SentenceRepository {
       JOIN user_progress p ON k.id = p.kanji_id
       $tagJoin
       WHERE k.jlpt_level IN ($levelPlaceholders)
-        ${targetOnly ? "AND p.status = 'target'" : reviewOnly ? "AND p.status = 'learned'" : "AND p.status != 'learned'"}
+        $statusClause
       $orderBy
       LIMIT ?
     ''', args);
 
-    return rows.map(Kanji.fromMap).toList();
+    var result = rows.map(Kanji.fromMap).toList();
+
+    // Cap top-up: if the practice pool ran short because items hit today's cap,
+    // fill the rest with already-learned kanji as review (they award no real
+    // progress since they're already learned) so the session keeps its length.
+    if (targetOnly && result.length < count) {
+      final have = result.map((k) => k.id).toList();
+      final notIn = have.isEmpty
+          ? ''
+          : 'AND k.id NOT IN (${List.filled(have.length, '?').join(',')})';
+      final topRows = await db.query('''
+        SELECT DISTINCT k.id, k.character, k.jlpt_level, k.on_reading, k.kun_reading, k.meaning, k.stroke_count
+        FROM kanji k
+        JOIN user_progress p ON k.id = p.kanji_id
+        $tagJoin
+        WHERE k.jlpt_level IN ($levelPlaceholders)
+          AND p.status = 'learned'
+          $notIn
+        ORDER BY RANDOM()
+        LIMIT ?
+      ''', [...tagArgs, ...jlptLevels, ...have, count - result.length]);
+      result = [...result, ...topRows.map(Kanji.fromMap)];
+    }
+
+    return result;
   }
 }
 

@@ -114,35 +114,45 @@ class ProgressRepository {
     ''', [kanjiId]);
   }
 
-  /// Practice-mode learning: adjust practice_progress (+1 correct / -1 wrong,
-  /// floored at 0) and promote to 'learned' when threshold reached.
-  /// Returns true if this call promoted the item.
+  /// Practice-mode learning (spaced, points-based). Applies the daily-scaled
+  /// points delta (first correct of day +5, repeats +1, wrong −1 floored 0),
+  /// tracks per-day appearance counters, and promotes to 'learned' at
+  /// [kPracticePointsToLearn]. See [applyPracticeAnswer].
   Future<PracticeResult> recordPracticeProgress(int kanjiId, {required bool isCorrect}) async {
-    if (isCorrect) {
-      await dbService.execute('''
-        INSERT INTO user_progress (kanji_id, status, practice_progress)
-        VALUES (?, 'target', 1)
-        ON CONFLICT(kanji_id) DO UPDATE SET practice_progress = practice_progress + 1
-      ''', [kanjiId]);
-    } else {
-      await dbService.execute('''
-        UPDATE user_progress
-        SET practice_progress = MAX(0, practice_progress - 1)
-        WHERE kanji_id = ?
-      ''', [kanjiId]);
-    }
+    final today = practiceDayKey();
+    // Ensure a row exists so the read-modify-write below has something to update.
+    await dbService.execute('''
+      INSERT INTO user_progress (kanji_id, status) VALUES (?, 'target')
+      ON CONFLICT(kanji_id) DO NOTHING
+    ''', [kanjiId]);
     final rows = await dbService.query(
-      'SELECT status, practice_progress FROM user_progress WHERE kanji_id=?', [kanjiId]
-    );
-    if (rows.isEmpty) return (promoted: false, learned: false, progress: 0);
+      'SELECT status, practice_points, practice_day, practice_seen_today, practice_correct_today '
+      'FROM user_progress WHERE kanji_id=?', [kanjiId]);
+    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0);
     final status = rows.first['status'] as String?;
-    final progress = rows.first['practice_progress'] as int? ?? 0;
-    if (status != 'learned' && progress >= kPracticeLearnThreshold) {
+    final next = applyPracticeAnswer(
+      points: rows.first['practice_points'] as int? ?? 0,
+      day: rows.first['practice_day'] as String?,
+      seenToday: rows.first['practice_seen_today'] as int? ?? 0,
+      correctToday: rows.first['practice_correct_today'] as int? ?? 0,
+      today: today,
+      isCorrect: isCorrect,
+    );
+    await dbService.execute('''
+      UPDATE user_progress
+      SET practice_points = ?, practice_day = ?, practice_seen_today = ?, practice_correct_today = ?
+      WHERE kanji_id = ?
+    ''', [next.points, today, next.seenToday, next.correctToday, kanjiId]);
+    if (status != 'learned' && next.points >= kPracticePointsToLearn) {
       await markLearned(kanjiId);
-      return (promoted: true, learned: true, progress: progress);
+      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday);
     }
-    return (promoted: false, learned: status == 'learned', progress: progress);
+    return (promoted: false, learned: status == 'learned', points: next.points, seenToday: next.seenToday);
   }
+
+  // Kanji practice cap-exclusion + learned top-up are handled directly in
+  // SentenceRepository.pickKanjiForSession (the single chokepoint for every
+  // kanji practice mode), so no per-id helpers are needed here.
 
   Future<Map<int, int>> getPracticeCountsForIds(List<int> ids) async {
     if (ids.isEmpty) return {};

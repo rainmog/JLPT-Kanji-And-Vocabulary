@@ -238,7 +238,7 @@ class _SessionSummaryScreenState extends ConsumerState<SessionSummaryScreen>
                                     ])
                                   else
                                     Text(
-                                      '${item.remaining} more to learn',
+                                      '${item.remaining} pts to go',
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,

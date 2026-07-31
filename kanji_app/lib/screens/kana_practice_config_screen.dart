@@ -65,10 +65,21 @@ class _KanaPracticeConfigScreenState extends ConsumerState<KanaPracticeConfigScr
       );
       return;
     }
+    // Drop chars that already hit today's appearance cap. getTargeted also
+    // returns already-learned chars (never capped), so they remain as review.
+    final capped = await kanaRepo.getCappedIds(targeted.map((c) => c.id).toList());
+    if (!mounted) return;
+    final pool = targeted.where((c) => !capped.contains(c.id)).toList();
+    if (pool.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("All caught up for today — come back tomorrow.")),
+      );
+      return;
+    }
 
     List<KanaWord> words = [];
     if (_quizType == KanaQuizType.wordToRomajiType) {
-      final rows = targeted.map((c) => c.row).toSet().toList();
+      final rows = pool.map((c) => c.row).toSet().toList();
       words = await kanaRepo.getWordsForTargetedRows(type: type, targetedRows: rows);
       if (!mounted) return;
       if (words.isEmpty) {
@@ -80,11 +91,11 @@ class _KanaPracticeConfigScreenState extends ConsumerState<KanaPracticeConfigScr
     }
 
     // Not-enough-targets: the char pool caps the session length.
-    if (words.isEmpty && targeted.length < _count) {
+    if (words.isEmpty && pool.length < _count) {
       final ok = await confirmShortSession(
         context,
         colors: ref.read(themeColorsProvider),
-        available: targeted.length,
+        available: pool.length,
         requested: _count,
       );
       if (!ok || !mounted) return;
@@ -94,10 +105,10 @@ class _KanaPracticeConfigScreenState extends ConsumerState<KanaPracticeConfigScr
     if (!mounted) return;
     soundService.playSelectButton();
     Navigator.push(context, AppRoute.to(PracticePreviewScreen(
-      items: KanaPreviewItems(targeted),
+      items: KanaPreviewItems(pool),
       onBegin: (ctx) {
         Navigator.push(ctx, AppRoute.to(KanaPracticeScreen(
-          chars: targeted,
+          chars: pool,
           allChars: allChars,
           words: words,
           quizType: _quizType,

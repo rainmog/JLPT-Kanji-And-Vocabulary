@@ -223,35 +223,54 @@ class KanaRepository {
     return {for (final r in rows) r['kana_id'] as int: r['cnt'] as int};
   }
 
-  /// Practice-mode learning: adjust practice_progress (+1 correct / -1 wrong,
-  /// floored at 0) and promote to learned when threshold reached.
-  /// Returns true if this call promoted the item.
+  /// Practice-mode learning (spaced, points-based). See [applyPracticeAnswer]:
+  /// first correct of day +5, repeats +1, wrong −1 (floored 0); promotes to
+  /// learned at [kPracticePointsToLearn].
   Future<PracticeResult> recordPracticeProgress(int kanaId, {required bool isCorrect}) async {
-    if (isCorrect) {
-      await dbService.execute('''
-        INSERT INTO kana_progress (kana_id, status, practice_progress)
-        VALUES (?, 'target', 1)
-        ON CONFLICT(kana_id) DO UPDATE SET practice_progress = practice_progress + 1
-      ''', [kanaId]);
-    } else {
-      await dbService.execute('''
-        UPDATE kana_progress
-        SET practice_progress = MAX(0, practice_progress - 1)
-        WHERE kana_id = ?
-      ''', [kanaId]);
-    }
+    final today = practiceDayKey();
+    await dbService.execute('''
+      INSERT INTO kana_progress (kana_id, status) VALUES (?, 'target')
+      ON CONFLICT(kana_id) DO NOTHING
+    ''', [kanaId]);
     final rows = await dbService.query(
-      'SELECT status, practice_progress FROM kana_progress WHERE kana_id=?', [kanaId]
-    );
-    if (rows.isEmpty) return (promoted: false, learned: false, progress: 0);
+      'SELECT status, practice_points, practice_day, practice_seen_today, practice_correct_today '
+      'FROM kana_progress WHERE kana_id=?', [kanaId]);
+    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0);
     final status = rows.first['status'] as String?;
-    final progress = rows.first['practice_progress'] as int? ?? 0;
-    if (status != 'learned' && progress >= kPracticeLearnThreshold) {
+    final next = applyPracticeAnswer(
+      points: rows.first['practice_points'] as int? ?? 0,
+      day: rows.first['practice_day'] as String?,
+      seenToday: rows.first['practice_seen_today'] as int? ?? 0,
+      correctToday: rows.first['practice_correct_today'] as int? ?? 0,
+      today: today,
+      isCorrect: isCorrect,
+    );
+    await dbService.execute('''
+      UPDATE kana_progress
+      SET practice_points = ?, practice_day = ?, practice_seen_today = ?, practice_correct_today = ?
+      WHERE kana_id = ?
+    ''', [next.points, today, next.seenToday, next.correctToday, kanaId]);
+    if (status != 'learned' && next.points >= kPracticePointsToLearn) {
       await setStatus(kanaId, 'learned');
-      return (promoted: true, learned: true, progress: progress);
+      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday);
     }
-    return (promoted: false, learned: status == 'learned', progress: progress);
+    return (promoted: false, learned: status == 'learned', points: next.points, seenToday: next.seenToday);
   }
+
+  /// Kana ids from [ids] that have hit today's appearance cap.
+  Future<Set<int>> getCappedIds(List<int> ids) async {
+    if (ids.isEmpty) return {};
+    final today = practiceDayKey();
+    final placeholders = List.filled(ids.length, '?').join(',');
+    final rows = await dbService.query(
+      'SELECT kana_id FROM kana_progress '
+      "WHERE kana_id IN ($placeholders) AND status != 'learned' "
+      'AND practice_day = ? AND practice_seen_today >= ?',
+      [...ids, today, kPracticeDailyCap]);
+    return rows.map((r) => r['kana_id'] as int).toSet();
+  }
+  // Learned kana are already returned by getTargeted (status IN target,learned),
+  // so they serve as review top-up automatically — no separate fetch needed.
 
   // Words
 

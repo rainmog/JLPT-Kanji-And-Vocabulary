@@ -6,6 +6,7 @@ import '../services/settings_service.dart';
 import '../theme.dart';
 import '../theme_provider.dart';
 import '../utils/app_route.dart';
+import '../utils/learning_constants.dart';
 import '../widgets/k_setup.dart';
 import 'main_shell.dart';
 
@@ -146,6 +147,63 @@ class _OnboardingAutoProgressionScreenState
     );
   }
 
+  Widget _pointRow(String head, String body) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+          margin: const EdgeInsets.only(top: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: AppColors.accent.withValues(alpha: 0.13),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(head, style: TextStyle(
+            fontSize: 12.5, fontWeight: FontWeight.w800, color: AppColors.accent,
+          )),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(body, style: TextStyle(fontSize: 13.5, color: AppColors.fg, height: 1.45)),
+        ),
+      ]),
+    );
+  }
+
+  /// Explains the spaced points system used by practice-mode learning.
+  Widget _practicePointsCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.pillBg, width: 1.5),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Icon(Icons.trending_up, size: 18, color: AppColors.accent),
+          const SizedBox(width: 8),
+          Text('How practice learning works', style: TextStyle(
+            fontSize: 14.5, fontWeight: FontWeight.w800, color: AppColors.fg,
+          )),
+        ]),
+        const SizedBox(height: 14),
+        _pointRow('+5', 'The first correct answer each day is worth the most.'),
+        _pointRow('+1', 'Every extra correct answer that same day.'),
+        _pointRow('−1', 'A wrong answer, never below zero.'),
+        _pointRow('$kPracticePointsToLearn', 'Points needed before an item is learned.'),
+        const SizedBox(height: 4),
+        Text(
+          'An item can appear up to $kPracticeDailyCap times a day, so it takes at least '
+          '3 days to learn — short daily reviews stick far better than cramming. '
+          'Once you run out of new items for the day, learned ones come back for review.',
+          style: TextStyle(fontSize: 13, color: AppColors.muted, height: 1.55),
+        ),
+      ]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = ref.watch(themeColorsProvider);
@@ -234,10 +292,14 @@ class _OnboardingAutoProgressionScreenState
                   selected: _learnedVia == 'practice',
                   icon: Icons.school_outlined,
                   title: 'Learn by Practicing',
-                  body: 'No separate tests. Items become learned as you answer them '
-                      'correctly in practice. Slip-ups just slow you down.',
+                  body: 'No separate tests. Items build up points as you answer them '
+                      'correctly in practice, and become learned over a few days.',
                   onTap: () => setState(() => _learnedVia = 'practice'),
                 ),
+                if (_learnedVia == 'practice') ...[
+                  const SizedBox(height: 12),
+                  _practicePointsCard(),
+                ],
 
                 const SizedBox(height: 28),
 

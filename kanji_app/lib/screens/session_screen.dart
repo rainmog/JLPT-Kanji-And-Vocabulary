@@ -764,7 +764,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
         practiceProgress.add((
           display: q.character,
           learned: r.learned,
-          remaining: (kPracticeLearnThreshold - r.progress).clamp(0, kPracticeLearnThreshold),
+          remaining: (kPracticePointsToLearn - r.points).clamp(0, kPracticePointsToLearn),
         ));
       }
       practiceProgress.sort((a, b) => (a.learned ? 0 : a.remaining).compareTo(b.learned ? 0 : b.remaining));

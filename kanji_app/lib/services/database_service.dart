@@ -6,10 +6,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseService {
-  // Bump when shipping a new kanji.db asset (e.g. N1 sentences added).
-  // Users will get the new content; user_progress is preserved across the rebuild.
-  static const int _assetDbVersion = 8;
+  // Bump when shipping a new kanji.db asset (e.g. new JLPT questions added).
+  // Users get the new content; all user-state tables (below) are preserved
+  // across the rebuild.
+  // v9: N5 JLPT questions quadrupled (115→465).
+  static const int _assetDbVersion = 9;
   static const String _prefDbVersion = 'db_asset_version';
+
+  // Every table that holds USER data (not shipped content). These are saved
+  // before an asset rebuild and restored after, so a version bump never wipes
+  // a user's progress, targets, or history. Content tables (kanji, vocabulary,
+  // jlpt_questions, sentences, …) come fresh from the asset and are not listed.
+  static const List<String> _userTables = [
+    'user_progress',        // kanji
+    'vocabulary_progress',
+    'vocabulary_targets',
+    'kana_progress',
+    'session_log',
+    'test_history',
+  ];
 
   static Future<Database>? _initFuture;
 
@@ -53,12 +68,19 @@ class DatabaseService {
     }
 
     if (needsRebuild) {
-      List<Map<String, dynamic>> savedProgress = [];
+      // Snapshot every user-state table before swapping in the new asset.
+      final Map<String, List<Map<String, dynamic>>> saved = {};
 
       if (preserveProgress) {
         try {
           final db = await openDatabase(path);
-          savedProgress = await db.query('user_progress');
+          for (final table in _userTables) {
+            try {
+              saved[table] = await db.query(table);
+            } catch (_) {
+              // Table may not exist in an older DB — skip it.
+            }
+          }
           await db.close();
         } catch (_) {}
       }
@@ -68,14 +90,21 @@ class DatabaseService {
       final bytes = data.buffer.asUint8List();
       await File(path).writeAsBytes(bytes, flush: true);
 
-      if (savedProgress.isNotEmpty) {
+      if (saved.isNotEmpty) {
         final db = await openDatabase(path);
-        await _runMigrations(db);
-        final batch = db.batch();
-        for (final row in savedProgress) {
-          batch.insert('user_progress', row, conflictAlgorithm: ConflictAlgorithm.replace);
+        await _runMigrations(db); // ensure every user table + column exists first
+        for (final entry in saved.entries) {
+          if (entry.value.isEmpty) continue;
+          try {
+            final batch = db.batch();
+            for (final row in entry.value) {
+              batch.insert(entry.key, row, conflictAlgorithm: ConflictAlgorithm.replace);
+            }
+            await batch.commit(noResult: true);
+          } catch (_) {
+            // Never let one table's restore failure abort the rebuild.
+          }
         }
-        await batch.commit(noResult: true);
         await db.close();
       }
     }
@@ -135,6 +164,21 @@ class DatabaseService {
       'ALTER TABLE user_progress ADD COLUMN practice_progress INTEGER NOT NULL DEFAULT 0',
       'ALTER TABLE vocabulary_progress ADD COLUMN practice_progress INTEGER NOT NULL DEFAULT 0',
       'ALTER TABLE kana_progress ADD COLUMN practice_progress INTEGER NOT NULL DEFAULT 0',
+      // Spaced points-based learning (replaces the 0..4 practice_progress counter).
+      // New columns default to 0 / NULL, so any in-progress item restarts at 0
+      // points under the new system; already-learned items are untouched.
+      'ALTER TABLE user_progress ADD COLUMN practice_points INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE user_progress ADD COLUMN practice_day TEXT',
+      'ALTER TABLE user_progress ADD COLUMN practice_seen_today INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE user_progress ADD COLUMN practice_correct_today INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE vocabulary_progress ADD COLUMN practice_points INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE vocabulary_progress ADD COLUMN practice_day TEXT',
+      'ALTER TABLE vocabulary_progress ADD COLUMN practice_seen_today INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE vocabulary_progress ADD COLUMN practice_correct_today INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE kana_progress ADD COLUMN practice_points INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE kana_progress ADD COLUMN practice_day TEXT',
+      'ALTER TABLE kana_progress ADD COLUMN practice_seen_today INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE kana_progress ADD COLUMN practice_correct_today INTEGER NOT NULL DEFAULT 0',
     ]) {
       try {
         await db.execute(migration);

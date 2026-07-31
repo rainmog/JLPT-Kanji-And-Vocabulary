@@ -48,11 +48,25 @@ class _VocabPracticeConfigScreenState extends ConsumerState<VocabPracticeConfigS
       );
       return;
     }
+    // Drop target words that already hit today's appearance cap.
+    final capped = await vocabRepo.getCappedIds(allWords.map((w) => w.id).toList());
+    if (!mounted) return;
+    var pool = allWords.where((w) => !capped.contains(w.id)).toList();
     // Each word is practiced twice; select half the question count as unique words.
     final wordCount = (_count / 2).ceil();
-    final words = allWords.length > wordCount
-        ? (List<VocabWord>.from(allWords)..shuffle()).sublist(0, wordCount)
-        : allWords;
+    // Capped out → top up with already-learned words as review so the session
+    // keeps its length instead of ending early.
+    if (pool.length < wordCount) {
+      final topUp = await vocabRepo.getLearnedVocab(
+        limit: wordCount - pool.length,
+        exclude: allWords.map((w) => w.id).toSet(),
+      );
+      if (!mounted) return;
+      pool = [...pool, ...topUp];
+    }
+    final words = pool.length > wordCount
+        ? (List<VocabWord>.from(pool)..shuffle()).sublist(0, wordCount)
+        : pool;
     // Not-enough-targets: confirm a shorter session.
     if (words.length < wordCount) {
       final ok = await confirmShortSession(
