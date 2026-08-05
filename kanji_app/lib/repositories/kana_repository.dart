@@ -235,10 +235,11 @@ class KanaRepository {
     final rows = await dbService.query(
       'SELECT status, practice_points, practice_day, practice_seen_today, practice_correct_today '
       'FROM kana_progress WHERE kana_id=?', [kanaId]);
-    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0);
+    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0, delta: 0);
     final status = rows.first['status'] as String?;
+    final oldPoints = rows.first['practice_points'] as int? ?? 0;
     final next = applyPracticeAnswer(
-      points: rows.first['practice_points'] as int? ?? 0,
+      points: oldPoints,
       day: rows.first['practice_day'] as String?,
       seenToday: rows.first['practice_seen_today'] as int? ?? 0,
       correctToday: rows.first['practice_correct_today'] as int? ?? 0,
@@ -250,11 +251,12 @@ class KanaRepository {
       SET practice_points = ?, practice_day = ?, practice_seen_today = ?, practice_correct_today = ?
       WHERE kana_id = ?
     ''', [next.points, today, next.seenToday, next.correctToday, kanaId]);
+    final delta = next.points - oldPoints;
     if (status != 'learned' && next.points >= kPracticePointsToLearn) {
       await setStatus(kanaId, 'learned');
-      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday);
+      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday, delta: delta);
     }
-    return (promoted: false, learned: status == 'learned', points: next.points, seenToday: next.seenToday);
+    return (promoted: false, learned: status == 'learned', points: next.points, seenToday: next.seenToday, delta: delta);
   }
 
   /// Kana ids from [ids] that have hit today's appearance cap.

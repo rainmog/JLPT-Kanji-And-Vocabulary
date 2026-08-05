@@ -12,6 +12,7 @@ import '../services/settings_service.dart';
 import '../services/sound_service.dart';
 import '../utils/app_route.dart';
 import '../utils/learning_constants.dart';
+import '../widgets/practice_delta_badge.dart';
 
 final _learnedKanjiProvider = FutureProvider.autoDispose<Set<String>>((ref) {
   return progressRepo.getLearnedKanjiCharacters();
@@ -57,6 +58,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
   bool _showingFeedback = false;
   bool? _lastAnswerCorrect;
   String _lastCorrectAnswer = '';
+  PracticeResult? _lastPractice; // practice-mode points change for current answer
   Timer? _autoNextTimer;
 
   @override
@@ -227,6 +229,15 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
               if (isKeyboard)
                 _buildKeyboardFooter(question, quizController, quizState),
             ]),
+            // Practice-mode progress delta badge (top-right, inconspicuous)
+            if (_showingFeedback && _lastPractice != null)
+              Positioned(
+                top: 70, right: 20,
+                child: PracticeDeltaBadge(
+                  result: _lastPractice!,
+                  color: _lastAnswerCorrect == true ? AppColors.correct : AppColors.incorrect,
+                ),
+              ),
             // Tap-to-advance early (silent)
             if (_showingFeedback)
               Positioned.fill(
@@ -725,6 +736,13 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
     } else {
       soundService.playWrong();
     }
+
+    // Practice-mode progress badge: refresh once the DB write resolves.
+    _lastPractice = null;
+    final qid = question.kanjiId;
+    controller.flushPracticeRecords().then((_) {
+      if (mounted) setState(() => _lastPractice = controller.practiceResults[qid]);
+    });
   }
 
   // ── Next question / session end ───────────────────────────────────────────────
@@ -756,7 +774,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
       // Practice-mode learning progress per kanji (de-duplicated).
       await controller.flushPracticeRecords();
       final seenP = <int>{};
-      final practiceProgress = <({String display, bool learned, int remaining})>[];
+      final practiceProgress = <({String display, bool learned, int percent})>[];
       for (final q in session.questions) {
         if (!seenP.add(q.kanjiId)) continue;
         final r = controller.practiceResults[q.kanjiId];
@@ -764,10 +782,10 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
         practiceProgress.add((
           display: q.character,
           learned: r.learned,
-          remaining: (kPracticePointsToLearn - r.points).clamp(0, kPracticePointsToLearn),
+          percent: practicePointsPercent(r.points),
         ));
       }
-      practiceProgress.sort((a, b) => (a.learned ? 0 : a.remaining).compareTo(b.learned ? 0 : b.remaining));
+      practiceProgress.sort((a, b) => (b.learned ? 100 : b.percent).compareTo(a.learned ? 100 : a.percent));
 
       progressRepo.logSession(
         mode: session.mode,
@@ -798,6 +816,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
       _showingFeedback = false;
       _lastAnswerCorrect = null;
       _lastCorrectAnswer = '';
+      _lastPractice = null;
       _answerController.clear();
       _selectedMCOption = null;
       _selectedMeaningOption = null;

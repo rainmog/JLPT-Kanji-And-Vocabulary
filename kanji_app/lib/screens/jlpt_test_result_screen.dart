@@ -106,7 +106,7 @@ class _JlptTestResultScreenState extends ConsumerState<JlptTestResultScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(22),
                       border: Border.all(color: AppColors.pillBg),
                       boxShadow: [
@@ -269,7 +269,7 @@ class _SectionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border(
           left: BorderSide(width: 4, color: barColor),
@@ -336,7 +336,7 @@ class _MissedQuestionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border(
           left: BorderSide(width: 4, color: AppColors.pillBg),

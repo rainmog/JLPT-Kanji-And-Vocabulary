@@ -128,10 +128,11 @@ class ProgressRepository {
     final rows = await dbService.query(
       'SELECT status, practice_points, practice_day, practice_seen_today, practice_correct_today '
       'FROM user_progress WHERE kanji_id=?', [kanjiId]);
-    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0);
+    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0, delta: 0);
     final status = rows.first['status'] as String?;
+    final oldPoints = rows.first['practice_points'] as int? ?? 0;
     final next = applyPracticeAnswer(
-      points: rows.first['practice_points'] as int? ?? 0,
+      points: oldPoints,
       day: rows.first['practice_day'] as String?,
       seenToday: rows.first['practice_seen_today'] as int? ?? 0,
       correctToday: rows.first['practice_correct_today'] as int? ?? 0,
@@ -143,11 +144,12 @@ class ProgressRepository {
       SET practice_points = ?, practice_day = ?, practice_seen_today = ?, practice_correct_today = ?
       WHERE kanji_id = ?
     ''', [next.points, today, next.seenToday, next.correctToday, kanjiId]);
+    final delta = next.points - oldPoints;
     if (status != 'learned' && next.points >= kPracticePointsToLearn) {
       await markLearned(kanjiId);
-      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday);
+      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday, delta: delta);
     }
-    return (promoted: false, learned: status == 'learned', points: next.points, seenToday: next.seenToday);
+    return (promoted: false, learned: status == 'learned', points: next.points, seenToday: next.seenToday, delta: delta);
   }
 
   // Kanji practice cap-exclusion + learned top-up are handled directly in

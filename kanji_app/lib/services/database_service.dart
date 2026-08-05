@@ -10,7 +10,8 @@ class DatabaseService {
   // Users get the new content; all user-state tables (below) are preserved
   // across the rebuild.
   // v9: N5 JLPT questions quadrupled (115→465).
-  static const int _assetDbVersion = 9;
+  // v10: N4 JLPT questions quadrupled (132→529); N5 idx-41 fairness fix.
+  static const int _assetDbVersion = 10;
   static const String _prefDbVersion = 'db_asset_version';
 
   // Every table that holds USER data (not shipped content). These are saved

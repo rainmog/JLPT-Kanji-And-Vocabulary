@@ -808,9 +808,9 @@
     "passage_title": null,
     "question_stem": "きょうは はれているので そとで あそびを （　　） たいです。",
     "option_1": "し",
-    "option_2": "みて",
-    "option_3": "かいて",
-    "option_4": "よんで",
+    "option_2": "み",
+    "option_3": "かき",
+    "option_4": "よみ",
     "correct_option": 1,
     "question_stem_display": "{今日|きょう}は はれているので そとで あそびを （　　） たいです。",
     "question_translation": "Since the weather is nice today, I want to **play** outside."

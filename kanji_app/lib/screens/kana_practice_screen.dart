@@ -10,6 +10,7 @@ import '../utils/learning_constants.dart';
 import '../utils/spaced_shuffle.dart';
 import '../utils/app_route.dart';
 import '../widgets/scale_on_press.dart';
+import '../widgets/practice_delta_badge.dart';
 
 enum KanaQuizType {
   kanaToRomajiMC,
@@ -62,6 +63,8 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
   // Practice-mode learning results keyed by char id (latest wins).
   final Map<int, PracticeResult> _practiceResults = {};
   Future<void>? _lastRecord;
+  PracticeResult? _lastPractice; // points change for current answer's badge
+  bool? _lastCorrect;            // correctness of current answer (badge color)
   final _controller = TextEditingController();
   bool _showingFeedback = false;
   Timer? _autoNextTimer;
@@ -291,6 +294,8 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
   }
 
   void _onResult(bool correct) {
+    _lastCorrect = correct;
+    _lastPractice = null;
     if (correct) {
       soundService.playCorrect();
       _correct++;
@@ -309,7 +314,10 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
       final id = _current.char!.id;
       _lastRecord = kanaRepo
           .recordPracticeProgress(id, isCorrect: correct)
-          .then((r) => _practiceResults[id] = r);
+          .then((r) {
+        _practiceResults[id] = r;
+        if (mounted) setState(() => _lastPractice = r);
+      });
     }
   }
 
@@ -323,6 +331,8 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
       _currentIndex++;
       _selectedOption = null;
       _showingFeedback = false;
+      _lastPractice = null;
+      _lastCorrect = null;
       _controller.clear();
     });
     _prepareQuestion();
@@ -352,19 +362,19 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
       practiceCounts = list;
     }
 
-    List<({String display, bool learned, int remaining})> practiceProgress = const [];
+    List<({String display, bool learned, int percent})> practiceProgress = const [];
     if (!widget.testMode && _practiceResults.isNotEmpty) {
-      final list = <({String display, bool learned, int remaining})>[];
+      final list = <({String display, bool learned, int percent})>[];
       for (final c in charItems) {
         final r = _practiceResults[c.id];
         if (r == null) continue;
         list.add((
           display: c.display,
           learned: r.learned,
-          remaining: (kPracticePointsToLearn - r.points).clamp(0, kPracticePointsToLearn),
+          percent: practicePointsPercent(r.points),
         ));
       }
-      list.sort((a, b) => (a.learned ? 0 : a.remaining).compareTo(b.learned ? 0 : b.remaining));
+      list.sort((a, b) => (b.learned ? 100 : b.percent).compareTo(a.learned ? 100 : a.percent));
       practiceProgress = list;
     }
 
@@ -466,6 +476,15 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
                   : _buildTypeInput(),
             ),
           ]),
+          // Practice-mode progress delta badge (top-right, inconspicuous)
+          if (_showingFeedback && _lastCorrect != null && _lastPractice != null)
+            Positioned(
+              top: 60, right: 20,
+              child: PracticeDeltaBadge(
+                result: _lastPractice!,
+                color: _lastCorrect! ? AppColors.correct : AppColors.incorrect,
+              ),
+            ),
           // Tap-to-advance overlay (invisible, early-advance mechanism)
           if (_showingFeedback)
             Positioned.fill(
@@ -712,7 +731,7 @@ class _KanaResultScreen extends StatelessWidget {
   final int total;
   final bool testMode;
   final List<({String display, int count})> practiceCounts;
-  final List<({String display, bool learned, int remaining})> practiceProgress;
+  final List<({String display, bool learned, int percent})> practiceProgress;
 
   const _KanaResultScreen({
     required this.correct,
@@ -810,7 +829,7 @@ class _KanaResultScreen extends StatelessWidget {
                                         )),
                                       ])
                                     else
-                                      Text('${item.remaining} pts to go', style: TextStyle(
+                                      Text('${item.percent}%', style: TextStyle(
                                         fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.muted,
                                       )),
                                   ],

@@ -29,7 +29,14 @@ const int kPracticeDailyCap = 4;
 /// [promoted] is true only on the answer that crossed the threshold.
 /// [seenToday] is how many times the item has appeared today (0..cap), used to
 /// enforce the daily appearance cap.
-typedef PracticeResult = ({bool promoted, bool learned, int points, int seenToday});
+/// [delta] is the change in practice_points this answer caused (+5 first correct
+/// of the day / +1 repeat / −1 wrong, after clamping). Used to show a per-answer
+/// +/-% indicator alongside the feedback.
+typedef PracticeResult = ({bool promoted, bool learned, int points, int seenToday, int delta});
+
+/// Progress toward 'learned' as a percentage (0..100) for a given points count.
+int practicePointsPercent(int points) =>
+    (points / kPracticePointsToLearn * 100).round().clamp(0, 100);
 
 /// Local calendar-day key ('YYYY-MM-DD'). The daily bonus and appearance cap
 /// both reset on this boundary (local midnight).

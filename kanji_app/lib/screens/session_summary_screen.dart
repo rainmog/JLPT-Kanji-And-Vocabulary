@@ -11,7 +11,7 @@ class SessionSummaryScreen extends ConsumerStatefulWidget {
   final List<({String display, int count})> practiceCounts;
   // Practice-mode learning progress: each item's display char/word, whether it
   // reached 'learned' this session, and how many more correct answers remain.
-  final List<({String display, bool learned, int remaining})> practiceProgress;
+  final List<({String display, bool learned, int percent})> practiceProgress;
 
   const SessionSummaryScreen({
     super.key,
@@ -238,7 +238,7 @@ class _SessionSummaryScreenState extends ConsumerState<SessionSummaryScreen>
                                     ])
                                   else
                                     Text(
-                                      '${item.remaining} pts to go',
+                                      '${item.percent}%',
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,

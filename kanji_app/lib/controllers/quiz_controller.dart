@@ -165,17 +165,19 @@ class QuizController extends Notifier<QuizState> {
   }
 
   Future<void> _persistAnswer(int kanjiId, bool isCorrect) async {
+    // Practice-mode learning: kicked off first (synchronously, before any await)
+    // so `_lastPracticeRecord` is available to the UI immediately after submit.
+    // Operates on `practice_points`; independent of the counters below.
+    if (ref.read(settingsProvider).learnedVia == 'practice') {
+      _lastPracticeRecord = progressRepo
+          .recordPracticeProgress(kanjiId, isCorrect: isCorrect)
+          .then((r) => practiceResults[kanjiId] = r);
+    }
     if (isCorrect) {
       await progressRepo.recordCorrect(kanjiId);
       progressRepo.incrementPracticeCount(kanjiId); // fire-and-forget
     } else {
       await progressRepo.recordIncorrect(kanjiId);
-    }
-    // Practice-mode learning: promote via decrementing progress counter.
-    if (ref.read(settingsProvider).learnedVia == 'practice') {
-      _lastPracticeRecord = progressRepo
-          .recordPracticeProgress(kanjiId, isCorrect: isCorrect)
-          .then((r) => practiceResults[kanjiId] = r);
     }
   }
 

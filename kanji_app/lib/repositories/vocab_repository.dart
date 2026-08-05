@@ -234,10 +234,11 @@ class VocabRepository {
     final rows = await dbService.query(
       'SELECT learned_at, practice_points, practice_day, practice_seen_today, practice_correct_today '
       'FROM vocabulary_progress WHERE vocab_id=?', [vocabId]);
-    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0);
+    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0, delta: 0);
     final learnedAt = rows.first['learned_at'];
+    final oldPoints = rows.first['practice_points'] as int? ?? 0;
     final next = applyPracticeAnswer(
-      points: rows.first['practice_points'] as int? ?? 0,
+      points: oldPoints,
       day: rows.first['practice_day'] as String?,
       seenToday: rows.first['practice_seen_today'] as int? ?? 0,
       correctToday: rows.first['practice_correct_today'] as int? ?? 0,
@@ -249,11 +250,12 @@ class VocabRepository {
       SET practice_points = ?, practice_day = ?, practice_seen_today = ?, practice_correct_today = ?
       WHERE vocab_id = ?
     ''', [next.points, today, next.seenToday, next.correctToday, vocabId]);
+    final delta = next.points - oldPoints;
     if (learnedAt == null && next.points >= kPracticePointsToLearn) {
       await markLearned(vocabId);
-      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday);
+      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday, delta: delta);
     }
-    return (promoted: false, learned: learnedAt != null, points: next.points, seenToday: next.seenToday);
+    return (promoted: false, learned: learnedAt != null, points: next.points, seenToday: next.seenToday, delta: delta);
   }
 
   /// Vocab ids from [ids] that have hit today's appearance cap.

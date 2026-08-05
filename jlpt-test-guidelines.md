@@ -62,7 +62,9 @@ codebase. N5 questions = `level = 5`.
 
 ## 3. Sections & question types
 
-Current N5 mix (115 total) — treat as the target ratio when scaling:
+Original N5 mix (the 115-item base, ×4'd to 465) — the reference ratio when
+scaling. N4 has since been scaled ×4 as well (132→529), keeping **N4's own**
+existing proportions (more reading, ~22%) rather than this exact ratio:
 
 | section | type | count | share |
 |---|---|---|---|
@@ -216,13 +218,17 @@ python3 tools/build_db.py                        # rebuild asset DB
 
 ---
 
-## 10. Open questions (need your input)
+## 10. Decisions & open questions
 
-- **Target size per level.** N5 is being 4×'d to ~460. Same for N1–N4 later, or
-  N5 only for now?
-- **Section ratio on scale-up.** Keep the current N5 mix (§3), or shift (e.g. more
-  reading passages)?
-- **Reading passage length cap** for N5 — how long is too long?
+Decisions made:
+- **Target size per level.** N5 4×'d → 465 (`_assetDbVersion` v9). N4 4×'d →
+  529 (v10). N1–N3 still at their original small banks.
+- **Section ratio on scale-up.** N4 kept **its own** existing proportions when
+  scaled (more reading, ~22%), not the N5 §3 ratio.
+
+Still open:
+- **N1–N3 scale-up** — same 4× treatment later?
+- **Reading passage length cap** — how long is too long per level?
 - Should `validate_questions.py` run in CI / as a pre-build gate?
 
 <!-- Add decisions here as we make them so the guidelines stay the single source. -->

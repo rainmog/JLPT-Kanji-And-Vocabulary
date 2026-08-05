@@ -13,6 +13,7 @@ import '../utils/spaced_shuffle.dart';
 import '../utils/vocab_answer_validator.dart';
 import 'session_summary_screen.dart';
 import '../widgets/ruby_text.dart';
+import '../widgets/practice_delta_badge.dart';
 
 // ── Private header widget ──────────────────────────────────────────────────────
 
@@ -105,6 +106,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
   // Practice-mode learning results, keyed by word id (latest wins).
   final Map<int, PracticeResult> _practiceResults = {};
   Future<void>? _lastRecord;
+  PracticeResult? _lastPractice; // points change for current answer's badge
 
   // Animation
   late AnimationController _promptCtrl;
@@ -189,9 +191,13 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
   void _recordPractice(bool correct) {
     if (ref.read(settingsProvider).learnedVia != 'practice') return;
     final id = _current.id;
+    _lastPractice = null;
     _lastRecord = vocabRepo
         .recordPracticeProgress(id, isCorrect: correct)
-        .then((r) => _practiceResults[id] = r);
+        .then((r) {
+      _practiceResults[id] = r;
+      if (mounted) setState(() => _lastPractice = r);
+    });
   }
 
   void _handleMcSelect(String option) {
@@ -243,7 +249,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
       final counts = await vocabRepo.getPracticeCountsForIds(ids);
       final seen = <int>{};
       final practiceCounts = <({String display, int count})>[];
-      final practiceProgress = <({String display, bool learned, int remaining})>[];
+      final practiceProgress = <({String display, bool learned, int percent})>[];
       for (final w in _queue) {
         if (seen.add(w.id)) {
           practiceCounts.add((display: w.word, count: counts[w.id] ?? 0));
@@ -252,13 +258,13 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
             practiceProgress.add((
               display: w.word,
               learned: r.learned,
-              remaining: (kPracticePointsToLearn - r.points).clamp(0, kPracticePointsToLearn),
+              percent: practicePointsPercent(r.points),
             ));
           }
         }
       }
       practiceCounts.sort((a, b) => b.count.compareTo(a.count));
-      practiceProgress.sort((a, b) => (a.learned ? 0 : a.remaining).compareTo(b.learned ? 0 : b.remaining));
+      practiceProgress.sort((a, b) => (b.learned ? 100 : b.percent).compareTo(a.learned ? 100 : a.percent));
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -277,6 +283,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
       _selectedOption = null;
       _showingFeedback = false;
       _lastCorrect = null;
+      _lastPractice = null;
       _controller.clear();
     });
     _promptCtrl.forward(from: 0);
@@ -448,6 +455,15 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
                   : _buildKeyboard(hintText),
             ),
           ]),
+          // Practice-mode progress delta badge (top-right, inconspicuous)
+          if (_showingFeedback && _lastCorrect != null && _lastPractice != null)
+            Positioned(
+              top: 60, right: 20,
+              child: PracticeDeltaBadge(
+                result: _lastPractice!,
+                color: _lastCorrect! ? Colors.green : Colors.red,
+              ),
+            ),
           // Early-advance overlay (no text)
           if (_showingFeedback)
             Positioned.fill(
