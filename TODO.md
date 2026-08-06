@@ -11,6 +11,9 @@
 
 # Completed
 
+- N4 JLPT question bank 4×: 132 → 529, keeping N4's own section mix; original + fairness-checked; N5 idx-41 fairness fix; asset DB v10 (progress-safe), pubspec 1.0.4+11 ✓ 2026-08-06
+- Practice progress shown as % (points/20) on the end screen; per-page `PracticeDeltaBadge` (+25%/+5%/−5% with running total) on kanji/vocab/kana study pages ✓ 2026-08-06
+- JLPT test result page midnight-theme readability fix (hardcoded white cards → `AppColors.surface`) ✓ 2026-08-06
 - Fonts: 5 English fonts added ✓ 2026-06-10
 - Background animations restored (snow, falling blocks, stars) ✓ 2026-06-10
 - Kana test page added to test hub ✓ 2026-06-10
