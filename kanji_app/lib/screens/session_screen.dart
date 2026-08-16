@@ -134,6 +134,8 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
     }
 
     final progress = quizController.progress;
+    final questionNumber = quizState.currentIndex + 1;
+    final questionTotal = quizState.session.questions.length;
     final learnedAsync = ref.watch(_learnedKanjiProvider);
     final learnedKanji = learnedAsync.asData?.value ?? const <String>{};
     final isKeyboard = _isKeyboardMode(question);
@@ -208,6 +210,12 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
                         style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700,
                           color: AppColors.accent)),
                     ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '$questionNumber / $questionTotal',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800,
+                        color: AppColors.muted),
+                    ),
                   ]),
                   const SizedBox(height: 8),
                   ClipRRect(
@@ -232,7 +240,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
             // Practice-mode progress delta badge (top-right, inconspicuous)
             if (_showingFeedback && _lastPractice != null)
               Positioned(
-                top: 70, right: 20,
+                top: 84, right: 20,
                 child: PracticeDeltaBadge(
                   result: _lastPractice!,
                   color: _lastAnswerCorrect == true ? AppColors.correct : AppColors.incorrect,

@@ -4,6 +4,7 @@ import '../models/quiz_models.dart';
 import '../utils/learning_constants.dart';
 import '../utils/spaced_shuffle.dart';
 import 'kanji_repository.dart';
+import 'progress_repository.dart';
 
 class SentenceToken {
   final String surface;
@@ -986,7 +987,6 @@ class SentenceRepository {
     required int count,
     required bool targetOnly,
     required bool reviewOnly,
-    bool orderByPracticeCount = false,
   }) async {
     final today = practiceDayKey();
     final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
@@ -998,58 +998,63 @@ class SentenceRepository {
       tagArgs.addAll(tags);
     }
 
-    final orderBy = orderByPracticeCount
-        ? 'ORDER BY COALESCE(p.practice_correct_count, 0) DESC'
-        : 'ORDER BY RANDOM()';
-
     // In practice (targetOnly), drop items that already hit today's appearance
-    // cap so they can't be shown a 5th time — this is what keeps an item from
-    // being learned in under 3 days.
-    final statusClause = targetOnly
+    // cap so they can't be shown again today. Since [markKanjiPracticed] stamps
+    // the cap once per *session* (not per question), the cap now means "up to N
+    // sessions/day" and a single multi-question session no longer exhausts it.
+    final primaryStatus = targetOnly
         ? "AND p.status = 'target' AND NOT (p.practice_day = ? AND p.practice_seen_today >= ?)"
         : reviewOnly
             ? "AND p.status = 'learned'"
             : "AND p.status != 'learned'";
-    final args = <dynamic>[
-      ...tagArgs,
-      ...jlptLevels,
-      if (targetOnly) ...[today, kPracticeDailyCap],
-      count,
-    ];
+    final capArgs = targetOnly ? <dynamic>[today, kPracticeDailyCap] : const <dynamic>[];
 
-    final rows = await db.query('''
-      SELECT DISTINCT k.id, k.character, k.jlpt_level, k.on_reading, k.kun_reading, k.meaning, k.stroke_count
-      FROM kanji k
-      JOIN user_progress p ON k.id = p.kanji_id
-      $tagJoin
-      WHERE k.jlpt_level IN ($levelPlaceholders)
-        $statusClause
-      $orderBy
-      LIMIT ?
-    ''', args);
-
-    var result = rows.map(Kanji.fromMap).toList();
-
-    // Cap top-up: if the practice pool ran short because items hit today's cap,
-    // fill the rest with already-learned kanji as review (they award no real
-    // progress since they're already learned) so the session keeps its length.
-    if (targetOnly && result.length < count) {
-      final have = result.map((k) => k.id).toList();
-      final notIn = have.isEmpty
+    // One pick pass: least-recently-practiced first (NULL = never → first),
+    // excluding [exclude], capped at [limit].
+    Future<List<Kanji>> pass(
+        String statusClause, List<dynamic> extra, List<int> exclude, int limit) async {
+      if (limit <= 0) return const [];
+      final notIn = exclude.isEmpty
           ? ''
-          : 'AND k.id NOT IN (${List.filled(have.length, '?').join(',')})';
-      final topRows = await db.query('''
-        SELECT DISTINCT k.id, k.character, k.jlpt_level, k.on_reading, k.kun_reading, k.meaning, k.stroke_count
+          : 'AND k.id NOT IN (${List.filled(exclude.length, '?').join(',')})';
+      final rows = await db.query('''
+        SELECT DISTINCT k.id, k.character, k.jlpt_level, k.on_reading, k.kun_reading,
+               k.meaning, k.stroke_count, p.last_practiced_at AS lpa
         FROM kanji k
         JOIN user_progress p ON k.id = p.kanji_id
         $tagJoin
         WHERE k.jlpt_level IN ($levelPlaceholders)
-          AND p.status = 'learned'
+          $statusClause
           $notIn
-        ORDER BY RANDOM()
+        ORDER BY COALESCE(p.last_practiced_at, 0) ASC, RANDOM()
         LIMIT ?
-      ''', [...tagArgs, ...jlptLevels, ...have, count - result.length]);
-      result = [...result, ...topRows.map(Kanji.fromMap)];
+      ''', [...tagArgs, ...jlptLevels, ...extra, ...exclude, limit]);
+      return rows.map(Kanji.fromMap).toList();
+    }
+
+    final result = <Kanji>[];
+    final picked = <int>{};
+    void take(List<Kanji> ks) {
+      for (final k in ks) {
+        if (picked.add(k.id)) result.add(k);
+      }
+    }
+
+    // Anti back-to-back repeat: exclude the immediately-previous session first,
+    // then relax (Stage 2) if the pool is too small to fill the session.
+    final lastSession = await progressRepo.lastKanjiSessionIds();
+
+    // Stage 1: primary pool, minus the last session → fresh rotation.
+    take(await pass(primaryStatus, capArgs, lastSession, count - result.length));
+    // Stage 2: primary pool, allowing last-session items to top up the count.
+    if (result.length < count) {
+      take(await pass(primaryStatus, capArgs, picked.toList(), count - result.length));
+    }
+    // Stage 3 (practice only): backfill with learned review so the session keeps
+    // its length even when every eligible target already hit today's cap. These
+    // award no real progress since they're already learned.
+    if (targetOnly && result.length < count) {
+      take(await pass("AND p.status = 'learned'", const [], picked.toList(), count - result.length));
     }
 
     return result;

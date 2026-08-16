@@ -55,6 +55,11 @@ class QuizController extends Notifier<QuizState> {
   final Map<int, PracticeResult> practiceResults = {};
   Future<void>? _lastPracticeRecord;
 
+  // Kanji whose daily appearance has already been counted this session. The
+  // first question of a kanji counts as one "appearance" (a session); later
+  // questions of the same kanji in this session must not re-bump the daily cap.
+  final Set<int> _appearanceCounted = {};
+
   /// Awaits the most recent practice-progress write (for summary screens).
   Future<void> flushPracticeRecords() => _lastPracticeRecord ?? Future.value();
 
@@ -89,6 +94,7 @@ class QuizController extends Notifier<QuizState> {
     List<int>? fixedKanjiIds,
   }) async {
     state = state.copyWith(loading: true, error: null);
+    _appearanceCounted.clear();
 
     try {
       List<QuizQuestion> questions = [];
@@ -127,6 +133,12 @@ class QuizController extends Notifier<QuizState> {
           kanjiIds: fixedKanjiIds,
         );
       }
+
+      // Stamp this session's kanji as practiced-now (once per session) so the
+      // next session rotates to least-recently-practiced items instead of
+      // repeating these. Fire-and-forget; ordering only, not correctness.
+      final sessionKanjiIds = questions.map((q) => q.kanjiId).toSet().toList();
+      progressRepo.markKanjiPracticed(sessionKanjiIds);
 
       state = state.copyWith(
         session: QuizSession(
@@ -169,8 +181,11 @@ class QuizController extends Notifier<QuizState> {
     // so `_lastPracticeRecord` is available to the UI immediately after submit.
     // Operates on `practice_points`; independent of the counters below.
     if (ref.read(settingsProvider).learnedVia == 'practice') {
+      // Count the daily appearance only on this kanji's first question in the
+      // session; repeats award points but must not re-bump the daily cap.
+      final countAppearance = _appearanceCounted.add(kanjiId);
       _lastPracticeRecord = progressRepo
-          .recordPracticeProgress(kanjiId, isCorrect: isCorrect)
+          .recordPracticeProgress(kanjiId, isCorrect: isCorrect, countAppearance: countAppearance)
           .then((r) => practiceResults[kanjiId] = r);
     }
     if (isCorrect) {

@@ -86,6 +86,52 @@ void main() {
     });
   });
 
+  group('countAppearance gates the daily cap (session-, not question-scoped)', () {
+    const today = '2026-01-01';
+
+    test('repeat questions of the same item in a session do not bump seenToday', () {
+      // First question of the item this session → counts one appearance.
+      final first = applyPracticeAnswer(
+        points: 0, day: null, seenToday: 0, correctToday: 0,
+        today: today, isCorrect: true, // countAppearance defaults true
+      );
+      expect(first.seenToday, 1);
+      expect(first.points, kPracticeFirstCorrectPoints);
+
+      // Later questions of the SAME item in the SAME session: points still
+      // accrue, but the appearance (cap) counter must stay put.
+      var seen = first.seenToday;
+      var correct = first.correctToday;
+      var points = first.points;
+      for (var i = 0; i < 3; i++) {
+        final r = applyPracticeAnswer(
+          points: points, day: today, seenToday: seen, correctToday: correct,
+          today: today, isCorrect: true, countAppearance: false,
+        );
+        seen = r.seenToday;
+        correct = r.correctToday;
+        points = r.points;
+      }
+      // A 4-question compound session touched the item once for the cap…
+      expect(seen, 1);
+      // …but still banked first(+5) + 3×repeat(+1) = 8 points.
+      expect(points, kPracticeFirstCorrectPoints + 3 * kPracticeRepeatCorrectPoints);
+    });
+
+    test('one such session leaves room for 3 more sessions today (cap = 4)', () {
+      // Each session contributes exactly one appearance for the item.
+      var seen = 0;
+      for (var s = 0; s < kPracticeDailyCap; s++) {
+        final r = applyPracticeAnswer(
+          points: 0, day: today, seenToday: seen, correctToday: 0,
+          today: today, isCorrect: true, countAppearance: true,
+        );
+        seen = r.seenToday;
+      }
+      expect(seen, kPracticeDailyCap); // 4 sessions → exactly at the cap
+    });
+  });
+
   group('retention guarantee', () {
     test('all-correct at full daily cap takes a minimum of 3 days', () {
       expect(daysToLearn(perDay: kPracticeDailyCap), 3);

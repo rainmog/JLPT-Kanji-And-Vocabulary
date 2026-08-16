@@ -479,7 +479,7 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
           // Practice-mode progress delta badge (top-right, inconspicuous)
           if (_showingFeedback && _lastCorrect != null && _lastPractice != null)
             Positioned(
-              top: 60, right: 20,
+              top: 84, right: 20,
               child: PracticeDeltaBadge(
                 result: _lastPractice!,
                 color: _lastCorrect! ? AppColors.correct : AppColors.incorrect,

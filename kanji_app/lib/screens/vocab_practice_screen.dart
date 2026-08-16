@@ -14,55 +14,7 @@ import '../utils/vocab_answer_validator.dart';
 import 'session_summary_screen.dart';
 import '../widgets/ruby_text.dart';
 import '../widgets/practice_delta_badge.dart';
-
-// ── Private header widget ──────────────────────────────────────────────────────
-
-class _QuizHeader extends StatelessWidget {
-  final int current;
-  final int total;
-  final VoidCallback onBack;
-
-  const _QuizHeader({
-    required this.current,
-    required this.total,
-    required this.onBack,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = current / total.clamp(1, total);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 16, 4),
-          child: Row(children: [
-            IconButton(
-              icon: Icon(Icons.arrow_back, color: AppColors.fg),
-              onPressed: onBack,
-              splashRadius: 22,
-            ),
-            const Spacer(),
-            Text(
-              '$current / $total',
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.muted,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ]),
-        ),
-        LinearProgressIndicator(
-          value: progress,
-          backgroundColor: AppColors.pillBg,
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
-          minHeight: 3,
-        ),
-      ],
-    );
-  }
-}
+import '../widgets/quiz_header.dart';
 
 // ── Main screen ────────────────────────────────────────────────────────────────
 
@@ -378,10 +330,11 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
       body: SafeArea(
         child: Stack(children: [
           Column(children: [
-            _QuizHeader(
+            QuizHeader(
+              progress: '${_currentIndex + 1} / ${_queue.length}',
+              onBack: () => Navigator.pop(context),
               current: _currentIndex + 1,
               total: _queue.length,
-              onBack: () => Navigator.pop(context),
             ),
             const SizedBox(height: 4),
             // Prompt area
@@ -458,7 +411,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
           // Practice-mode progress delta badge (top-right, inconspicuous)
           if (_showingFeedback && _lastCorrect != null && _lastPractice != null)
             Positioned(
-              top: 60, right: 20,
+              top: 84, right: 20,
               child: PracticeDeltaBadge(
                 result: _lastPractice!,
                 color: _lastCorrect! ? Colors.green : Colors.red,

@@ -364,13 +364,18 @@ class VocabRepository {
     return result;
   }
 
-  /// Returns vocab words whose `word` field contains any of the given kanji characters.
+  /// Returns vocab words whose `word` field contains any of the given kanji
+  /// characters. Excludes words tagged `usually_kana` (loanwords like タバコ /
+  /// アメリカ) so speed reading matches the other kanji practice sessions.
   Future<List<VocabWord>> getVocabContainingKanji(Set<String> chars) async {
     if (chars.isEmpty) return [];
     final conditions = chars.map((_) => 'word LIKE ?').join(' OR ');
     final args = chars.map((c) => '%$c%').toList();
     final rows = await dbService.query(
-      'SELECT * FROM vocabulary WHERE $conditions ORDER BY jlpt_level DESC, id ASC',
+      'SELECT * FROM vocabulary '
+      'WHERE ($conditions) '
+      "AND id NOT IN (SELECT vocab_id FROM vocabulary_tags WHERE tag = 'usually_kana') "
+      'ORDER BY jlpt_level DESC, id ASC',
       args,
     );
     return rows.map(VocabWord.fromMap).toList();

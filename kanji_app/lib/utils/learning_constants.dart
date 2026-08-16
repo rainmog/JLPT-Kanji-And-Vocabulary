@@ -50,6 +50,14 @@ String practiceDayKey([DateTime? now]) {
 /// Pure points math for one practice answer, shared by every progress repo.
 /// Callers pass the item's stored counters plus [today]; the result is written
 /// back verbatim (points, seenToday, correctToday) along with `practice_day`.
+///
+/// [countAppearance] gates the per-day appearance counter (`seenToday`). It
+/// must be `true` on the FIRST question of an item within a session and `false`
+/// on any repeat questions of that same item in the same session. This makes
+/// `seenToday` count *sessions* rather than *questions*, so multi-question
+/// modes (kanji compounds/sentences produce several questions per kanji) no
+/// longer exhaust the daily appearance cap in a single session. Points still
+/// accrue on every answer, so `countAppearance` never affects `points`.
 ({int points, int seenToday, int correctToday, bool firstCorrectOfDay})
     applyPracticeAnswer({
   required int points,
@@ -58,6 +66,7 @@ String practiceDayKey([DateTime? now]) {
   required int correctToday,
   required String today,
   required bool isCorrect,
+  bool countAppearance = true,
 }) {
   // New day → reset the per-day counters (points persist across days).
   if (day != today) {
@@ -73,7 +82,7 @@ String practiceDayKey([DateTime? now]) {
   } else {
     delta = -kPracticeWrongPenalty;
   }
-  seenToday += 1;
+  if (countAppearance) seenToday += 1;
   final newPoints = (points + delta).clamp(0, kPracticePointsToLearn);
   return (
     points: newPoints,

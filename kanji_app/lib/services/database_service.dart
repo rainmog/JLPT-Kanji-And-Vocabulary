@@ -180,6 +180,11 @@ class DatabaseService {
       'ALTER TABLE kana_progress ADD COLUMN practice_day TEXT',
       'ALTER TABLE kana_progress ADD COLUMN practice_seen_today INTEGER NOT NULL DEFAULT 0',
       'ALTER TABLE kana_progress ADD COLUMN practice_correct_today INTEGER NOT NULL DEFAULT 0',
+      // Least-recently-practiced rotation: stamped once per session at start so
+      // items don't recur in back-to-back sessions. NULL = never practiced.
+      'ALTER TABLE user_progress ADD COLUMN last_practiced_at INTEGER',
+      'ALTER TABLE vocabulary_progress ADD COLUMN last_practiced_at INTEGER',
+      'ALTER TABLE kana_progress ADD COLUMN last_practiced_at INTEGER',
     ]) {
       try {
         await db.execute(migration);

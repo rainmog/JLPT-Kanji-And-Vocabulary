@@ -33,6 +33,18 @@ class ProgressRepository {
     ''', [kanjiId]);
   }
 
+  /// Stamp [ids] as practiced *now* (once per session, at session start). Drives
+  /// least-recently-practiced rotation in [SentenceRepository.pickKanjiForSession]
+  /// so the same items don't recur in back-to-back sessions.
+  Future<void> markKanjiPracticed(List<int> ids) async {
+    if (ids.isEmpty) return;
+    final placeholders = List.filled(ids.length, '?').join(',');
+    await dbService.execute(
+      'UPDATE user_progress SET last_practiced_at = ? WHERE kanji_id IN ($placeholders)',
+      [DateTime.now().millisecondsSinceEpoch, ...ids],
+    );
+  }
+
   /// Bulk-target all unlearned kanji in [ids]. Learned kanji are untouched.
   Future<void> markAllTarget(List<int> ids) async {
     if (ids.isEmpty) return;
@@ -118,7 +130,8 @@ class ProgressRepository {
   /// points delta (first correct of day +5, repeats +1, wrong −1 floored 0),
   /// tracks per-day appearance counters, and promotes to 'learned' at
   /// [kPracticePointsToLearn]. See [applyPracticeAnswer].
-  Future<PracticeResult> recordPracticeProgress(int kanjiId, {required bool isCorrect}) async {
+  Future<PracticeResult> recordPracticeProgress(int kanjiId,
+      {required bool isCorrect, bool countAppearance = true}) async {
     final today = practiceDayKey();
     // Ensure a row exists so the read-modify-write below has something to update.
     await dbService.execute('''
@@ -138,6 +151,7 @@ class ProgressRepository {
       correctToday: rows.first['practice_correct_today'] as int? ?? 0,
       today: today,
       isCorrect: isCorrect,
+      countAppearance: countAppearance,
     );
     await dbService.execute('''
       UPDATE user_progress
@@ -181,6 +195,20 @@ class ProgressRepository {
       [midnight],
     );
     return rows.first['cnt'] as int? ?? 0;
+  }
+
+  /// Kanji ids of the most recent kanji-practice session (any kanji mode).
+  /// Used to keep those items out of the very next session (anti back-to-back
+  /// repeat). Empty on the first session ever.
+  Future<List<int>> lastKanjiSessionIds() async {
+    final rows = await dbService.query(
+      "SELECT kanji_ids FROM session_log "
+      "WHERE mode IN ('sentence','word','wordpractice') AND kanji_ids != '' "
+      "ORDER BY timestamp DESC LIMIT 1",
+    );
+    if (rows.isEmpty) return const [];
+    final csv = rows.first['kanji_ids'] as String? ?? '';
+    return csv.split(',').where((s) => s.isNotEmpty).map(int.parse).toList();
   }
 
   Future<void> logSession({

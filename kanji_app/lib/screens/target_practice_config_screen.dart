@@ -73,7 +73,6 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
       count: kanjiCount,
       targetOnly: true,
       reviewOnly: false,
-      orderByPracticeCount: true,
     );
 
     if (!mounted) return;
