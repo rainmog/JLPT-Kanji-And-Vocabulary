@@ -11,10 +11,10 @@ void main() {
       expect(j['ambientVolume'], 0.5);
     });
 
-    test('fromJson defaults animationsEnabled true, ambientVolume 1.0', () {
+    test('fromJson defaults animationsEnabled true, ambientVolume 0.5', () {
       final s = AppSettings.fromJson({});
       expect(s.animationsEnabled, true);
-      expect(s.ambientVolume, 1.0);
+      expect(s.ambientVolume, 0.5);
     });
 
     test('fromJson roundtrips animationsEnabled false', () {
