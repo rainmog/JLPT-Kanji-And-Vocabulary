@@ -11,6 +11,11 @@
 
 # Completed
 
+- Quiz header consistency: kanji session shows `X / Y` count top-right (kept "I know this"); vocab practice switched to shared `QuizHeader` to match vocab-test format; `+%` practice delta badge moved down (top 84) so it clears the progress bar on kanji/kana/vocab ✓ 2026-09-05
+- Speed reading (kanji) now excludes `usually_kana` loanwords (煙草/タバコ, etc.), matching the other kanji practice sessions ✓ 2026-09-05
+- Session rotation: daily appearance counted once per kanji per session (repeats award points but don't re-bump the daily cap); session kanji stamped practiced-now + last-session exclusion so back-to-back sessions rotate to least-recently-practiced items ✓ 2026-09-05
+- Test fixes: `settings_service_test` ambientVolume default 0.5 (was stale 1.0); `widget_test` smoke test no longer leaks the splash timer (seed empty prefs, pump past 2400ms splash, no pumpAndSettle) ✓ 2026-09-05
+- pubspec 1.0.4+12 (asset DB rotation) ✓ 2026-09-05
 - N4 JLPT question bank 4×: 132 → 529, keeping N4's own section mix; original + fairness-checked; N5 idx-41 fairness fix; asset DB v10 (progress-safe), pubspec 1.0.4+11 ✓ 2026-08-06
 - Practice progress shown as % (points/20) on the end screen; per-page `PracticeDeltaBadge` (+25%/+5%/−5% with running total) on kanji/vocab/kana study pages ✓ 2026-08-06
 - JLPT test result page midnight-theme readability fix (hardcoded white cards → `AppColors.surface`) ✓ 2026-08-06
