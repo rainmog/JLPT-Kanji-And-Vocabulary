@@ -5,6 +5,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../utils/learning_constants.dart';
+
 class DatabaseService {
   // Bump when shipping a new kanji.db asset (e.g. new JLPT questions added).
   // Users get the new content; all user-state tables (below) are preserved
@@ -112,6 +114,7 @@ class DatabaseService {
 
     final db = await openDatabase(path);
     await _runMigrations(db);
+    await runSrsBackfill(db);
     await prefs.setInt(_prefDbVersion, _assetDbVersion);
     return db;
   }
@@ -185,11 +188,62 @@ class DatabaseService {
       'ALTER TABLE user_progress ADD COLUMN last_practiced_at INTEGER',
       'ALTER TABLE vocabulary_progress ADD COLUMN last_practiced_at INTEGER',
       'ALTER TABLE kana_progress ADD COLUMN last_practiced_at INTEGER',
+      // Leitner SRS scheduler columns.
+      'ALTER TABLE user_progress ADD COLUMN srs_box INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE user_progress ADD COLUMN srs_due TEXT',
+      'ALTER TABLE user_progress ADD COLUMN srs_last_review TEXT',
+      'ALTER TABLE vocabulary_progress ADD COLUMN srs_box INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE vocabulary_progress ADD COLUMN srs_due TEXT',
+      'ALTER TABLE vocabulary_progress ADD COLUMN srs_last_review TEXT',
+      'ALTER TABLE kana_progress ADD COLUMN srs_box INTEGER NOT NULL DEFAULT 0',
+      'ALTER TABLE kana_progress ADD COLUMN srs_due TEXT',
+      'ALTER TABLE kana_progress ADD COLUMN srs_last_review TEXT',
     ]) {
       try {
         await db.execute(migration);
       } catch (_) {}
     }
+  }
+
+  /// One-time reset of in-rotation items into Leitner box 1 with staggered
+  /// due dates. Learned items are left at box 0 (excluded). Gated by a prefs
+  /// flag so it runs exactly once.
+  Future<void> runSrsBackfill(Database db) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('srs_backfill_v1_done') ?? false) return;
+    final today = practiceDayKey();
+    await backfillKanjiForTest(db, today);
+    await backfillVocabForTest(db, today);
+    await backfillKanaForTest(db, today);
+    await prefs.setBool('srs_backfill_v1_done', true);
+  }
+
+  // Stagger due across 5 days using (id % 5). SQLite date() arithmetic:
+  //   date(?, '+' || (id % 5) || ' days')
+  Future<void> backfillVocabForTest(Database db, String today) async {
+    await db.execute('''
+      UPDATE vocabulary_progress
+      SET srs_box = 1,
+          srs_due = date(?, '+' || (vocab_id % 5) || ' days')
+      WHERE learned_at IS NULL
+        AND vocab_id IN (SELECT vocab_id FROM vocabulary_targets)
+    ''', [today]);
+  }
+
+  Future<void> backfillKanjiForTest(Database db, String today) async {
+    await db.execute('''
+      UPDATE user_progress
+      SET srs_box = 1, srs_due = date(?, '+' || (kanji_id % 5) || ' days')
+      WHERE status = 'target'
+    ''', [today]);
+  }
+
+  Future<void> backfillKanaForTest(Database db, String today) async {
+    await db.execute('''
+      UPDATE kana_progress
+      SET srs_box = 1, srs_due = date(?, '+' || (kana_id % 5) || ' days')
+      WHERE status = 'target'
+    ''', [today]);
   }
 
   Future<List<Map<String, dynamic>>> query(
