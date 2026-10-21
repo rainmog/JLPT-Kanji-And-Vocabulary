@@ -223,42 +223,6 @@ class VocabRepository {
     return {for (final r in rows) r['vocab_id'] as int: r['cnt'] as int};
   }
 
-  /// Practice-mode learning (spaced, points-based). See [applyPracticeAnswer]:
-  /// first correct of day +5, repeats +1, wrong −1 (floored 0); promotes to
-  /// learned at [kPracticePointsToLearn].
-  Future<PracticeResult> recordPracticeProgress(int vocabId, {required bool isCorrect}) async {
-    final today = practiceDayKey();
-    await dbService.execute('''
-      INSERT INTO vocabulary_progress (vocab_id) VALUES (?)
-      ON CONFLICT(vocab_id) DO NOTHING
-    ''', [vocabId]);
-    final rows = await dbService.query(
-      'SELECT learned_at, practice_points, practice_day, practice_seen_today, practice_correct_today '
-      'FROM vocabulary_progress WHERE vocab_id=?', [vocabId]);
-    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0, delta: 0);
-    final learnedAt = rows.first['learned_at'];
-    final oldPoints = rows.first['practice_points'] as int? ?? 0;
-    final next = applyPracticeAnswer(
-      points: oldPoints,
-      day: rows.first['practice_day'] as String?,
-      seenToday: rows.first['practice_seen_today'] as int? ?? 0,
-      correctToday: rows.first['practice_correct_today'] as int? ?? 0,
-      today: today,
-      isCorrect: isCorrect,
-    );
-    await dbService.execute('''
-      UPDATE vocabulary_progress
-      SET practice_points = ?, practice_day = ?, practice_seen_today = ?, practice_correct_today = ?
-      WHERE vocab_id = ?
-    ''', [next.points, today, next.seenToday, next.correctToday, vocabId]);
-    final delta = next.points - oldPoints;
-    if (learnedAt == null && next.points >= kPracticePointsToLearn) {
-      await markLearned(vocabId);
-      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday, delta: delta);
-    }
-    return (promoted: false, learned: learnedAt != null, points: next.points, seenToday: next.seenToday, delta: delta);
-  }
-
   /// Leitner SRS review recording (vocab practice track). Advances/resets the
   /// item's box per [applySrsReview] and persists the new box/due. Only the
   /// first review of a day changes the schedule (same-day repeats are
@@ -310,32 +274,6 @@ class VocabRepository {
       ORDER BY p.srs_due ASC, v.id ASC LIMIT ?
     ''', [today, sessionLen]);
     return rows.map(VocabWord.fromMap).toList();
-  }
-
-  /// Vocab ids from [ids] that have hit today's appearance cap.
-  Future<Set<int>> getCappedIds(List<int> ids) async {
-    if (ids.isEmpty) return {};
-    final today = practiceDayKey();
-    final placeholders = List.filled(ids.length, '?').join(',');
-    final rows = await dbService.query(
-      'SELECT vocab_id FROM vocabulary_progress '
-      'WHERE vocab_id IN ($placeholders) AND learned_at IS NULL '
-      'AND practice_day = ? AND practice_seen_today >= ?',
-      [...ids, today, kPracticeDailyCap]);
-    return rows.map((r) => r['vocab_id'] as int).toSet();
-  }
-
-  /// Random already-learned words, for topping up a practice session as review
-  /// when target words get capped out. [exclude] skips ids already in the pool.
-  Future<List<VocabWord>> getLearnedVocab({int? limit, Set<int> exclude = const {}}) async {
-    final rows = await dbService.query('''
-      SELECT v.* FROM vocabulary v
-      JOIN vocabulary_progress vp ON v.id = vp.vocab_id
-      WHERE vp.learned_at IS NOT NULL
-      ORDER BY RANDOM()''');
-    var words = rows.map(VocabWord.fromMap).where((w) => !exclude.contains(w.id)).toList();
-    if (limit != null && words.length > limit) words = words.sublist(0, limit);
-    return words;
   }
 
   Future<Map<int, ({int learned, int total})>> getProgressByLevel() async {

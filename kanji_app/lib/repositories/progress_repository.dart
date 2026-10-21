@@ -127,46 +127,6 @@ class ProgressRepository {
     ''', [kanjiId]);
   }
 
-  /// Practice-mode learning (spaced, points-based). Applies the daily-scaled
-  /// points delta (first correct of day +5, repeats +1, wrong −1 floored 0),
-  /// tracks per-day appearance counters, and promotes to 'learned' at
-  /// [kPracticePointsToLearn]. See [applyPracticeAnswer].
-  Future<PracticeResult> recordPracticeProgress(int kanjiId,
-      {required bool isCorrect, bool countAppearance = true}) async {
-    final today = practiceDayKey();
-    // Ensure a row exists so the read-modify-write below has something to update.
-    await dbService.execute('''
-      INSERT INTO user_progress (kanji_id, status) VALUES (?, 'target')
-      ON CONFLICT(kanji_id) DO NOTHING
-    ''', [kanjiId]);
-    final rows = await dbService.query(
-      'SELECT status, practice_points, practice_day, practice_seen_today, practice_correct_today '
-      'FROM user_progress WHERE kanji_id=?', [kanjiId]);
-    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0, delta: 0);
-    final status = rows.first['status'] as String?;
-    final oldPoints = rows.first['practice_points'] as int? ?? 0;
-    final next = applyPracticeAnswer(
-      points: oldPoints,
-      day: rows.first['practice_day'] as String?,
-      seenToday: rows.first['practice_seen_today'] as int? ?? 0,
-      correctToday: rows.first['practice_correct_today'] as int? ?? 0,
-      today: today,
-      isCorrect: isCorrect,
-      countAppearance: countAppearance,
-    );
-    await dbService.execute('''
-      UPDATE user_progress
-      SET practice_points = ?, practice_day = ?, practice_seen_today = ?, practice_correct_today = ?
-      WHERE kanji_id = ?
-    ''', [next.points, today, next.seenToday, next.correctToday, kanjiId]);
-    final delta = next.points - oldPoints;
-    if (status != 'learned' && next.points >= kPracticePointsToLearn) {
-      await markLearned(kanjiId);
-      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday, delta: delta);
-    }
-    return (promoted: false, learned: status == 'learned', points: next.points, seenToday: next.seenToday, delta: delta);
-  }
-
   /// Leitner SRS review recording (kanji practice track). Advances/resets the
   /// item's box per [applySrsReview] and persists the new box/due. Only the
   /// first review of a day changes the schedule (same-day repeats are

@@ -6,7 +6,6 @@ import '../services/settings_service.dart';
 import '../theme.dart';
 import '../theme_provider.dart';
 import '../utils/app_route.dart';
-import '../utils/learning_constants.dart';
 import '../widgets/k_setup.dart';
 import 'main_shell.dart';
 
@@ -170,7 +169,7 @@ class _OnboardingAutoProgressionScreenState
     );
   }
 
-  /// Explains the spaced points system used by practice-mode learning.
+  /// Explains the Leitner box model used by practice-mode learning.
   Widget _practicePointsCard() {
     return Container(
       width: double.infinity,
@@ -189,15 +188,13 @@ class _OnboardingAutoProgressionScreenState
           )),
         ]),
         const SizedBox(height: 14),
-        _pointRow('+5', 'The first correct answer each day is worth the most.'),
-        _pointRow('+1', 'Every extra correct answer that same day.'),
-        _pointRow('−1', 'A wrong answer, never below zero.'),
-        _pointRow('$kPracticePointsToLearn', 'Points needed before an item is learned.'),
+        _pointRow('✓', 'A correct answer moves an item up a box — you won’t see it again for longer.'),
+        _pointRow('✗', 'A wrong answer sends it back to the first box to review again soon.'),
+        _pointRow('5', 'Clear all five boxes (spaced 1, 2, 4, 9 then 21 days apart) and the item is learned.'),
         const SizedBox(height: 4),
         Text(
-          'An item can appear up to $kPracticeDailyCap times a day, so it takes at least '
-          '3 days to learn — short daily reviews stick far better than cramming. '
-          'Once you run out of new items for the day, learned ones come back for review.',
+          'Reviews that are due come first, and a few new items are added each day. '
+          'Short daily reviews spaced out over time stick far better than cramming.',
           style: TextStyle(fontSize: 13, color: AppColors.muted, height: 1.55),
         ),
       ]),

@@ -224,55 +224,6 @@ class KanaRepository {
     return {for (final r in rows) r['kana_id'] as int: r['cnt'] as int};
   }
 
-  /// Practice-mode learning (spaced, points-based). See [applyPracticeAnswer]:
-  /// first correct of day +5, repeats +1, wrong −1 (floored 0); promotes to
-  /// learned at [kPracticePointsToLearn].
-  Future<PracticeResult> recordPracticeProgress(int kanaId, {required bool isCorrect}) async {
-    final today = practiceDayKey();
-    await dbService.execute('''
-      INSERT INTO kana_progress (kana_id, status) VALUES (?, 'target')
-      ON CONFLICT(kana_id) DO NOTHING
-    ''', [kanaId]);
-    final rows = await dbService.query(
-      'SELECT status, practice_points, practice_day, practice_seen_today, practice_correct_today '
-      'FROM kana_progress WHERE kana_id=?', [kanaId]);
-    if (rows.isEmpty) return (promoted: false, learned: false, points: 0, seenToday: 0, delta: 0);
-    final status = rows.first['status'] as String?;
-    final oldPoints = rows.first['practice_points'] as int? ?? 0;
-    final next = applyPracticeAnswer(
-      points: oldPoints,
-      day: rows.first['practice_day'] as String?,
-      seenToday: rows.first['practice_seen_today'] as int? ?? 0,
-      correctToday: rows.first['practice_correct_today'] as int? ?? 0,
-      today: today,
-      isCorrect: isCorrect,
-    );
-    await dbService.execute('''
-      UPDATE kana_progress
-      SET practice_points = ?, practice_day = ?, practice_seen_today = ?, practice_correct_today = ?
-      WHERE kana_id = ?
-    ''', [next.points, today, next.seenToday, next.correctToday, kanaId]);
-    final delta = next.points - oldPoints;
-    if (status != 'learned' && next.points >= kPracticePointsToLearn) {
-      await setStatus(kanaId, 'learned');
-      return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday, delta: delta);
-    }
-    return (promoted: false, learned: status == 'learned', points: next.points, seenToday: next.seenToday, delta: delta);
-  }
-
-  /// Kana ids from [ids] that have hit today's appearance cap.
-  Future<Set<int>> getCappedIds(List<int> ids) async {
-    if (ids.isEmpty) return {};
-    final today = practiceDayKey();
-    final placeholders = List.filled(ids.length, '?').join(',');
-    final rows = await dbService.query(
-      'SELECT kana_id FROM kana_progress '
-      "WHERE kana_id IN ($placeholders) AND status != 'learned' "
-      'AND practice_day = ? AND practice_seen_today >= ?',
-      [...ids, today, kPracticeDailyCap]);
-    return rows.map((r) => r['kana_id'] as int).toSet();
-  }
-
   /// Leitner SRS review recording (kana practice track). Advances/resets the
   /// item's box per [applySrsReview] and persists the new box/due. Only the
   /// first review of a day changes the schedule (same-day repeats are
