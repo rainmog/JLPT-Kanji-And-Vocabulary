@@ -11,7 +11,7 @@ import '../repositories/progress_repository.dart';
 import '../services/settings_service.dart';
 import '../services/sound_service.dart';
 import '../utils/app_route.dart';
-import '../utils/learning_constants.dart';
+import '../utils/srs_scheduler.dart';
 import '../widgets/practice_delta_badge.dart';
 
 final _learnedKanjiProvider = FutureProvider.autoDispose<Set<String>>((ref) {
@@ -58,7 +58,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
   bool _showingFeedback = false;
   bool? _lastAnswerCorrect;
   String _lastCorrectAnswer = '';
-  PracticeResult? _lastPractice; // practice-mode points change for current answer
+  SrsReviewResult? _lastPractice; // practice-mode SRS box result for current answer
   Timer? _autoNextTimer;
 
   @override
@@ -241,8 +241,8 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
             if (_showingFeedback && _lastPractice != null)
               Positioned(
                 top: 84, right: 20,
-                child: PracticeDeltaBadge(
-                  result: _lastPractice!,
+                child: PracticeDeltaBadge.box(
+                  box: _lastPractice!.box,
                   color: _lastAnswerCorrect == true ? AppColors.correct : AppColors.incorrect,
                 ),
               ),
@@ -790,7 +790,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
         practiceProgress.add((
           display: q.character,
           learned: r.learned,
-          percent: practicePointsPercent(r.points),
+          percent: (r.box / kSrsBoxCount * 100).round(),
         ));
       }
       practiceProgress.sort((a, b) => (b.learned ? 100 : b.percent).compareTo(a.learned ? 100 : a.percent));

@@ -1,5 +1,6 @@
 import '../services/database_service.dart';
 import '../utils/learning_constants.dart';
+import '../utils/srs_scheduler.dart';
 
 class ProgressRepository {
   Future<Map<String, dynamic>?> getProgress(int kanjiId) async {
@@ -164,6 +165,50 @@ class ProgressRepository {
       return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday, delta: delta);
     }
     return (promoted: false, learned: status == 'learned', points: next.points, seenToday: next.seenToday, delta: delta);
+  }
+
+  /// Leitner SRS review recording (kanji practice track). Advances/resets the
+  /// item's box per [applySrsReview] and persists the new box/due. Only the
+  /// first review of a day changes the schedule (same-day repeats are
+  /// practice-only). A correct answer in the top box graduates the item to
+  /// 'learned'. Returns the post-review [SrsReviewResult].
+  Future<SrsReviewResult> recordSrsReview(int kanjiId,
+      {required bool isCorrect}) async {
+    final today = practiceDayKey();
+    await dbService.execute(
+      "INSERT INTO user_progress (kanji_id, status) VALUES (?, 'target') "
+      "ON CONFLICT(kanji_id) DO NOTHING",
+      [kanjiId],
+    );
+    final rows = await dbService.query(
+      'SELECT status, srs_box, srs_last_review FROM user_progress WHERE kanji_id=?',
+      [kanjiId],
+    );
+    if (rows.isEmpty) return (box: 0, learned: false, graduated: false);
+    final status = rows.first['status'] as String?;
+    final box = rows.first['srs_box'] as int? ?? 0;
+    final u = applySrsReview(
+      box: box,
+      lastReview: rows.first['srs_last_review'] as String?,
+      today: today,
+      isCorrect: isCorrect,
+    );
+    if (!u.changed) {
+      return (box: box, learned: status == 'learned', graduated: false);
+    }
+    if (u.learned) {
+      await markLearned(kanjiId); // existing method: sets status='learned'
+      await dbService.execute(
+        'UPDATE user_progress SET srs_box=?, srs_last_review=? WHERE kanji_id=?',
+        [kSrsBoxCount, today, kanjiId],
+      );
+      return (box: kSrsBoxCount, learned: true, graduated: true);
+    }
+    await dbService.execute(
+      'UPDATE user_progress SET srs_box=?, srs_due=?, srs_last_review=? WHERE kanji_id=?',
+      [u.box, u.due, today, kanjiId],
+    );
+    return (box: u.box, learned: false, graduated: false);
   }
 
   // Kanji practice cap-exclusion + learned top-up are handled directly in

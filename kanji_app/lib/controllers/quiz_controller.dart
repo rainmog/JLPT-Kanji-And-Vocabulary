@@ -5,7 +5,7 @@ import '../repositories/kanji_repository.dart';
 import '../repositories/progress_repository.dart';
 import '../services/database_service.dart' show DatabaseService, dbService;
 import '../services/settings_service.dart';
-import '../utils/learning_constants.dart';
+import '../utils/srs_scheduler.dart';
 
 /// Riverpod provider for DatabaseService singleton
 final databaseServiceProvider = Provider<DatabaseService>((ref) {
@@ -51,14 +51,9 @@ class QuizController extends Notifier<QuizState> {
   late DatabaseService _dbService;
   late SentenceRepository _sentenceRepo;
 
-  // Practice-mode learning results keyed by kanji id (latest wins).
-  final Map<int, PracticeResult> practiceResults = {};
+  // Practice-mode SRS review results keyed by kanji id (latest wins).
+  final Map<int, SrsReviewResult> practiceResults = {};
   Future<void>? _lastPracticeRecord;
-
-  // Kanji whose daily appearance has already been counted this session. The
-  // first question of a kanji counts as one "appearance" (a session); later
-  // questions of the same kanji in this session must not re-bump the daily cap.
-  final Set<int> _appearanceCounted = {};
 
   /// Awaits the most recent practice-progress write (for summary screens).
   Future<void> flushPracticeRecords() => _lastPracticeRecord ?? Future.value();
@@ -94,7 +89,6 @@ class QuizController extends Notifier<QuizState> {
     List<int>? fixedKanjiIds,
   }) async {
     state = state.copyWith(loading: true, error: null);
-    _appearanceCounted.clear();
 
     try {
       List<QuizQuestion> questions = [];
@@ -179,13 +173,11 @@ class QuizController extends Notifier<QuizState> {
   Future<void> _persistAnswer(int kanjiId, bool isCorrect) async {
     // Practice-mode learning: kicked off first (synchronously, before any await)
     // so `_lastPracticeRecord` is available to the UI immediately after submit.
-    // Operates on `practice_points`; independent of the counters below.
+    // Drives the Leitner SRS schedule; the same-day guard lives inside
+    // applySrsReview, so repeats never double-advance the box.
     if (ref.read(settingsProvider).learnedVia == 'practice') {
-      // Count the daily appearance only on this kanji's first question in the
-      // session; repeats award points but must not re-bump the daily cap.
-      final countAppearance = _appearanceCounted.add(kanjiId);
       _lastPracticeRecord = progressRepo
-          .recordPracticeProgress(kanjiId, isCorrect: isCorrect, countAppearance: countAppearance)
+          .recordSrsReview(kanjiId, isCorrect: isCorrect)
           .then((r) => practiceResults[kanjiId] = r);
     }
     if (isCorrect) {

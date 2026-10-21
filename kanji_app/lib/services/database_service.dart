@@ -246,6 +246,13 @@ class DatabaseService {
     ''', [today]);
   }
 
+  /// Test-only: route all [query]/[execute]/[insert] calls at an already-open
+  /// database (e.g. an in-memory ffi db built with the SRS schema), bypassing
+  /// the asset-bundle init path. Mirrors the `*ForTest` helpers above.
+  void setTestDatabase(Database db) {
+    _initFuture = Future.value(db);
+  }
+
   Future<List<Map<String, dynamic>>> query(
     String sql, [List<dynamic>? args]
   ) async {

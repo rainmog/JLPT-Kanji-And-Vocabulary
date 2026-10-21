@@ -998,19 +998,27 @@ class SentenceRepository {
       tagArgs.addAll(tags);
     }
 
-    // In practice (targetOnly), drop items that already hit today's appearance
-    // cap so they can't be shown again today. Since [markKanjiPracticed] stamps
-    // the cap once per *session* (not per question), the cap now means "up to N
-    // sessions/day" and a single multi-question session no longer exhausts it.
+    // In practice (targetOnly), selection is Leitner-SRS due-based: items in box
+    // ≥ 1 (i.e. already in rotation) whose next-due date has arrived (srs_due ≤
+    // today) and that aren't yet learned. New (srs_box = 0) items are NOT
+    // introduced here — that is the daily introducer's job. reviewOnly pulls the
+    // learned pool; the default pool is everything not-yet-learned.
     final primaryStatus = targetOnly
-        ? "AND p.status = 'target' AND NOT (p.practice_day = ? AND p.practice_seen_today >= ?)"
+        ? "AND p.status != 'learned' AND p.srs_box >= 1 AND p.srs_due <= ?"
         : reviewOnly
             ? "AND p.status = 'learned'"
             : "AND p.status != 'learned'";
-    final capArgs = targetOnly ? <dynamic>[today, kPracticeDailyCap] : const <dynamic>[];
+    final primaryArgs = targetOnly ? <dynamic>[today] : const <dynamic>[];
 
-    // One pick pass: least-recently-practiced first (NULL = never → first),
-    // excluding [exclude], capped at [limit].
+    // ORDER BY differs by path: the SRS (targetOnly) path puts the most-overdue
+    // items first, with last-session rotation as a tiebreaker; other paths keep
+    // the plain least-recently-practiced rotation.
+    final orderBy = targetOnly
+        ? 'ORDER BY p.srs_due ASC, COALESCE(p.last_practiced_at, 0) ASC, RANDOM()'
+        : 'ORDER BY COALESCE(p.last_practiced_at, 0) ASC, RANDOM()';
+
+    // One pick pass: ordered per [orderBy] above, excluding [exclude], capped at
+    // [limit].
     Future<List<Kanji>> pass(
         String statusClause, List<dynamic> extra, List<int> exclude, int limit) async {
       if (limit <= 0) return const [];
@@ -1026,7 +1034,7 @@ class SentenceRepository {
         WHERE k.jlpt_level IN ($levelPlaceholders)
           $statusClause
           $notIn
-        ORDER BY COALESCE(p.last_practiced_at, 0) ASC, RANDOM()
+        $orderBy
         LIMIT ?
       ''', [...tagArgs, ...jlptLevels, ...extra, ...exclude, limit]);
       return rows.map(Kanji.fromMap).toList();
@@ -1045,16 +1053,10 @@ class SentenceRepository {
     final lastSession = await progressRepo.lastKanjiSessionIds();
 
     // Stage 1: primary pool, minus the last session → fresh rotation.
-    take(await pass(primaryStatus, capArgs, lastSession, count - result.length));
+    take(await pass(primaryStatus, primaryArgs, lastSession, count - result.length));
     // Stage 2: primary pool, allowing last-session items to top up the count.
     if (result.length < count) {
-      take(await pass(primaryStatus, capArgs, picked.toList(), count - result.length));
-    }
-    // Stage 3 (practice only): backfill with learned review so the session keeps
-    // its length even when every eligible target already hit today's cap. These
-    // award no real progress since they're already learned.
-    if (targetOnly && result.length < count) {
-      take(await pass("AND p.status = 'learned'", const [], picked.toList(), count - result.length));
+      take(await pass(primaryStatus, primaryArgs, picked.toList(), count - result.length));
     }
 
     return result;
