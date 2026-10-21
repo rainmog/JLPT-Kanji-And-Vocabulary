@@ -222,11 +222,13 @@ class DatabaseService {
   //   date(?, '+' || (id % 5) || ' days')
   Future<void> backfillVocabForTest(Database db, String today) async {
     await db.execute('''
+      INSERT OR IGNORE INTO vocabulary_progress (vocab_id)
+      SELECT vocab_id FROM vocabulary_targets
+    ''');
+    await db.execute('''
       UPDATE vocabulary_progress
-      SET srs_box = 1,
-          srs_due = date(?, '+' || (vocab_id % 5) || ' days')
-      WHERE learned_at IS NULL
-        AND vocab_id IN (SELECT vocab_id FROM vocabulary_targets)
+      SET srs_box = 1, srs_due = date(?, '+' || (vocab_id % 5) || ' days')
+      WHERE learned_at IS NULL AND vocab_id IN (SELECT vocab_id FROM vocabulary_targets)
     ''', [today]);
   }
 

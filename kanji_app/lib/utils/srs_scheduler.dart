@@ -28,7 +28,8 @@ typedef SrsReviewResult = ({int box, bool learned, bool graduated});
 /// as of [today].
 String srsDueAfter(int box, String today) {
   final interval = kSrsIntervals[(box - 1).clamp(0, kSrsBoxCount - 1)];
-  final due = DateTime.parse(today).add(Duration(days: interval));
+  final d = DateTime.parse(today);
+  final due = DateTime(d.year, d.month, d.day + interval);
   return practiceDayKey(due);
 }
 

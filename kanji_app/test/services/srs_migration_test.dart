@@ -19,6 +19,8 @@ void main() {
     // Stuck learned word (targeted AND learned — the bug)
     await db.insert('vocabulary_progress', {'vocab_id': 20, 'learned_at': 1});
     await db.insert('vocabulary_targets', {'vocab_id': 20, 'added_at': 0});
+    // Never-practiced target (targeted, but no vocabulary_progress row yet)
+    await db.insert('vocabulary_targets', {'vocab_id': 30, 'added_at': 0});
 
     await dbService.backfillVocabForTest(db, practiceDayKey());
 
@@ -26,6 +28,8 @@ void main() {
     expect(rows.firstWhere((r) => r['vocab_id'] == 10)['srs_box'], 1);
     expect(rows.firstWhere((r) => r['vocab_id'] == 10)['srs_due'], isNotNull);
     expect(rows.firstWhere((r) => r['vocab_id'] == 20)['srs_box'], 0); // learned excluded
+    expect(rows.firstWhere((r) => r['vocab_id'] == 30)['srs_box'], 1); // never-practiced, backfilled
+    expect(rows.firstWhere((r) => r['vocab_id'] == 30)['srs_due'], isNotNull);
     await db.close();
   });
 
