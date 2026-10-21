@@ -1,6 +1,7 @@
 import 'dart:convert';
 import '../services/database_service.dart';
 import '../utils/learning_constants.dart';
+import '../utils/srs_scheduler.dart';
 
 class VocabWord {
   final int id;
@@ -256,6 +257,59 @@ class VocabRepository {
       return (promoted: true, learned: true, points: next.points, seenToday: next.seenToday, delta: delta);
     }
     return (promoted: false, learned: learnedAt != null, points: next.points, seenToday: next.seenToday, delta: delta);
+  }
+
+  /// Leitner SRS review recording (vocab practice track). Advances/resets the
+  /// item's box per [applySrsReview] and persists the new box/due. Only the
+  /// first review of a day changes the schedule (same-day repeats are
+  /// practice-only). A correct answer in the top box graduates the item to
+  /// learned (sets `learned_at`). Returns the post-review [SrsReviewResult].
+  Future<SrsReviewResult> recordSrsReview(int vocabId, {required bool isCorrect}) async {
+    final today = practiceDayKey();
+    await dbService.execute(
+      'INSERT INTO vocabulary_progress (vocab_id) VALUES (?) ON CONFLICT(vocab_id) DO NOTHING',
+      [vocabId],
+    );
+    final rows = await dbService.query(
+      'SELECT learned_at, srs_box, srs_last_review FROM vocabulary_progress WHERE vocab_id=?',
+      [vocabId],
+    );
+    if (rows.isEmpty) return (box: 0, learned: false, graduated: false);
+    final learnedAt = rows.first['learned_at'];
+    final box = rows.first['srs_box'] as int? ?? 0;
+    final u = applySrsReview(
+      box: box,
+      lastReview: rows.first['srs_last_review'] as String?,
+      today: today,
+      isCorrect: isCorrect,
+    );
+    if (!u.changed) return (box: box, learned: learnedAt != null, graduated: false);
+    if (u.learned) {
+      await markLearned(vocabId);
+      await dbService.execute(
+        'UPDATE vocabulary_progress SET srs_box=?, srs_last_review=? WHERE vocab_id=?',
+        [kSrsBoxCount, today, vocabId],
+      );
+      return (box: kSrsBoxCount, learned: true, graduated: true);
+    }
+    await dbService.execute(
+      'UPDATE vocabulary_progress SET srs_box=?, srs_due=?, srs_last_review=? WHERE vocab_id=?',
+      [u.box, u.due, today, vocabId],
+    );
+    return (box: u.box, learned: false, graduated: false);
+  }
+
+  /// Vocab currently due for review: in rotation (srs_box>=1), not learned,
+  /// due on or before today, most-overdue first. New items are introduced
+  /// separately by the daily introducer, not here.
+  Future<List<VocabWord>> getDuePracticeVocab({required int sessionLen}) async {
+    final today = practiceDayKey();
+    final rows = await dbService.query('''
+      SELECT v.* FROM vocabulary v JOIN vocabulary_progress p ON v.id=p.vocab_id
+      WHERE p.srs_box >= 1 AND p.learned_at IS NULL AND p.srs_due <= ?
+      ORDER BY p.srs_due ASC, v.id ASC LIMIT ?
+    ''', [today, sessionLen]);
+    return rows.map(VocabWord.fromMap).toList();
   }
 
   /// Vocab ids from [ids] that have hit today's appearance cap.

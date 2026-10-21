@@ -8,8 +8,8 @@ import '../services/sound_service.dart';
 import '../theme.dart';
 import '../utils/app_route.dart';
 import '../utils/romaji_converter.dart';
-import '../utils/learning_constants.dart';
 import '../utils/spaced_shuffle.dart';
+import '../utils/srs_scheduler.dart';
 import '../utils/vocab_answer_validator.dart';
 import 'session_summary_screen.dart';
 import '../widgets/ruby_text.dart';
@@ -55,10 +55,10 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
 
   int _correctCount = 0;
 
-  // Practice-mode learning results, keyed by word id (latest wins).
-  final Map<int, PracticeResult> _practiceResults = {};
+  // Practice-mode SRS results, keyed by word id (latest wins).
+  final Map<int, SrsReviewResult> _practiceResults = {};
   Future<void>? _lastRecord;
-  PracticeResult? _lastPractice; // points change for current answer's badge
+  SrsReviewResult? _lastPractice; // SRS box result for current answer's badge
 
   // Animation
   late AnimationController _promptCtrl;
@@ -94,9 +94,9 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
     final learned = await progressRepo.getLearnedKanjiCharacters();
     if (!mounted) return;
     setState(() {
-      // Show each word twice; space repeats so the same word is never
-      // back-to-back (gap of 3 other questions where the pool allows).
-      _queue = spacedShuffle([...widget.words, ...widget.words], (w) => w.id, minGap: 3);
+      // Space repeats so the same word is never back-to-back (gap of 3 other
+      // questions where the pool allows).
+      _queue = spacedShuffle([...widget.words], (w) => w.id, minGap: 3);
       _learnedKanji = learned;
       _loading = false;
     });
@@ -145,7 +145,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
     final id = _current.id;
     _lastPractice = null;
     _lastRecord = vocabRepo
-        .recordPracticeProgress(id, isCorrect: correct)
+        .recordSrsReview(id, isCorrect: correct)
         .then((r) {
       _practiceResults[id] = r;
       if (mounted) setState(() => _lastPractice = r);
@@ -210,7 +210,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
             practiceProgress.add((
               display: w.word,
               learned: r.learned,
-              percent: practicePointsPercent(r.points),
+              percent: (r.box / kSrsBoxCount * 100).round(),
             ));
           }
         }
@@ -412,8 +412,8 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
           if (_showingFeedback && _lastCorrect != null && _lastPractice != null)
             Positioned(
               top: 84, right: 20,
-              child: PracticeDeltaBadge(
-                result: _lastPractice!,
+              child: PracticeDeltaBadge.box(
+                box: _lastPractice!.box,
                 color: _lastCorrect! ? Colors.green : Colors.red,
               ),
             ),
