@@ -57,23 +57,11 @@ class _KanaPracticeConfigScreenState extends ConsumerState<KanaPracticeConfigScr
 
   Future<void> _start() async {
     final type = _activeType;
-    final targeted = await kanaRepo.getTargeted(type: type);
+    final pool = await kanaRepo.getDuePracticeKana(sessionLen: _count, type: type);
     if (!mounted) return;
-    if (targeted.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No targets selected. Add targets first.')),
-      );
-      return;
-    }
-    // Drop chars that already hit today's appearance cap. getTargeted also
-    // returns already-learned chars (never capped), so they remain as review.
-    final capped = await kanaRepo.getCappedIds(targeted.map((c) => c.id).toList());
-    if (!mounted) return;
-    final pool = targeted.where((c) => !capped.contains(c.id)).toList();
     if (pool.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("All caught up for today — come back tomorrow.")),
-      );
+        const SnackBar(content: Text('All caught up — no kana due right now.')));
       return;
     }
 

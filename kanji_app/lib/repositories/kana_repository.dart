@@ -1,6 +1,7 @@
 import 'dart:convert';
 import '../services/database_service.dart';
 import '../utils/learning_constants.dart';
+import '../utils/srs_scheduler.dart';
 
 class KanaCharacter {
   final int id;
@@ -271,8 +272,61 @@ class KanaRepository {
       [...ids, today, kPracticeDailyCap]);
     return rows.map((r) => r['kana_id'] as int).toSet();
   }
-  // Learned kana are already returned by getTargeted (status IN target,learned),
-  // so they serve as review top-up automatically — no separate fetch needed.
+
+  /// Leitner SRS review recording (kana practice track). Advances/resets the
+  /// item's box per [applySrsReview] and persists the new box/due. Only the
+  /// first review of a day changes the schedule (same-day repeats are
+  /// practice-only). A correct answer in the top box graduates the item to
+  /// learned (sets `status = 'learned'`). Returns the post-review
+  /// [SrsReviewResult].
+  Future<SrsReviewResult> recordSrsReview(int kanaId, {required bool isCorrect}) async {
+    final today = practiceDayKey();
+    await dbService.execute(
+      "INSERT INTO kana_progress (kana_id, status) VALUES (?, 'target') ON CONFLICT(kana_id) DO NOTHING",
+      [kanaId],
+    );
+    final rows = await dbService.query(
+      'SELECT status, srs_box, srs_last_review FROM kana_progress WHERE kana_id=?',
+      [kanaId],
+    );
+    if (rows.isEmpty) return (box: 0, learned: false, graduated: false);
+    final status = rows.first['status'] as String?;
+    final box = rows.first['srs_box'] as int? ?? 0;
+    final u = applySrsReview(
+      box: box,
+      lastReview: rows.first['srs_last_review'] as String?,
+      today: today,
+      isCorrect: isCorrect,
+    );
+    if (!u.changed) return (box: box, learned: status == 'learned', graduated: false);
+    if (u.learned) {
+      await setStatus(kanaId, 'learned');
+      await dbService.execute(
+        'UPDATE kana_progress SET srs_box=?, srs_last_review=? WHERE kana_id=?',
+        [kSrsBoxCount, today, kanaId],
+      );
+      return (box: kSrsBoxCount, learned: true, graduated: true);
+    }
+    await dbService.execute(
+      'UPDATE kana_progress SET srs_box=?, srs_due=?, srs_last_review=? WHERE kana_id=?',
+      [u.box, u.due, today, kanaId],
+    );
+    return (box: u.box, learned: false, graduated: false);
+  }
+
+  /// Kana currently due for review: in rotation (srs_box>=1), not learned,
+  /// due on or before today, most-overdue first. Optionally filtered by type.
+  Future<List<KanaCharacter>> getDuePracticeKana({required int sessionLen, String? type}) async {
+    final today = practiceDayKey();
+    final typeClause = type != null ? 'AND k.type = ?' : '';
+    final args = <dynamic>[today, if (type != null) type, sessionLen];
+    final rows = await dbService.query('''
+      SELECT k.*, p.status FROM kana k JOIN kana_progress p ON k.id=p.kana_id
+      WHERE p.srs_box >= 1 AND p.status != 'learned' AND p.srs_due <= ? $typeClause
+      ORDER BY p.srs_due ASC, k.id ASC LIMIT ?
+    ''', args);
+    return rows.map(KanaCharacter.fromRow).toList();
+  }
 
   // Words
 

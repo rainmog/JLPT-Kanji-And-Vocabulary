@@ -6,8 +6,8 @@ import '../repositories/kana_repository.dart';
 import '../services/settings_service.dart';
 import '../services/sound_service.dart';
 import '../theme.dart';
-import '../utils/learning_constants.dart';
 import '../utils/spaced_shuffle.dart';
+import '../utils/srs_scheduler.dart';
 import '../utils/app_route.dart';
 import '../widgets/scale_on_press.dart';
 import '../widgets/practice_delta_badge.dart';
@@ -60,10 +60,10 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
 
   List<String> _options = [];
   String? _selectedOption;
-  // Practice-mode learning results keyed by char id (latest wins).
-  final Map<int, PracticeResult> _practiceResults = {};
+  // Practice-mode SRS results keyed by char id (latest wins).
+  final Map<int, SrsReviewResult> _practiceResults = {};
   Future<void>? _lastRecord;
-  PracticeResult? _lastPractice; // points change for current answer's badge
+  SrsReviewResult? _lastPractice; // SRS box result for current answer's badge
   bool? _lastCorrect;            // correctness of current answer (badge color)
   final _controller = TextEditingController();
   bool _showingFeedback = false;
@@ -313,7 +313,7 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
         ref.read(settingsProvider).learnedVia == 'practice') {
       final id = _current.char!.id;
       _lastRecord = kanaRepo
-          .recordPracticeProgress(id, isCorrect: correct)
+          .recordSrsReview(id, isCorrect: correct)
           .then((r) {
         _practiceResults[id] = r;
         if (mounted) setState(() => _lastPractice = r);
@@ -371,7 +371,7 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
         list.add((
           display: c.display,
           learned: r.learned,
-          percent: practicePointsPercent(r.points),
+          percent: (r.box / kSrsBoxCount * 100).round(),
         ));
       }
       list.sort((a, b) => (b.learned ? 100 : b.percent).compareTo(a.learned ? 100 : a.percent));
@@ -480,8 +480,8 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
           if (_showingFeedback && _lastCorrect != null && _lastPractice != null)
             Positioned(
               top: 84, right: 20,
-              child: PracticeDeltaBadge(
-                result: _lastPractice!,
+              child: PracticeDeltaBadge.box(
+                box: _lastPractice!.box,
                 color: _lastCorrect! ? AppColors.correct : AppColors.incorrect,
               ),
             ),
