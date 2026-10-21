@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/sentence_repository.dart';
+import '../services/auto_progression_service.dart';
 import '../services/preferences_service.dart';
 import '../services/settings_service.dart';
 import '../services/sound_service.dart';
@@ -57,6 +58,11 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
     if (_loading) return;
     setState(() => _loading = true);
     final settings = ref.read(settingsProvider);
+    if (settings.autoProgressionEnabled) {
+      final (:result, :updatedSettings) = await autoProgressionService.run(settings: settings);
+      if (!mounted) return;
+      await ref.read(settingsProvider.notifier).update(updatedSettings);
+    }
     PreferencesService.save(
       mode: _mode,
       levels: {1, 2, 3, 4, 5},

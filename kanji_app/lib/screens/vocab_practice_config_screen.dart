@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/vocab_repository.dart';
+import '../services/auto_progression_service.dart';
+import '../services/settings_service.dart';
 import '../services/sound_service.dart';
 import '../theme_provider.dart';
 import '../utils/app_route.dart';
@@ -40,6 +42,12 @@ class _VocabPracticeConfigScreenState extends ConsumerState<VocabPracticeConfigS
   }
 
   Future<void> _start() async {
+    final settings = ref.read(settingsProvider);
+    if (settings.autoProgressionEnabled) {
+      final (:result, :updatedSettings) = await autoProgressionService.run(settings: settings);
+      if (!mounted) return;
+      await ref.read(settingsProvider.notifier).update(updatedSettings);
+    }
     final words = await vocabRepo.getDuePracticeVocab(sessionLen: _count);
     if (!mounted) return;
     if (words.isEmpty) {

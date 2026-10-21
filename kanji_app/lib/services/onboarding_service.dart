@@ -1,5 +1,6 @@
 import '../services/database_service.dart';
 import '../repositories/kana_repository.dart';
+import '../utils/learning_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LevelBounds {
@@ -104,6 +105,8 @@ class OnboardingService {
         VALUES (?, strftime('%s','now'))
       ''', [row['id']]);
     }
+
+    await finalizeSeeding();
   }
 
   /// Sets N5 vocab/kanji targets by count.
@@ -137,6 +140,8 @@ class OnboardingService {
         ''', [row['id']]);
       }
     }
+
+    await finalizeSeeding();
   }
 
   /// Sets the first [count] unlearned kana characters as targets.
@@ -146,6 +151,47 @@ class OnboardingService {
     for (final ch in kana) {
       await kanaRepo.setStatus(ch.id, 'target');
     }
+
+    await finalizeSeeding();
+  }
+
+  /// Promotes every freshly-seeded in-rotation item that is still srs_box=0
+  /// into Leitner box 1 with a staggered due date (id % 5 days out). The
+  /// `AND srs_box = 0` guard makes this idempotent and keeps it from touching
+  /// items that already progressed. Called at the end of every seed method so
+  /// a fresh install has items due immediately after onboarding.
+  static Future<void> finalizeSeeding() async {
+    final db = dbService;
+    final today = practiceDayKey();
+    await db.execute('''
+      UPDATE user_progress
+      SET srs_box = 1,
+          srs_due = date(?, '+' || (kanji_id % 5) || ' days'),
+          srs_last_review = NULL
+      WHERE status = 'target' AND srs_box = 0
+    ''', [today]);
+    // Onboarding inserts vocabulary_targets but may not have a
+    // vocabulary_progress row yet — create the missing ones so the UPDATE
+    // reaches them.
+    await db.execute('''
+      INSERT OR IGNORE INTO vocabulary_progress (vocab_id)
+      SELECT vocab_id FROM vocabulary_targets
+    ''');
+    await db.execute('''
+      UPDATE vocabulary_progress
+      SET srs_box = 1,
+          srs_due = date(?, '+' || (vocab_id % 5) || ' days'),
+          srs_last_review = NULL
+      WHERE learned_at IS NULL AND srs_box = 0
+        AND vocab_id IN (SELECT vocab_id FROM vocabulary_targets)
+    ''', [today]);
+    await db.execute('''
+      UPDATE kana_progress
+      SET srs_box = 1,
+          srs_due = date(?, '+' || (kana_id % 5) || ' days'),
+          srs_last_review = NULL
+      WHERE status = 'target' AND srs_box = 0
+    ''', [today]);
   }
 
   /// N4/3/2/1 direct: all easier levels → learned; 10 kanji + 30 vocab from selected → target.
