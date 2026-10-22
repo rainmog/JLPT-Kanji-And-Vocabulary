@@ -163,10 +163,14 @@ def main(dry_run):
     db = sqlite3.connect(DB_PATH)
     standalone, vocab = load_reference(db)
 
-    data = json.loads(JSON_PATH.read_text(encoding='utf-8'))
-    db_rows = [(sid, kid, json.loads(ts), json.loads(vr) if vr else None)
-               for sid, kid, ts, vr in db.execute(
-                   'SELECT id, kanji_id, text_structured, valid_readings FROM sentences')]
+    raw_json = JSON_PATH.read_text(encoding='utf-8')
+    data = json.loads(raw_json)
+    raw_db = {}
+    db_rows = []
+    for sid, kid, ts, vr in db.execute(
+            'SELECT id, kanji_id, text_structured, valid_readings FROM sentences'):
+        raw_db[sid] = (ts, vr)
+        db_rows.append((sid, kid, json.loads(ts), json.loads(vr) if vr else None))
 
     good = build_good_map(
         [s['text_structured'] for k in data for s in k['sentences']]
@@ -222,23 +226,33 @@ def main(dry_run):
     for e in examples[:15]:
         print('  ', e)
 
+    # Only rows whose serialized content actually changes are written, so a
+    # re-run on already-repaired data touches neither file.
+    changed = []
+    for sid, sent in updates:
+        ts = json.dumps(sent['text_structured'], ensure_ascii=False)
+        vr = (json.dumps(sent['valid_readings'], ensure_ascii=False)
+              if sent['valid_readings'] is not None else None)
+        if (ts, vr) != raw_db[sid]:
+            changed.append((ts, vr, sid))
+    new_json = json.dumps(data, ensure_ascii=False, indent=2)
+
     if dry_run:
-        print('dry run — nothing written')
+        print(f'dry run — would write {len(changed)} updates, {len(deletes)} deletes, '
+              f'JSON {"changed" if new_json != raw_json else "unchanged"}')
         return
 
-    JSON_PATH.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
-    with db:
-        for sid, sent in updates:
-            db.execute(
+    if new_json != raw_json:
+        JSON_PATH.write_text(new_json, encoding='utf-8')
+    if changed or deletes:
+        with db:
+            db.executemany(
                 'UPDATE sentences SET text_structured = ?, valid_readings = ? WHERE id = ?',
-                (json.dumps(sent['text_structured'], ensure_ascii=False),
-                 json.dumps(sent['valid_readings'], ensure_ascii=False)
-                 if sent['valid_readings'] is not None else None,
-                 sid))
-        for sid in deletes:
-            db.execute('DELETE FROM sentences WHERE id = ?', (sid,))
-    db.execute('VACUUM')
-    print(f'wrote {len(updates)} updates, {len(deletes)} deletes')
+                changed)
+            db.executemany('DELETE FROM sentences WHERE id = ?', [(s,) for s in deletes])
+        db.execute('VACUUM')
+    print(f'wrote {len(changed)} updates, {len(deletes)} deletes, '
+          f'JSON {"changed" if new_json != raw_json else "unchanged"}')
 
 
 if __name__ == '__main__':
