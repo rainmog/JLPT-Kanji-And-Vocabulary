@@ -1061,6 +1061,14 @@ class SentenceRepository {
     if (result.length < count) {
       take(await pass(primaryStatus, primaryArgs, picked.toList(), count - result.length));
     }
+    // Stage 3 (practice only): not enough due — top up with in-rotation items
+    // that aren't due yet, soonest first, so the session keeps its length.
+    // Reviewing these a little early trades a bit of spacing for consistency.
+    if (targetOnly && result.length < count) {
+      take(await pass(
+          "AND p.status != 'learned' AND p.srs_box >= 1 AND p.srs_due > ?",
+          [today], picked.toList(), count - result.length));
+    }
 
     return result;
   }

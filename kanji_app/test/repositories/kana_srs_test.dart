@@ -88,11 +88,21 @@ void main() {
       expect(list.map((c) => c.id), isNot(contains(2)));
     });
 
-    test('excludes a box1 char due in the future', () async {
+    test('does not pull a not-yet-due char when due chars fill the session', () async {
       await _seed(db, 1, type: 'hiragana', box: 1, due: today);
       await _seed(db, 3, type: 'hiragana', box: 1, due: srsDueAfter(2, today));
+      final list = await kanaRepo.getDuePracticeKana(sessionLen: 1, type: 'hiragana');
+      expect(list.map((c) => c.id), [1]);
+    });
+
+    test('tops up with not-yet-due chars of the same type, soonest first', () async {
+      await _seed(db, 1, type: 'hiragana', box: 1, due: today);
+      await _seed(db, 2, type: 'hiragana', box: 3, due: srsDueAfter(3, today)); // +4d
+      await _seed(db, 3, type: 'hiragana', box: 1, due: srsDueAfter(1, today)); // +1d
+      await _seed(db, 4, type: 'katakana', box: 1, due: srsDueAfter(1, today)); // other type
+      await _seed(db, 5, type: 'hiragana', box: 5, due: srsDueAfter(1, today), status: 'learned');
       final list = await kanaRepo.getDuePracticeKana(sessionLen: 10, type: 'hiragana');
-      expect(list.map((c) => c.id), isNot(contains(3)));
+      expect(list.map((c) => c.id), [1, 3, 2]);
     });
 
     test('respects the type filter', () async {

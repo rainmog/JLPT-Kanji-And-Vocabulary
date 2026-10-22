@@ -44,16 +44,6 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
     });
   }
 
-  // 'wordpractice' generates 1 question per kanji, so it uses _count directly.
-  // Sentence/word modes support multiple questions per kanji, so pick fewer kanji.
-  int _kanjiCountForSession(int questionCount) => switch (questionCount) {
-    10 => 4,
-    20 => 5,
-    30 => 6,
-    40 => 8,
-    _ => (questionCount ~/ 4).clamp(4, 10),
-  };
-
   Future<void> _startSession() async {
     if (_loading) return;
     setState(() => _loading = true);
@@ -72,11 +62,13 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
     );
     soundService.playSelectButton();
 
-    final kanjiCount = _mode == 'wordpractice' ? _count : _kanjiCountForSession(_count);
+    // One kanji per requested question in every mode. wordpractice asks one
+    // question per kanji; sentence/word modes sample sentences across the pool
+    // and cap at _count, so a full-size pool guarantees a full session.
     final kanjiList = await sentenceRepo.pickKanjiForSession(
       jlptLevels: const [1, 2, 3, 4, 5],
       tags: const [],
-      count: kanjiCount,
+      count: _count,
       targetOnly: true,
       reviewOnly: false,
     );
@@ -90,8 +82,8 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
       );
       return;
     }
-    // wordpractice is 1 question per kanji — warn if fewer targets than asked.
-    if (_mode == 'wordpractice' && kanjiList.length < _count) {
+    // Whole rotation is smaller than the session — warn before a short one.
+    if (kanjiList.length < _count) {
       final ok = await confirmShortSession(
         context,
         colors: ref.read(themeColorsProvider),

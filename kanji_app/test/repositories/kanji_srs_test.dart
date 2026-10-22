@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:kanji_app/repositories/progress_repository.dart';
+import 'package:kanji_app/repositories/sentence_repository.dart';
 import 'package:kanji_app/services/database_service.dart';
 import 'package:kanji_app/utils/learning_constants.dart';
 import 'package:kanji_app/utils/srs_scheduler.dart';
@@ -164,5 +165,74 @@ void main() {
     await _seed(db, 21, box: 2, due: srsDueAfter(2, today)); // due in future
     await _seed(db, 22, box: 0, due: null); // new, not introduced
     expect(await _dueIds(db, today), [20]);
+  });
+
+  group('pickKanjiForSession (practice)', () {
+    final yesterday =
+        practiceDayKey(DateTime.now().subtract(const Duration(days: 1)));
+
+    // Adds the kanji + session_log tables pickKanjiForSession reads, and a
+    // kanji row for each id.
+    Future<void> withKanji(List<int> ids, {List<int> lastSession = const []}) async {
+      await db.execute('''
+        CREATE TABLE kanji(
+          id INTEGER PRIMARY KEY, character TEXT NOT NULL, jlpt_level INTEGER NOT NULL,
+          on_reading TEXT, kun_reading TEXT, meaning TEXT, stroke_count INTEGER)''');
+      await db.execute(
+          'CREATE TABLE session_log(mode TEXT, kanji_ids TEXT, timestamp INTEGER)');
+      for (final id in ids) {
+        await db.insert('kanji', {
+          'id': id, 'character': 'k$id', 'jlpt_level': 3, 'meaning': 'm$id',
+        });
+      }
+      if (lastSession.isNotEmpty) {
+        await db.insert('session_log', {
+          'mode': 'wordpractice', 'kanji_ids': lastSession.join(','), 'timestamp': 1,
+        });
+      }
+    }
+
+    Future<List<int>> pick(int count) async => (await SentenceRepository()
+            .pickKanjiForSession(
+                jlptLevels: const [3], tags: const [], count: count,
+                targetOnly: true, reviewOnly: false))
+        .map((k) => k.id)
+        .toList();
+
+    test('fills the session: due first, then not-yet-due soonest first', () async {
+      await withKanji([1, 2, 3, 4, 5, 6, 7]);
+      await _seed(db, 1, box: 1, due: yesterday); // overdue
+      await _seed(db, 2, box: 2, due: today); // due
+      await _seed(db, 3, box: 3, due: srsDueAfter(3, today)); // +4d
+      await _seed(db, 4, box: 1, due: srsDueAfter(1, today)); // +1d
+      await _seed(db, 5, box: 4, due: srsDueAfter(4, today)); // +9d
+      await _seed(db, 6, box: 5, due: srsDueAfter(1, today), status: 'learned');
+      await _seed(db, 7, box: 0); // unseen — introducer's job
+      expect(await pick(4), [1, 2, 4, 3]);
+    });
+
+    test('does not pull not-yet-due kanji when due kanji fill the session', () async {
+      await withKanji([1, 2, 3]);
+      await _seed(db, 1, box: 1, due: yesterday);
+      await _seed(db, 2, box: 1, due: today);
+      await _seed(db, 3, box: 1, due: srsDueAfter(1, today));
+      expect(await pick(2), [1, 2]);
+    });
+
+    test('a due kanji from the last session still beats a not-yet-due one', () async {
+      await withKanji([1, 2], lastSession: [1]);
+      await _seed(db, 1, box: 1, due: today);
+      await _seed(db, 2, box: 1, due: srsDueAfter(1, today));
+      expect(await pick(1), [1]);
+      expect(await pick(2), [1, 2]);
+    });
+
+    test('never pulls learned or unseen kanji, even when short', () async {
+      await withKanji([1, 2, 3]);
+      await _seed(db, 1, box: 1, due: today);
+      await _seed(db, 2, box: 5, due: today, status: 'learned');
+      await _seed(db, 3, box: 0);
+      expect(await pick(10), [1]);
+    });
   });
 }

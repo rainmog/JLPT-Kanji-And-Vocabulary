@@ -263,16 +263,17 @@ class VocabRepository {
     return (box: u.box, learned: false, graduated: false);
   }
 
-  /// Vocab currently due for review: in rotation (srs_box>=1), not learned,
-  /// due on or before today, most-overdue first. New items are introduced
-  /// separately by the daily introducer, not here.
+  /// Vocab for a practice session of [sessionLen]: in rotation (srs_box>=1),
+  /// not learned, ordered by due date. Due words (srs_due <= today, most
+  /// overdue first) come first; if they don't fill the session, it's topped
+  /// up with not-yet-due words, soonest first, so sessions keep their length.
+  /// New items are introduced separately by the daily introducer, not here.
   Future<List<VocabWord>> getDuePracticeVocab({required int sessionLen}) async {
-    final today = practiceDayKey();
     final rows = await dbService.query('''
       SELECT v.* FROM vocabulary v JOIN vocabulary_progress p ON v.id=p.vocab_id
-      WHERE p.srs_box >= 1 AND p.learned_at IS NULL AND p.srs_due <= ?
+      WHERE p.srs_box >= 1 AND p.learned_at IS NULL
       ORDER BY p.srs_due ASC, v.id ASC LIMIT ?
-    ''', [today, sessionLen]);
+    ''', [sessionLen]);
     return rows.map(VocabWord.fromMap).toList();
   }
 

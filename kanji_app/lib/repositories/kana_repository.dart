@@ -265,15 +265,16 @@ class KanaRepository {
     return (box: u.box, learned: false, graduated: false);
   }
 
-  /// Kana currently due for review: in rotation (srs_box>=1), not learned,
-  /// due on or before today, most-overdue first. Optionally filtered by type.
+  /// Kana for a practice session of [sessionLen]: in rotation (srs_box>=1),
+  /// not learned, ordered by due date — due chars first (most overdue), then
+  /// topped up with not-yet-due chars, soonest first, so sessions keep their
+  /// length. Optionally filtered by type.
   Future<List<KanaCharacter>> getDuePracticeKana({required int sessionLen, String? type}) async {
-    final today = practiceDayKey();
     final typeClause = type != null ? 'AND k.type = ?' : '';
-    final args = <dynamic>[today, if (type != null) type, sessionLen];
+    final args = <dynamic>[if (type != null) type, sessionLen];
     final rows = await dbService.query('''
       SELECT k.*, p.status FROM kana k JOIN kana_progress p ON k.id=p.kana_id
-      WHERE p.srs_box >= 1 AND p.status != 'learned' AND p.srs_due <= ? $typeClause
+      WHERE p.srs_box >= 1 AND p.status != 'learned' $typeClause
       ORDER BY p.srs_due ASC, k.id ASC LIMIT ?
     ''', args);
     return rows.map(KanaCharacter.fromRow).toList();

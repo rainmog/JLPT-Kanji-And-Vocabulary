@@ -89,11 +89,30 @@ void main() {
       expect(words.map((w) => w.id), isNot(contains(2)));
     });
 
-    test('excludes a box1 word due in the future', () async {
+    test('does not pull a not-yet-due word when due words fill the session', () async {
       await _seed(db, 1, box: 1, due: today);
       await _seed(db, 3, box: 1, due: srsDueAfter(2, today)); // due later
+      final words = await vocabRepo.getDuePracticeVocab(sessionLen: 1);
+      expect(words.map((w) => w.id), [1]);
+    });
+
+    test('tops up with not-yet-due words, soonest first, after the due ones', () async {
+      await _seed(db, 1, box: 1, due: today);
+      await _seed(db, 2, box: 2, due: today);
+      await _seed(db, 3, box: 3, due: srsDueAfter(3, today)); // +4 days
+      await _seed(db, 4, box: 1, due: srsDueAfter(1, today)); // +1 day
+      await _seed(db, 5, box: 4, due: srsDueAfter(4, today)); // +9 days
+      final words = await vocabRepo.getDuePracticeVocab(sessionLen: 4);
+      expect(words.map((w) => w.id), [1, 2, 4, 3]);
+    });
+
+    test('top-up never pulls learned or unseen words', () async {
+      await _seed(db, 1, box: 1, due: today);
+      await _seed(db, 2, box: 5, due: srsDueAfter(1, today),
+          learnedAt: DateTime.now().millisecondsSinceEpoch);
+      await _seed(db, 3, box: 0); // unseen — introducer's job, not the selector's
       final words = await vocabRepo.getDuePracticeVocab(sessionLen: 10);
-      expect(words.map((w) => w.id), isNot(contains(3)));
+      expect(words.map((w) => w.id), [1]);
     });
 
     test('returns each due word exactly once', () async {
