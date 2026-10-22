@@ -72,8 +72,10 @@ def is_suspect(token, standalone):
     reading = hira(token.get('reading', ''))
     if len(reading) < nk:
         return True
-    kc = token.get('kanji_char')
-    return bool(kc) and reading in standalone.get(kc, set())
+    # Checked against every kanji in the word, not just the tagged target, so
+    # the verdict doesn't change once a token has been demoted (kanji_char
+    # cleared) — otherwise a re-run would trust a demoted bad reading.
+    return any(reading in standalone.get(c, set()) for c in surface if is_kanji(c))
 
 
 def build_good_map(all_token_lists, standalone):
@@ -136,6 +138,8 @@ def repair_sentence(sentence, standalone, good, vocab):
             unresolved = True
             continue
         old = t['reading']
+        if hira(old) == new:
+            continue
         t['reading'] = new
         changes.append((t['surface'], old, new))
         vr = sentence.get('valid_readings')
