@@ -237,10 +237,11 @@ def main(dry_run):
             changed.append((ts, vr, sid))
     new_json = json.dumps(data, ensure_ascii=False, indent=2)
 
+    pending = bool(changed or deletes or new_json != raw_json)
     if dry_run:
         print(f'dry run — would write {len(changed)} updates, {len(deletes)} deletes, '
               f'JSON {"changed" if new_json != raw_json else "unchanged"}')
-        return
+        return pending
 
     if new_json != raw_json:
         JSON_PATH.write_text(new_json, encoding='utf-8')

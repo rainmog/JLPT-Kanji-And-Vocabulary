@@ -2,6 +2,7 @@ import json, sqlite3, os, sys
 from pathlib import Path
 from validate_database import validate_all
 from tag_kanji import TAG_RULES
+from fix_compound_readings import main as repair_readings
 
 BASE = Path(__file__).parent
 
@@ -461,6 +462,16 @@ if __name__ == '__main__':
         print("Running data validation...")
         if not validate_all():
             print("\nERROR: Data validation failed. Fix errors before building.", file=sys.stderr)
+            sys.exit(1)
+
+        # sentences_v2.json is copied verbatim into the asset, so unrepaired
+        # sentence readings (truncated compounds like 会議 "ぎ", shifted
+        # furigana) would ship as wrong quiz answers. Refuse until repaired.
+        print("\nChecking sentence readings...")
+        if repair_readings(dry_run=True):
+            print("\nERROR: sentences_v2.json has unrepaired readings. Run:\n"
+                  "  python3 tools/fix_compound_readings.py\n"
+                  "then re-run build_db.py.", file=sys.stderr)
             sys.exit(1)
 
         print("\nBuilding database...")
