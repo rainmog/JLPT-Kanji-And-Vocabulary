@@ -13,7 +13,10 @@ class DatabaseService {
   // across the rebuild.
   // v9: N5 JLPT questions quadrupled (115→465).
   // v10: N4 JLPT questions quadrupled (132→529); N5 idx-41 fairness fix.
-  static const int _assetDbVersion = 10;
+  // v11: sentence readings repaired (tools/fix_compound_readings.py) — 39
+  //      truncated compound readings fixed (会議 "ぎ"→"かいぎ"), 537
+  //      furigana-misaligned sentences dropped.
+  static const int _assetDbVersion = 11;
   static const String _prefDbVersion = 'db_asset_version';
 
   // Every table that holds USER data (not shipped content). These are saved

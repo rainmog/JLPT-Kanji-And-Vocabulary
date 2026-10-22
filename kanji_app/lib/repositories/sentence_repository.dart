@@ -2,6 +2,7 @@ import 'dart:convert';
 import '../services/database_service.dart';
 import '../models/quiz_models.dart';
 import '../utils/learning_constants.dart';
+import '../utils/reading_guard.dart';
 import '../utils/spaced_shuffle.dart';
 import 'kanji_repository.dart';
 import 'progress_repository.dart';
@@ -465,6 +466,7 @@ class SentenceRepository {
             }
           }
           if (word == null || correctReading == null) continue;
+          if (!isPlausibleWordReading(word, correctReading)) continue; // truncated data reading
           if (usuallyKanaWords.contains(word)) continue;
           if (!seenCompoundWords.add(word)) continue; // skip repeated compound
 
@@ -803,6 +805,7 @@ class SentenceRepository {
         }
 
         if (word == null || correctReading == null) continue;
+        if (!isPlausibleWordReading(word, correctReading)) continue; // truncated data reading
         if (usuallyKanaWords.contains(word)) continue;
         if (!seenWords.add(word)) continue; // skip repeated compound
         final wm = await _vocabMeaning(word, vocabCache);
