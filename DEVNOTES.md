@@ -2,12 +2,12 @@
 
 ## Current State (2026-10-23)
 
-**App**: Flutter 3.44.0, offline-first kanji + vocabulary study app — **v1.0.6+14** (`pubspec.yaml`)  
+**App**: Flutter 3.44.0, offline-first kanji + vocabulary study app — **v1.0.6+15** (`pubspec.yaml`)  
 **Data**: 2230 kanji (N5=80, N4=166, N3=367, N2=373, N1=1244); ≤9 sentences each (17,994 total); 7173 vocab (N5=657, N4=588, N3=1625, N2=1589, N1=920, Other=1794); JLPT questions N5=465, N4=529  
 **DB**: SQLite ~29 MB; `_assetDbVersion=11`; 695 vocab tagged `usually_kana`; 1794 vocab level 0 ("other" — not in Core 6k, browsable via Other button in select vocab); 10919 `compound_glosses` (sentence compounds absent from vocab)  
 **Repo**: https://github.com/rainmog/JLPT-Kanji-And-Vocabulary (**public**). AAB (Play upload): `kanji_app/build/app/outputs/bundle/release/app-release.aab`. APK: `kanji_app/build/app/outputs/flutter-apk/app-release.apk`.
 
-> **Release rule**: every release **must bump the version build number** (`version: x.y.z+N` in `pubspec.yaml`) — increment `N` by at least 1 each build, because Google Play rejects a reused `versionCode`. Do this **unprompted** whenever building a release AAB/APK. Last uploaded versionCode: **13** (1.0.5) → next free is **14+**. (Codes can be consumed by Play internal-testing tracks, so the next free code may be higher than the repo suggests — when in doubt, jump ahead.)
+> **Release rule**: every release **must bump the version build number** (`version: x.y.z+N` in `pubspec.yaml`) — increment `N` by at least 1 each build, because Google Play rejects a reused `versionCode`. Do this **unprompted** whenever building a release AAB/APK. Last uploaded versionCode: **14** (1.0.6) → next free is **15+**. (Codes can be consumed by Play internal-testing tracks, so the next free code may be higher than the repo suggests — when in doubt, jump ahead.)
 
 ---
 
