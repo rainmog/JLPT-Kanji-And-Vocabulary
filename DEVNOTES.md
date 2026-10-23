@@ -119,11 +119,16 @@ kana_words(id, word, romaji, acceptable_romaji, meaning, type)
 compound_glosses(word PK, meanings)   -- sentence compounds absent from vocab (JMdict + hand-authored)
 
 -- Runtime (created by _runMigrations, not in asset DB):
-user_progress(kanji_id PK, status, consecutive_correct, total_seen, total_correct, practice_correct_count)
+user_progress(kanji_id PK, status, consecutive_correct, total_seen, total_correct, practice_correct_count,
+              last_practiced_at, srs_box 0–5, srs_due 'YYYY-MM-DD', srs_last_review)
 session_log(id, mode, kanji_ids, score, timestamp ms, question_count)
 vocabulary_targets(vocab_id, added_at)
-vocabulary_progress(vocab_id, word_to_meaning, meaning_to_word, learned_at, practice_correct_count)
-kana_progress(kana_id, status, consecutive_correct, total_seen, total_correct, practice_correct_count)
+vocabulary_progress(vocab_id, word_to_meaning, meaning_to_word, learned_at, practice_correct_count,
+                    last_practiced_at, srs_box, srs_due, srs_last_review)
+kana_progress(kana_id, status, consecutive_correct, total_seen, total_correct, practice_correct_count,
+              last_practiced_at, srs_box, srs_due, srs_last_review)
+-- Dead (kept, unused since 1.0.5): practice_points, practice_day, practice_seen_today,
+--   practice_correct_today, practice_progress on the three progress tables.
 test_history(id, timestamp, test_type, level, section, score, total, detail)
 ```
 

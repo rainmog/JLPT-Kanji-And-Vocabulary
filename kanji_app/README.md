@@ -1,6 +1,6 @@
 # kanji_app
 
-Flutter Android app — see [project README](../README.md) for full documentation.
+Flutter Android app — see [DEVNOTES](../DEVNOTES.md) for full documentation.
 
 ## Quick start
 
@@ -12,6 +12,6 @@ flutter run
 ## Tests
 
 ```bash
-flutter test        # 21 tests
-flutter analyze     # no issues
+flutter test        # 96 tests
+flutter analyze     # no errors (infos + a few pre-existing warnings, mostly lib_backup_redesign/)
 ```
