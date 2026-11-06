@@ -15,6 +15,8 @@ import 'session_summary_screen.dart';
 import '../widgets/ruby_text.dart';
 import '../widgets/practice_delta_badge.dart';
 import '../widgets/quiz_header.dart';
+import '../widgets/swipe_up_detector.dart';
+import '../widgets/entry_sheet.dart';
 
 // ── Main screen ────────────────────────────────────────────────────────────────
 
@@ -23,6 +25,7 @@ class VocabPracticeScreen extends ConsumerStatefulWidget {
   final bool multipleChoice;
   final bool suppressFurigana;
   final bool reverseMode;
+  final Future<void> Function()? onStudyMore;
 
   const VocabPracticeScreen({
     super.key,
@@ -30,6 +33,7 @@ class VocabPracticeScreen extends ConsumerStatefulWidget {
     required this.multipleChoice,
     this.suppressFurigana = false,
     this.reverseMode = false,
+    this.onStudyMore,
   });
 
   @override
@@ -107,13 +111,9 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
 
   Future<void> _buildOptions() async {
     if (widget.reverseMode) {
-      final distractors = await vocabRepo.getDistractors(
-        jlptLevel: _current.jlptLevel,
-        count: 3,
-        excludeIds: [_current.id],
-      );
+      final wrong = await vocabRepo.getReadingDistractors(_current);
       if (!mounted) return;
-      final opts = [_current.reading, ...distractors.map((d) => d.reading)]..shuffle();
+      final opts = [_current.reading, ...wrong]..shuffle();
       setState(() => _options = opts);
     } else {
       final distractors = await vocabRepo.getDistractors(
@@ -141,6 +141,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
   }
 
   void _recordPractice(bool correct) {
+    progressRepo.logAnswer(track: 'vocab', correct: correct); // daily goal
     if (ref.read(settingsProvider).learnedVia != 'practice') return;
     final id = _current.id;
     _lastPractice = null;
@@ -226,6 +227,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
           learnedChars: const [],
           practiceCounts: practiceCounts,
           practiceProgress: practiceProgress,
+          onStudyMore: widget.onStudyMore,
         )),
       );
       return;
@@ -395,7 +397,7 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Tap anywhere to continue',
+                    continueHint,
                     style: TextStyle(fontSize: 12, color: AppColors.muted),
                   ),
                 ]),
@@ -420,11 +422,14 @@ class _VocabPracticeScreenState extends ConsumerState<VocabPracticeScreen>
           // Early-advance overlay (no text)
           if (_showingFeedback)
             Positioned.fill(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
+              child: SwipeUpDetector(
                 onTap: () {
                   _autoNextTimer?.cancel();
                   _next();
+                },
+                onSwipeUp: () async {
+                  _autoNextTimer?.cancel();
+                  await showVocabEntryById(context, _current.id);
                 },
               ),
             ),

@@ -102,8 +102,22 @@ void main() {
       await _seed(db, 3, box: 3, due: srsDueAfter(3, today)); // +4 days
       await _seed(db, 4, box: 1, due: srsDueAfter(1, today)); // +1 day
       await _seed(db, 5, box: 4, due: srsDueAfter(4, today)); // +9 days
-      final words = await vocabRepo.getDuePracticeVocab(sessionLen: 4);
-      expect(words.map((w) => w.id), [1, 2, 4, 3]);
+      final ids = (await vocabRepo.getDuePracticeVocab(sessionLen: 4)).map((w) => w.id).toList();
+      expect(ids.take(2).toSet(), {1, 2}); // due today — order among ties is random
+      expect(ids.skip(2), [4, 3]);
+    });
+
+    test('words reviewed today sort after fresh ones (study more rotates)', () async {
+      for (final id in [1, 2, 3]) {
+        await _seed(db, id, box: 1, due: srsDueAfter(1, today), lastReview: today);
+      }
+      await _seed(db, 4, box: 3, due: srsDueAfter(3, today));
+      await _seed(db, 5, box: 4, due: srsDueAfter(4, today));
+      final words = await vocabRepo.getDuePracticeVocab(sessionLen: 2);
+      expect(words.map((w) => w.id).toList()..sort(), [4, 5]);
+      final all = await vocabRepo.getDuePracticeVocab(sessionLen: 5);
+      expect(all.take(2).map((w) => w.id).toList()..sort(), [4, 5]);
+      expect(await vocabRepo.countRotationNotReviewedToday(), 2);
     });
 
     test('top-up never pulls learned or unseen words', () async {

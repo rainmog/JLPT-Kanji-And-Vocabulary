@@ -234,5 +234,30 @@ void main() {
       await _seed(db, 3, box: 0);
       expect(await pick(10), [1]);
     });
+
+    test('study more: kanji reviewed today are the last resort, not the first top-up', () async {
+      await withKanji([1, 2, 3, 4, 5, 6]);
+      // 1-3 were just practiced (box 1, due tomorrow, reviewed today).
+      for (final id in [1, 2, 3]) {
+        await _seed(db, id, box: 1, due: srsDueAfter(1, today), lastReview: today);
+      }
+      // 4-6 are in rotation but weren't in that session (due later).
+      await _seed(db, 4, box: 3, due: srsDueAfter(3, today));
+      await _seed(db, 5, box: 3, due: srsDueAfter(3, today));
+      await _seed(db, 6, box: 4, due: srsDueAfter(4, today));
+      expect((await pick(3))..sort(), [4, 5, 6]);
+      // Bigger session than fresh items → the practiced ones fill the rest.
+      final five = await pick(5);
+      expect(five.take(3).toList()..sort(), [4, 5, 6]);
+      expect(five.skip(3).every([1, 2, 3].contains), isTrue);
+    });
+
+    test('study more: previous-session kanji wait behind other not-yet-due ones', () async {
+      await withKanji([1, 2, 3], lastSession: [1]);
+      await _seed(db, 1, box: 1, due: srsDueAfter(1, today));
+      await _seed(db, 2, box: 2, due: srsDueAfter(2, today));
+      await _seed(db, 3, box: 2, due: srsDueAfter(2, today));
+      expect((await pick(2))..sort(), [2, 3]);
+    });
   });
 }

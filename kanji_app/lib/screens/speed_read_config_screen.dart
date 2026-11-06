@@ -65,18 +65,15 @@ class _SpeedReadConfigScreenState extends ConsumerState<SpeedReadConfigScreen> {
 
   int get _effectiveCount => _questionCount.clamp(1, _available);
 
-  List<SpeedReadQuestion> _buildQuestions() {
+  Future<List<SpeedReadQuestion>> _buildQuestions() async {
     final rng = Random();
     switch (widget.speedContext) {
       case SpeedReadContext.kanji:
         final pool = List.of(_kanjiVocab)..shuffle(rng);
         final selected = pool.take(_effectiveCount).toList();
-        final allReadings = pool.map((v) => v.reading).toSet().toList();
-        return selected.map((v) {
-          final wrong = (List.of(allReadings)..shuffle(rng))
-              .where((r) => r != v.reading)
-              .take(3)
-              .toList();
+        final out = <SpeedReadQuestion>[];
+        for (final v in selected) {
+          final wrong = await vocabRepo.getReadingDistractors(v);
           final opts = [v.reading, ...wrong]..shuffle(rng);
           final meanings = v.meanings
               .split(RegExp(r'[;,]'))
@@ -84,13 +81,14 @@ class _SpeedReadConfigScreenState extends ConsumerState<SpeedReadConfigScreen> {
               .where((s) => s.isNotEmpty)
               .take(2)
               .join(', ');
-          return SpeedReadQuestion(
+          out.add(SpeedReadQuestion(
             display: v.word,
             correct: v.reading,
             options: opts,
             meaning: meanings.isEmpty ? null : meanings,
-          );
-        }).toList();
+          ));
+        }
+        return out;
 
       case SpeedReadContext.kana:
         final pool = List.of(_kanaChars)..shuffle(rng);
@@ -109,9 +107,10 @@ class _SpeedReadConfigScreenState extends ConsumerState<SpeedReadConfigScreen> {
     }
   }
 
-  void _launch() {
+  Future<void> _launch() async {
     if (_available == 0) return;
-    final questions = _buildQuestions();
+    final questions = await _buildQuestions();
+    if (!mounted) return;
     Navigator.push(context, AppRoute.to(SpeedReadScreen(
       questions: questions,
       flashSeconds: _flashSeconds,

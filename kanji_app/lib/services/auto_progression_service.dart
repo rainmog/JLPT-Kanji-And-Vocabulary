@@ -125,6 +125,31 @@ class AutoProgressionService {
     );
   }
 
+  /// Study-more top-up: when a fresh session needs more items than the rotation
+  /// has left unreviewed today, pull [count] extra unseen items into rotation
+  /// beyond today's quota (counted against today's total, so the daily counter
+  /// and the next intake stay consistent). Respects the same switches and kana
+  /// stages as [run]: nothing when auto-progression is off, vocab only once
+  /// hiragana is learned, kanji only once katakana is too. Returns the number
+  /// introduced.
+  Future<int> introduceBonus({
+    required AppSettings settings,
+    required String track,
+    required int count,
+  }) async {
+    if (count <= 0 || !settings.autoProgressionEnabled) return 0;
+    final hiragana = await kanaRepo.getProgress(type: 'hiragana');
+    if (hiragana.learned < hiragana.total) return 0;
+    if (track == 'kanji') {
+      final katakana = await kanaRepo.getProgress(type: 'katakana');
+      if (katakana.learned < katakana.total) return 0;
+    }
+    final day = practiceDayKey();
+    final prefs = await SharedPreferences.getInstance();
+    final used = prefs.getInt('srs_new_${track}_$day') ?? 0;
+    return introduceDaily(track: track, quota: used + count, day: day);
+  }
+
   /// Promote up to the remaining daily quota of unseen items (srs_box=0, not
   /// learned) into rotation (srs_box=1, srs_due=day) in frequency order
   /// (jlpt_level DESC, id ASC). Daily cap tracked via SharedPreferences key

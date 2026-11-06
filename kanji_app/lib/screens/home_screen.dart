@@ -50,7 +50,7 @@ final allProgressProvider = FutureProvider.autoDispose<_ProgressData>((ref) asyn
 });
 
 final _todayGoalProvider = FutureProvider.autoDispose<int>(
-  (_) => progressRepo.getTodaySessionCount(),
+  (_) => progressRepo.getTodayAnswerCount(),
 );
 
 final _graduationCandidatesProvider = FutureProvider.autoDispose<({
@@ -228,7 +228,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // The goal ring tracks every answered question, live — even while a
+    // session screen is stacked on top of this one.
+    progressRepo.answerTick.addListener(_onAnswerLogged);
     WidgetsBinding.instance.addPostFrameCallback((_) => _runAutoProgression());
+  }
+
+  @override
+  void dispose() {
+    progressRepo.answerTick.removeListener(_onAnswerLogged);
+    super.dispose();
+  }
+
+  void _onAnswerLogged() {
+    if (mounted) ref.invalidate(_todayGoalProvider);
   }
 
   Future<void> _runAutoProgression() async {
@@ -406,7 +419,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Expanded(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text(
-                          "TODAY'S SESSION",
+                          "CURRENT TARGETS",
                           style: TextStyle(
                             fontSize: 12, fontWeight: FontWeight.w700,
                             letterSpacing: 1.4, color: KDesign.inkSoft(colors),

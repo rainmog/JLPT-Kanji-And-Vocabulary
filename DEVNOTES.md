@@ -4,7 +4,7 @@
 
 **App**: Flutter 3.44.0, offline-first kanji + vocabulary study app — **v1.0.6+15** (`pubspec.yaml`)  
 **Data**: 2230 kanji (N5=80, N4=166, N3=367, N2=373, N1=1244); ≤9 sentences each (17,994 total); 7173 vocab (N5=657, N4=588, N3=1625, N2=1589, N1=920, Other=1794); JLPT questions N5=465, N4=529  
-**DB**: SQLite ~29 MB; `_assetDbVersion=11`; 695 vocab tagged `usually_kana`; 1794 vocab level 0 ("other" — not in Core 6k, browsable via Other button in select vocab); 10919 `compound_glosses` (sentence compounds absent from vocab)  
+**DB**: SQLite ~29 MB; `_assetDbVersion=12`; 695 vocab tagged `usually_kana`; 1794 vocab level 0 ("other" — not in Core 6k, browsable via Other button in select vocab); 10919 `compound_glosses` (sentence compounds absent from vocab)  
 **Repo**: https://github.com/rainmog/JLPT-Kanji-And-Vocabulary (**public**). AAB (Play upload): `kanji_app/build/app/outputs/bundle/release/app-release.aab`. APK: `kanji_app/build/app/outputs/flutter-apk/app-release.apk`.
 
 > **Release rule**: every release **must bump the version build number** (`version: x.y.z+N` in `pubspec.yaml`) — increment `N` by at least 1 each build, because Google Play rejects a reused `versionCode`. Do this **unprompted** whenever building a release AAB/APK. Last uploaded versionCode: **14** (1.0.6) → next free is **15+**. (Codes can be consumed by Play internal-testing tracks, so the next free code may be higher than the repo suggests — when in doubt, jump ahead.)
@@ -83,8 +83,15 @@ pyftsubset kanji_app/assets/fonts/NotoSerifCJKjp-Regular.otf \
 - **vocab_repository.dart**: `VocabWord.isUsuallyKana`, `VocabWord.levelLabel`. Orders by `jlpt_level DESC, id ASC`.
 - **settings_service.dart**: `homeTrackers`, `dailyGoal` (default 100), `autoProgressionEnabled/Quota`, `completedKanjiLevels/VocabLevels`, `jlptGoal` (0=not set, 1–5 for N1–N5), audio/appearance.
 - **auto_progression_service.dart**: daily new-item introducer (`introduceDaily`, quota = new items/day) + staged kana gating + completed-level detection. Called from `HomeScreen.initState` and every practice config screen. See Gotcha 26.
-- **database_service.dart**: `_assetDbVersion=11`. Bump when shipping new `kanji.db`. On bump, saves/restores **all six user-state tables** (`_userTables`: user_progress, vocabulary_progress, vocabulary_targets, kana_progress, session_log, test_history); content tables come fresh from the asset; `_runMigrations` ensures schema before restore.
+- **database_service.dart**: `_assetDbVersion=12`. Bump when shipping new `kanji.db`. On bump, saves/restores **all seven user-state tables** (`_userTables`: user_progress, vocabulary_progress, vocabulary_targets, kana_progress, session_log, test_history, answer_log); content tables come fresh from the asset; `_runMigrations` ensures schema before restore.
 - **history_repository.dart**: `getHistory({testType?, level?, limit})` — optional `level` filter applied in Dart after fetch (avoids SQL type mismatch).
+
+### Quiz UX notes (v12)
+- **Distractors**: `utils/reading_distractors.dart` (word readings; okurigana-suffix matched, katakana-aware) and `utils/kanji_distractors.dart` (kanji on/kun + meaning labels). Fresh sampling from the whole deck per question; no consumed cursor, no hard-coded fallbacks.
+- **Goal counter**: `answer_log` table, one row per answered question (`ProgressRepository.logAnswer`); Home "CURRENT TARGETS" listens to `progressRepo.answerTick`.
+- **Study More**: summary screen's `onStudyMore` starts a fresh draw (prefers items not reviewed today, tops up with bonus-introduced items via `AutoProgressionService.introduceBonus`).
+- **Swipe-up examples**: every graded answer shows "Tap anywhere to continue, or swipe up for examples". `widgets/swipe_up_detector.dart` (overlay) + `widgets/entry_sheet.dart` (opens the dictionary-style sheet from `item_info_sheet.dart`: readings, strokes, common words, example sentences matched on whole tokens). JLPT mock-test screen is excluded (no per-item entry).
+- **Reading repair**: run `tools/fix_reading_mismatches.py` after `fix_compound_readings.py`; JMdict-validated, idempotent.
 
 ### Design system
 
@@ -160,7 +167,7 @@ D8–D9 in general practice only. Falls back uncapped if <3 sentences within cap
 8. **DB race condition**: `_initFuture` static pattern prevents concurrent `_init()` calls.
 9. **`INSERT OR IGNORE` + `lastrowid`**: unreliable on conflict. Always `SELECT id WHERE ...` after.
 10. **JLPT save/resume**: `buildSession` uses `ORDER BY RANDOM()`. Save `vocabIds`/`grammarIds`/`readingIds`; use `buildSessionFromIds` on resume.
-11. **Asset DB versioning**: `_assetDbVersion=11`. Bump to ship new `kanji.db`. All user-state tables (`_userTables`) survive the rebuild — `_runMigrations` runs before the restore, so added columns (e.g. `srs_*`) are preserved.
+11. **Asset DB versioning**: `_assetDbVersion=12`. Bump to ship new `kanji.db`. All user-state tables (`_userTables`) survive the rebuild — `_runMigrations` runs before the restore, so added columns (e.g. `srs_*`) are preserved.
 12. **Kana-surface compounds**: 位→くらい etc. `_containsKanji()` guards against pure-kana surfaces.
 13. **user_progress UPSERT**: use `INSERT ... ON CONFLICT DO UPDATE`. Plain UPDATE fails silently for new users.
 14. **Timer callbacks**: check `if (!mounted) return` before setState/Navigator.

@@ -41,12 +41,26 @@ class _VocabPracticeConfigScreenState extends ConsumerState<VocabPracticeConfigS
     setState(() { _targetCount = count; _loading = false; });
   }
 
-  Future<void> _start() async {
+  /// "Study more" from the summary: back to this screen, then a fresh draw.
+  Future<void> _studyMore() async {
+    final route = ModalRoute.of(context);
+    Navigator.popUntil(context, (r) => r == route);
+    await _start(studyMore: true);
+  }
+
+  Future<void> _start({bool studyMore = false}) async {
     final settings = ref.read(settingsProvider);
     if (settings.autoProgressionEnabled) {
       final (:result, :updatedSettings) = await autoProgressionService.run(settings: settings);
       if (!mounted) return;
       await ref.read(settingsProvider.notifier).update(updatedSettings);
+    }
+    if (studyMore) {
+      // Not enough words left unreviewed today to fill a fresh session →
+      // introduce the shortfall from the unseen pool instead of repeating.
+      final fresh = await vocabRepo.countRotationNotReviewedToday();
+      await autoProgressionService.introduceBonus(
+          settings: settings, track: 'vocab', count: _count - fresh);
     }
     final words = await vocabRepo.getDuePracticeVocab(sessionLen: _count);
     if (!mounted) return;
@@ -69,6 +83,7 @@ class _VocabPracticeConfigScreenState extends ConsumerState<VocabPracticeConfigS
           multipleChoice: _answerMode == 'mc',
           suppressFurigana: _suppressFurigana,
           reverseMode: _dir == 'en2jp',
+          onStudyMore: _studyMore,
         )));
       },
     )));

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../repositories/progress_repository.dart';
 import '../repositories/sentence_repository.dart';
 import '../services/auto_progression_service.dart';
 import '../services/preferences_service.dart';
@@ -44,7 +45,14 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
     });
   }
 
-  Future<void> _startSession() async {
+  /// "Study more" from the summary: back to this screen, then a fresh draw.
+  Future<void> _studyMore() async {
+    final route = ModalRoute.of(context);
+    Navigator.popUntil(context, (r) => r == route);
+    await _startSession(studyMore: true);
+  }
+
+  Future<void> _startSession({bool studyMore = false}) async {
     if (_loading) return;
     setState(() => _loading = true);
     final settings = ref.read(settingsProvider);
@@ -52,6 +60,13 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
       final (:result, :updatedSettings) = await autoProgressionService.run(settings: settings);
       if (!mounted) return;
       await ref.read(settingsProvider.notifier).update(updatedSettings);
+    }
+    if (studyMore) {
+      // Not enough kanji left unreviewed today to fill a fresh session →
+      // introduce the shortfall from the unseen pool instead of repeating.
+      final fresh = await progressRepo.countRotationNotReviewedToday();
+      await autoProgressionService.introduceBonus(
+          settings: settings, track: 'kanji', count: _count - fresh);
     }
     PreferencesService.save(
       mode: _mode,
@@ -106,6 +121,7 @@ class _TargetPracticeConfigScreenState extends ConsumerState<TargetPracticeConfi
           multipleChoice: _multipleChoice,
           targetOnly: true,
           fixedKanjiIds: kanjiList.map((k) => k.id).toList(),
+          onStudyMore: _studyMore,
         )));
       },
     )));

@@ -10,6 +10,8 @@ import '../theme.dart';
 import '../widgets/quiz_header.dart';
 import 'test_result_screen.dart';
 import '../utils/app_route.dart';
+import '../widgets/swipe_up_detector.dart';
+import '../widgets/entry_sheet.dart';
 
 class TestSessionScreen extends ConsumerStatefulWidget {
   final List<Kanji> allTargets;
@@ -79,6 +81,7 @@ class _TestSessionScreenState extends ConsumerState<TestSessionScreen> {
     if (_showingFeedback) return;
     final q = _current;
     final isCorrect = option == _correctReading(q);
+    progressRepo.logAnswer(track: 'kanji', correct: isCorrect); // daily goal
     final char = q.character;
     final (correct, total) = _kanjiScores[char] ?? (0, 0);
     _kanjiScores[char] = (correct + (isCorrect ? 1 : 0), total + 1);
@@ -188,7 +191,7 @@ class _TestSessionScreenState extends ConsumerState<TestSessionScreen> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 4),
-                                  Text('Tap anywhere to continue',
+                                  Text(continueHint,
                                       style: TextStyle(fontSize: 13, color: AppColors.muted),
                                       textAlign: TextAlign.center),
                                 ],
@@ -205,9 +208,9 @@ class _TestSessionScreenState extends ConsumerState<TestSessionScreen> {
         ),
         if (_showingFeedback)
           Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
+            child: SwipeUpDetector(
               onTap: _handleNext,
+              onSwipeUp: () => showKanjiEntryById(context, _current.kanjiId),
             ),
           ),
       ]),

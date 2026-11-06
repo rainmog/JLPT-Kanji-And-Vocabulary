@@ -3,6 +3,7 @@ from pathlib import Path
 from validate_database import validate_all
 from tag_kanji import TAG_RULES
 from fix_compound_readings import main as repair_readings
+from fix_reading_mismatches import main as repair_mismatches
 
 BASE = Path(__file__).parent
 
@@ -470,6 +471,19 @@ if __name__ == '__main__':
         print("\nChecking sentence readings...")
         if repair_readings(dry_run=True):
             print("\nERROR: sentences_v2.json has unrepaired readings. Run:\n"
+                  "  python3 tools/fix_compound_readings.py\n"
+                  "then re-run build_db.py.", file=sys.stderr)
+            sys.exit(1)
+        # Wrong (not just truncated) compound readings, checked against JMdict.
+        try:
+            mismatches_pending = repair_mismatches(dry_run=True)
+        except SystemExit:
+            mismatches_pending = False
+            print("WARNING: JMdict_e.gz not found — skipped the reading-mismatch check.",
+                  file=sys.stderr)
+        if mismatches_pending:
+            print("\nERROR: sentences_v2.json has wrong compound readings. Run:\n"
+                  "  python3 tools/fix_reading_mismatches.py\n"
                   "  python3 tools/fix_compound_readings.py\n"
                   "then re-run build_db.py.", file=sys.stderr)
             sys.exit(1)

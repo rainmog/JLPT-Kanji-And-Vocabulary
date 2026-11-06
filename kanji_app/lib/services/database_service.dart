@@ -16,7 +16,10 @@ class DatabaseService {
   // v11: sentence readings repaired (tools/fix_compound_readings.py) — 41
   //      truncated compound readings fixed (会議 "ぎ"→"かいぎ"), 540
   //      furigana-misaligned sentences dropped.
-  static const int _assetDbVersion = 11;
+  // v12: wrong compound readings fixed against JMdict (tools/fix_reading_mismatches.py)
+  //      — ~450 words (不足 ぶそく→ふそく, 暫定 ぎん→ざんてい …), junk glued onto
+  //      readings stripped, ~85 sentences with corrupted furigana dropped.
+  static const int _assetDbVersion = 12;
   static const String _prefDbVersion = 'db_asset_version';
 
   // Every table that holds USER data (not shipped content). These are saved
@@ -30,7 +33,11 @@ class DatabaseService {
     'kana_progress',
     'session_log',
     'test_history',
+    'answer_log',          // every answered question (daily goal ring)
   ];
+
+  /// Test-only view of [_userTables].
+  static List<String> get userTablesForTest => _userTables;
 
   static Future<Database>? _initFuture;
 
@@ -153,6 +160,17 @@ class DatabaseService {
       'CREATE INDEX IF NOT EXISTS idx_test_history_timestamp ON test_history(timestamp DESC)',
     );
     await db.execute('''
+      CREATE TABLE IF NOT EXISTS answer_log (
+        id        INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp INTEGER NOT NULL,
+        track     TEXT,
+        correct   INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_answer_log_timestamp ON answer_log(timestamp)',
+    );
+    await db.execute('''
       CREATE TABLE IF NOT EXISTS kana_progress (
         kana_id INTEGER PRIMARY KEY REFERENCES kana(id),
         status TEXT NOT NULL DEFAULT 'unlearned',
@@ -250,6 +268,9 @@ class DatabaseService {
       WHERE status = 'target'
     ''', [today]);
   }
+
+  /// Test-only: run the schema migrations on an already-open database.
+  Future<void> runMigrationsForTest(Database db) => _runMigrations(db);
 
   /// Test-only: route all [query]/[execute]/[insert] calls at an already-open
   /// database (e.g. an in-memory ffi db built with the SRS schema), bypassing

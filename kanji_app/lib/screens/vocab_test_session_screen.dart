@@ -9,6 +9,8 @@ import '../theme_provider.dart';
 import '../widgets/quiz_header.dart';
 import '../utils/app_route.dart';
 import 'vocab_test_result_screen.dart';
+import '../widgets/swipe_up_detector.dart';
+import '../widgets/entry_sheet.dart';
 
 sealed class VocabTestQuestion {
   final VocabWord word;
@@ -77,12 +79,8 @@ class _VocabTestSessionScreenState extends ConsumerState<VocabTestSessionScreen>
       final meaningOpts = [word.meanings, ...meaningDistractors.map((d) => d.meanings)]..shuffle();
       qs.add(WordToMeaningQuestion(word, meaningOpts));
 
-      final readingDistractors = await vocabRepo.getDistractors(
-        jlptLevel: word.jlptLevel,
-        count: 3,
-        excludeIds: [word.id],
-      );
-      final readingOpts = [word.reading, ...readingDistractors.map((d) => d.reading)]..shuffle();
+      final readingDistractors = await vocabRepo.getReadingDistractors(word);
+      final readingOpts = [word.reading, ...readingDistractors]..shuffle();
       qs.add(MeaningToWordQuestion(word, readingOpts));
     }
     qs.shuffle();
@@ -126,6 +124,7 @@ class _VocabTestSessionScreenState extends ConsumerState<VocabTestSessionScreen>
         isWordToMeaning = false;
     }
 
+    progressRepo.logAnswer(track: 'vocab', correct: isCorrect); // daily goal
     final prev = _scores[q.word.id] ?? (wordToMeaning: null, meaningToWord: null);
     if (!isCorrect) {
       _scores[q.word.id] = (wordToMeaning: false, meaningToWord: false);
@@ -311,7 +310,7 @@ class _VocabTestSessionScreenState extends ConsumerState<VocabTestSessionScreen>
                   height: 36,
                   child: _showingFeedback
                       ? Center(
-                          child: Text('Tap anywhere to continue',
+                          child: Text(continueHint,
                               style: TextStyle(fontSize: 13, color: colors.muted)),
                         )
                       : null,
@@ -322,11 +321,14 @@ class _VocabTestSessionScreenState extends ConsumerState<VocabTestSessionScreen>
           ),
           if (_showingFeedback)
             Positioned.fill(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
+              child: SwipeUpDetector(
                 onTap: () {
                   _autoNextTimer?.cancel();
                   _next();
+                },
+                onSwipeUp: () {
+                  _autoNextTimer?.cancel();
+                  showVocabEntryById(context, _questions[_currentIndex].word.id);
                 },
               ),
             ),

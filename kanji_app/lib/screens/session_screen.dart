@@ -13,6 +13,8 @@ import '../services/sound_service.dart';
 import '../utils/app_route.dart';
 import '../utils/srs_scheduler.dart';
 import '../widgets/practice_delta_badge.dart';
+import '../widgets/swipe_up_detector.dart';
+import '../widgets/entry_sheet.dart';
 
 final _learnedKanjiProvider = FutureProvider.autoDispose<Set<String>>((ref) {
   return progressRepo.getLearnedKanjiCharacters();
@@ -29,6 +31,7 @@ class SessionScreen extends ConsumerStatefulWidget {
   final bool targetOnly;
   final bool reviewOnly;
   final List<int>? fixedKanjiIds;
+  final Future<void> Function()? onStudyMore;
 
   const SessionScreen({
     super.key,
@@ -42,6 +45,7 @@ class SessionScreen extends ConsumerStatefulWidget {
     this.targetOnly = false,
     this.reviewOnly = false,
     this.fixedKanjiIds,
+    this.onStudyMore,
   });
 
   bool get forceFurigana => jlptLevels.length == 1 && jlptLevels.first == 5;
@@ -249,13 +253,17 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
             // Tap-to-advance early (silent)
             if (_showingFeedback)
               Positioned.fill(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
+                child: SwipeUpDetector(
                   onTap: () {
                     _autoNextTimer?.cancel();
                     _handleNext(context,
                       ref.read(quizControllerProvider.notifier),
                       ref.read(quizControllerProvider));
+                  },
+                  onSwipeUp: () async {
+                    _autoNextTimer?.cancel();
+                    final id = ref.read(quizControllerProvider.notifier).currentQuestion?.kanjiId;
+                    if (id != null) await showKanjiEntryById(context, id);
                   },
                 ),
               ),
@@ -340,7 +348,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
           if (_showingFeedback) ...[
             const SizedBox(height: 8),
             Text(
-              'Tap anywhere to continue',
+              continueHint,
               style: TextStyle(fontSize: 13, color: AppColors.muted),
               textAlign: TextAlign.center,
             ),
@@ -525,7 +533,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
         Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(
-            'Tap anywhere to continue',
+            continueHint,
             style: TextStyle(fontSize: 13, color: AppColors.muted),
             textAlign: TextAlign.center,
           ),
@@ -814,6 +822,7 @@ class _SessionScreenState extends ConsumerState<SessionScreen> {
               .toList(),
           practiceCounts: practiceCounts,
           practiceProgress: practiceProgress,
+          onStudyMore: widget.onStudyMore,
         )),
       );
       return;

@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:math';
 import '../services/database_service.dart';
 import '../models/quiz_models.dart';
+import '../utils/kanji_distractors.dart';
 import '../utils/learning_constants.dart';
+import '../utils/reading_distractors.dart';
 import '../utils/reading_guard.dart';
 import '../utils/spaced_shuffle.dart';
 import 'kanji_repository.dart';
@@ -57,8 +60,7 @@ class SentenceRepository {
 
   SentenceRepository({DatabaseService? dbService}) : db = dbService ?? _dbService;
 
-  static const _fallbackMeanings = ['peace', 'safety', 'inexpensive', 'valuable'];
-  static const _fallbackReadings = ['かいぎ', 'せいかつ', 'りょこう', 'しごと', 'べんきょう', 'でんわ', 'じかん', 'にほん'];
+  final Random _rng = Random();
 
   static bool _hasKanji(String text) =>
       text.codeUnits.any((c) => c >= 0x4E00 && c <= 0x9FFF);
@@ -215,15 +217,7 @@ class SentenceRepository {
     return j >= 0 ? reading.substring(0, j + 1) : reading;
   }
 
-  static String _readingLabel(String? on, String? kun) {
-    final onStr = (on ?? '').split('・')[0].trim();
-    // strip okurigana suffix (e.g. "たべ.る" → "たべ")
-    final kunStr = (kun ?? '').split('・')[0].split('.')[0].trim();
-    if (onStr.isNotEmpty && kunStr.isNotEmpty) return '$onStr・$kunStr';
-    if (onStr.isNotEmpty) return onStr;
-    if (kunStr.isNotEmpty) return kunStr;
-    return '';
-  }
+  static String _readingLabel(String? on, String? kun) => kanjiReadingLabel(on, kun);
 
   /// Maps JLPT level (DB value) to max difficulty for test questions.
   /// N4=4→2, N3=3→3, N2=2→5, N1=1→7. Falls back to 3 for unknown levels.
@@ -243,30 +237,7 @@ class SentenceRepository {
   Future<List<SentenceQuestion>> buildTestQuestions({
     required List<Kanji> targetKanji,
   }) async {
-    // Build wrong-reading pool from compound tokens
-    final wrongRows = await db.query('''
-      SELECT DISTINCT s.text_structured FROM sentences s
-      JOIN kanji k ON k.id = s.kanji_id
-      ORDER BY RANDOM() LIMIT 120
-    ''');
-    final wrongPool = <String>[];
-    final seenWrong = <String>{};
-    for (final row in wrongRows) {
-      try {
-        final tokens = jsonDecode(row['text_structured'] as String) as List;
-        for (final t in tokens) {
-          final token = t as Map<String, dynamic>;
-          final surface = token['surface'] as String? ?? '';
-          final reading = token['reading'] as String? ?? '';
-          if (token['kanji_char'] != null && surface.length > 1 && reading.isNotEmpty) {
-            final h = _toHiragana(reading);
-            if (!seenWrong.contains(h)) { seenWrong.add(h); wrongPool.add(h); }
-          }
-        }
-      } catch (_) {}
-      if (wrongPool.length >= 60) break;
-    }
-    wrongPool.shuffle();
+    final readingPool = await loadWordReadingPool(db);
 
     final allQuestions = <SentenceQuestion>[];
 
@@ -288,7 +259,6 @@ class SentenceRepository {
         ''', [kanji.id]);
       }
 
-      int wrongIdx = 0;
       for (final row in sentenceRows) {
         try {
           final tokens = (jsonDecode(row['text_structured'] as String) as List)
@@ -311,19 +281,6 @@ class SentenceRepository {
               hint: (!isTarget && _hasKanji(t.surface)) ? _toHiragana(t.reading) : null,
             );
           }).toList();
-
-          // MC options: correct + 3 wrong compound readings
-          final seenOpts = <String>{correctReading};
-          final wrong = <String>[];
-          while (wrong.length < 3 && wrongIdx < wrongPool.length) {
-            final r = wrongPool[wrongIdx++];
-            if (!seenOpts.contains(r)) { seenOpts.add(r); wrong.add(r); }
-          }
-          for (var fi = 0; wrong.length < 3; fi++) {
-            final f = _fallbackReadings[fi % _fallbackReadings.length];
-            if (!seenOpts.contains(f)) { wrong.add(f); seenOpts.add(f); }
-          }
-          final mcOptions = [correctReading, ...wrong]..shuffle();
 
           // Find targetWord for over-merged compound tokens
           String? targetWord;
@@ -350,6 +307,18 @@ class SentenceRepository {
               }
             }
           }
+
+          // MC options: correct + 3 wrong readings shaped like the target word
+          // (same okurigana), drawn fresh per question.
+          final optionWord = targetWord ??
+              questionTokens
+                  .firstWhere((qt) => qt.isTarget, orElse: () => (surface: kanji.character, reading: '', isTarget: true, hint: null))
+                  .surface;
+          final mcOptions = [
+            correctReading,
+            ...pickReadingDistractors(
+                word: optionWord, reading: correctReading, pool: readingPool, rng: _rng),
+          ]..shuffle(_rng);
 
           allQuestions.add(SentenceQuestion(
             kanjiId: kanji.id,
@@ -379,56 +348,10 @@ class SentenceRepository {
   }) async {
     if (targetKanji.isEmpty) return [];
 
-    // Wrong pool for compound readings
-    final wrongCompoundRows = await db.query('''
-      SELECT DISTINCT s.text_structured FROM sentences s
-      ORDER BY RANDOM() LIMIT 120
-    ''');
-    final compoundWrongPool = <String>[];
-    final seenCompound = <String>{};
-    for (final row in wrongCompoundRows) {
-      try {
-        final tokens = jsonDecode(row['text_structured'] as String) as List;
-        for (final t in tokens) {
-          final token = t as Map<String, dynamic>;
-          final surface = token['surface'] as String? ?? '';
-          final reading = token['reading'] as String? ?? '';
-          if (token['kanji_char'] != null && surface.length > 1 && reading.isNotEmpty) {
-            final h = _toHiragana(reading);
-            if (!seenCompound.contains(h)) { seenCompound.add(h); compoundWrongPool.add(h); }
-          }
-        }
-      } catch (_) {}
-      if (compoundWrongPool.length >= 60) break;
-    }
-    compoundWrongPool.shuffle();
-
-    final ids = targetKanji.map((k) => k.id).toList();
-    final idPlaceholders = List.filled(ids.length, '?').join(',');
-
-    // Wrong pools for on/kun reading and meaning
-    final wrongReadingRows = await db.query(
-      'SELECT DISTINCT on_reading, kun_reading FROM kanji WHERE id NOT IN ($idPlaceholders) ORDER BY RANDOM() LIMIT 60',
-      ids,
-    );
-    final kanjiWrongLabels = wrongReadingRows
-        .map((r) => _readingLabel(r['on_reading'] as String?, r['kun_reading'] as String?))
-        .where((r) => r.isNotEmpty)
-        .toList();
-
-    final wrongMeanRows = await db.query(
-      'SELECT DISTINCT meaning FROM kanji WHERE id NOT IN ($idPlaceholders) ORDER BY RANDOM() LIMIT 60',
-      ids,
-    );
-    final kanjiWrongMeanings = wrongMeanRows
-        .map((r) => ((r['meaning'] as String? ?? '').split(',')[0]).trim())
-        .where((m) => m.isNotEmpty)
-        .toList();
+    final readingPool = await loadWordReadingPool(db);
+    final kanjiPool = await loadKanjiChoicePool(db);
 
     final allQuestions = <QuizQuestion>[];
-    int compoundWrongIdx = 0;
-    int readingWrongIdx = 0;
-    int meaningWrongIdx = 0;
     final vocabCache = <String, String>{};
     final usuallyKanaWords = await _getUsuallyKanaWords();
     final seenCompoundWords = <String>{}; // a compound appears at most once per test
@@ -472,16 +395,8 @@ class SentenceRepository {
 
           final wm = await _vocabMeaning(word, vocabCache);
           if (wm.isEmpty) continue; // skip tokenizer artifacts with no known meaning
-          final seen = <String>{correctReading};
-          final wrong = <String>[];
-          while (wrong.length < 3 && compoundWrongIdx < compoundWrongPool.length) {
-            final r = compoundWrongPool[compoundWrongIdx++];
-            if (!seen.contains(r)) { seen.add(r); wrong.add(r); }
-          }
-          for (var fi = 0; wrong.length < 3; fi++) {
-            final f = _fallbackReadings[fi % _fallbackReadings.length];
-            if (!seen.contains(f)) { wrong.add(f); seen.add(f); }
-          }
+          final wrong = pickReadingDistractors(
+              word: word, reading: correctReading, pool: readingPool, rng: _rng);
 
           allQuestions.add(WordQuestion(
             kanjiId: kanji.id,
@@ -490,7 +405,7 @@ class SentenceRepository {
             word: word,
             correctReading: correctReading,
             sentenceContext: row['text_kanji'] as String,
-            mcOptions: [correctReading, ...wrong]..shuffle(),
+            mcOptions: [correctReading, ...wrong]..shuffle(_rng),
             englishTranslation: row['english_translation'] as String? ?? '',
             wordMeaning: wm,
           ));
@@ -504,34 +419,17 @@ class SentenceRepository {
       final correctLabel = _readingLabel(kanji.onReading, kanji.kunReading);
       final meaning = kanji.meaning.split(',')[0];
 
-      final seenR = <String>{correctLabel};
-      final wrongReadings = <String>[];
-      while (wrongReadings.length < 3 && readingWrongIdx < kanjiWrongLabels.length) {
-        final r = kanjiWrongLabels[readingWrongIdx++];
-        if (!seenR.contains(r)) { seenR.add(r); wrongReadings.add(r); }
-      }
-      for (var fi = 0; wrongReadings.length < 3; fi++) {
-        final f = _fallbackReadings[fi % _fallbackReadings.length];
-        if (!seenR.contains(f)) { wrongReadings.add(f); seenR.add(f); }
-      }
-
-      final seenMeaning = <String>{meaning};
-      final wrongMeanings = <String>[];
-      while (wrongMeanings.length < 3 && meaningWrongIdx < kanjiWrongMeanings.length) {
-        final m = kanjiWrongMeanings[meaningWrongIdx++];
-        if (!seenMeaning.contains(m)) { seenMeaning.add(m); wrongMeanings.add(m); }
-      }
-      for (var fi = 0; wrongMeanings.length < 3; fi++) {
-        final f = _fallbackMeanings[fi % _fallbackMeanings.length];
-        if (!seenMeaning.contains(f)) { wrongMeanings.add(f); seenMeaning.add(f); }
-      }
+      final wrongReadings = pickKanjiReadingDistractors(
+          correct: correctLabel, level: kanji.jlptLevel, pool: kanjiPool, rng: _rng);
+      final wrongMeanings = pickKanjiMeaningDistractors(
+          correct: meaning, level: kanji.jlptLevel, pool: kanjiPool, rng: _rng);
 
       allQuestions.add(KanjiQuestion(
         kanjiId: kanji.id,
         character: kanji.character,
         meaning: kanji.meaning,
-        readingOptions: [correctLabel, ...wrongReadings]..shuffle(),
-        meaningOptions: [meaning, ...wrongMeanings]..shuffle(),
+        readingOptions: [correctLabel, ...wrongReadings]..shuffle(_rng),
+        meaningOptions: [meaning, ...wrongMeanings]..shuffle(_rng),
         correctReading: correctLabel,
         correctMeaning: meaning,
       ));
@@ -597,42 +495,9 @@ class SentenceRepository {
       ''', args);
     }
 
-    // Fetch wrong-reading pool upfront (both on + kun)
-    final List<Map<String, dynamic>> wrongReadingRows;
-    final List<Map<String, dynamic>> wrongMeaningRows;
-    if (kanjiIds != null && kanjiIds.isNotEmpty) {
-      wrongReadingRows = await db.query(
-        'SELECT DISTINCT on_reading, kun_reading FROM kanji WHERE id NOT IN (${List.filled(rows.length, '?').join(',')}) ORDER BY RANDOM() LIMIT 60',
-        rows.map((r) => r['id'] as int).toList(),
-      );
-      wrongMeaningRows = await db.query(
-        'SELECT DISTINCT meaning FROM kanji WHERE id NOT IN (${List.filled(rows.length, '?').join(',')}) ORDER BY RANDOM() LIMIT 60',
-        rows.map((r) => r['id'] as int).toList(),
-      );
-    } else {
-      final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
-      wrongReadingRows = await db.query(
-        'SELECT DISTINCT on_reading, kun_reading FROM kanji WHERE id NOT IN (${List.filled(rows.length, '?').join(',')}) AND jlpt_level IN ($levelPlaceholders) ORDER BY RANDOM() LIMIT 60',
-        [...rows.map((r) => r['id'] as int), ...jlptLevels],
-      );
-      wrongMeaningRows = await db.query(
-        'SELECT DISTINCT meaning FROM kanji WHERE id NOT IN (${List.filled(rows.length, '?').join(',')}) AND jlpt_level IN ($levelPlaceholders) ORDER BY RANDOM() LIMIT 60',
-        [...rows.map((r) => r['id'] as int), ...jlptLevels],
-      );
-    }
-    final allWrongLabels = wrongReadingRows
-      .map((r) => _readingLabel(r['on_reading'] as String?, r['kun_reading'] as String?))
-      .where((r) => r.isNotEmpty)
-      .toList();
-
-    final allWrongMeanings = wrongMeaningRows
-        .map((r) => ((r['meaning'] as String? ?? '').split(',')[0]).trim())
-        .where((m) => m.isNotEmpty)
-        .toList();
+    final kanjiPool = await loadKanjiChoicePool(db);
 
     final questions = <KanjiQuestion>[];
-    var wrongIdx = 0;
-    var meaningIdx = 0;
     for (final row in rows) {
       final id = row['id'] as int;
       final char = row['character'] as String;
@@ -640,32 +505,17 @@ class SentenceRepository {
       final correctLabel = _readingLabel(
         row['on_reading'] as String?, row['kun_reading'] as String?);
 
-      // Gather 3 wrong readings — skip any that duplicate correctLabel
-      final seen = <String>{correctLabel};
-      final wrongReadings = <String>[];
-      while (wrongReadings.length < 3 && wrongIdx < allWrongLabels.length) {
-        final r = allWrongLabels[wrongIdx++];
-        if (!seen.contains(r)) { seen.add(r); wrongReadings.add(r); }
-      }
-      // Fallback if pool exhausted
-      for (var fi = 0; wrongReadings.length < 3; fi++) {
-        final f = _fallbackReadings[fi % _fallbackReadings.length];
-        if (!seen.contains(f)) { wrongReadings.add(f); seen.add(f); }
-      }
-
-      final readingOptions = [correctLabel, ...wrongReadings]..shuffle();
-
-      final seenM = <String>{meaning};
-      final wrongMeanings = <String>[];
-      while (wrongMeanings.length < 3 && meaningIdx < allWrongMeanings.length) {
-        final m = allWrongMeanings[meaningIdx++];
-        if (!seenM.contains(m)) { seenM.add(m); wrongMeanings.add(m); }
-      }
-      for (var fi = 0; wrongMeanings.length < 3; fi++) {
-        final f = _fallbackMeanings[fi % _fallbackMeanings.length];
-        if (!seenM.contains(f)) { wrongMeanings.add(f); seenM.add(f); }
-      }
-      final meaningOptions = [meaning, ...wrongMeanings]..shuffle();
+      final level = row['jlpt_level'] as int? ?? 0;
+      final readingOptions = [
+        correctLabel,
+        ...pickKanjiReadingDistractors(
+            correct: correctLabel, level: level, pool: kanjiPool, rng: _rng),
+      ]..shuffle(_rng);
+      final meaningOptions = [
+        meaning,
+        ...pickKanjiMeaningDistractors(
+            correct: meaning, level: level, pool: kanjiPool, rng: _rng),
+      ]..shuffle(_rng);
 
       questions.add(KanjiQuestion(
         kanjiId: id,
@@ -735,50 +585,11 @@ class SentenceRepository {
       ''', args);
     }
 
-    // Wrong-reading pool for MC — use other compound word readings, not on/kun labels
-    List<String> wrongPool = [];
-    if (multipleChoice) {
-      final List<Map<String, dynamic>> wrongRows;
-      if (kanjiIds != null && kanjiIds.isNotEmpty) {
-        wrongRows = await db.query(
-          '''SELECT DISTINCT s.text_structured
-             FROM sentences s
-             ORDER BY RANDOM() LIMIT 120''',
-          [],
-        );
-      } else {
-        final levelPlaceholders = List.filled(jlptLevels.length, '?').join(',');
-        wrongRows = await db.query(
-          '''SELECT DISTINCT s.text_structured
-             FROM sentences s
-             JOIN kanji k ON k.id = s.kanji_id
-             WHERE k.jlpt_level IN ($levelPlaceholders)
-             ORDER BY RANDOM() LIMIT 120''',
-          jlptLevels,
-        );
-      }
-      final seen = <String>{};
-      for (final row in wrongRows) {
-        try {
-          final tokens = jsonDecode(row['text_structured'] as String) as List;
-          for (final t in tokens) {
-            final token = t as Map<String, dynamic>;
-            final surface = token['surface'] as String? ?? '';
-            final reading = token['reading'] as String? ?? '';
-            final kanjiChar = token['kanji_char'];
-            if (kanjiChar != null && surface.length > 1 && reading.isNotEmpty) {
-              final h = _toHiragana(reading);
-              if (!seen.contains(h)) { seen.add(h); wrongPool.add(h); }
-            }
-          }
-        } catch (_) {}
-        if (wrongPool.length >= 60) break;
-      }
-      wrongPool.shuffle();
-    }
+    // MC wrong answers come from the shared word-reading pool, sampled fresh
+    // per question with matching okurigana (see pickReadingDistractors).
+    final readingPool = multipleChoice ? await loadWordReadingPool(db) : const <WordReading>[];
 
     final questions = <WordQuestion>[];
-    var wrongIdx = 0;
     final vocabCache = <String, String>{};
     final usuallyKanaWords = await _getUsuallyKanaWords();
     final seenWords = <String>{}; // a compound appears at most once per session
@@ -813,17 +624,9 @@ class SentenceRepository {
 
         List<String> mcOptions = [];
         if (multipleChoice) {
-          final seen = <String>{correctReading};
-          final wrong = <String>[];
-          while (wrong.length < 3 && wrongIdx < wrongPool.length) {
-            final r = wrongPool[wrongIdx++];
-            if (!seen.contains(r)) { seen.add(r); wrong.add(r); }
-          }
-          for (var fi = 0; wrong.length < 3; fi++) {
-            final f = _fallbackReadings[fi % _fallbackReadings.length];
-            if (!seen.contains(f)) { wrong.add(f); seen.add(f); }
-          }
-          mcOptions = [correctReading, ...wrong]..shuffle();
+          final wrong = pickReadingDistractors(
+              word: word, reading: correctReading, pool: readingPool, rng: _rng);
+          mcOptions = [correctReading, ...wrong]..shuffle(_rng);
         }
 
         questions.add(WordQuestion(
@@ -900,6 +703,7 @@ class SentenceRepository {
         LIMIT ?
       ''', args);
     }
+    final readingPool = multipleChoice ? await loadWordReadingPool(db) : const <WordReading>[];
     final questions = <SentenceQuestion>[];
 
     for (final row in rows) {
@@ -959,8 +763,14 @@ class SentenceRepository {
 
         var mcOptions = <String>[];
         if (multipleChoice) {
-          mcOptions.addAll([correctReading, 'きれい', 'たのしい', 'さむい']);
-          mcOptions.shuffle();
+          final optionWord = targetWord ??
+              tokens.firstWhere((t) => t.isTarget,
+                  orElse: () => (surface: char, reading: '', isTarget: true, hint: null)).surface;
+          mcOptions = [
+            correctReading,
+            ...pickReadingDistractors(
+                word: optionWord, reading: correctReading, pool: readingPool, rng: _rng),
+          ]..shuffle(_rng);
         }
 
         questions.add(SentenceQuestion(
@@ -1023,7 +833,8 @@ class SentenceRepository {
     // One pick pass: ordered per [orderBy] above, excluding [exclude], capped at
     // [limit].
     Future<List<Kanji>> pass(
-        String statusClause, List<dynamic> extra, List<int> exclude, int limit) async {
+        String statusClause, List<dynamic> extra, List<int> exclude, int limit,
+        {String? order, List<dynamic> orderArgs = const []}) async {
       if (limit <= 0) return const [];
       final notIn = exclude.isEmpty
           ? ''
@@ -1037,9 +848,9 @@ class SentenceRepository {
         WHERE k.jlpt_level IN ($levelPlaceholders)
           $statusClause
           $notIn
-        $orderBy
+        ${order ?? orderBy}
         LIMIT ?
-      ''', [...tagArgs, ...jlptLevels, ...extra, ...exclude, limit]);
+      ''', [...tagArgs, ...jlptLevels, ...extra, ...exclude, ...orderArgs, limit]);
       return rows.map(Kanji.fromMap).toList();
     }
 
@@ -1062,12 +873,20 @@ class SentenceRepository {
       take(await pass(primaryStatus, primaryArgs, picked.toList(), count - result.length));
     }
     // Stage 3 (practice only): not enough due — top up with in-rotation items
-    // that aren't due yet, soonest first, so the session keeps its length.
-    // Reviewing these a little early trades a bit of spacing for consistency.
+    // that aren't due yet so the session keeps its length. Items already
+    // reviewed today come last (and the previous session's items before that
+    // is relaxed), so "Study more" hands out a fresh set instead of cycling the
+    // words that were just practiced; soonest-due first within each group.
     if (targetOnly && result.length < count) {
-      take(await pass(
-          "AND p.status != 'learned' AND p.srs_box >= 1 AND p.srs_due > ?",
-          [today], picked.toList(), count - result.length));
+      const notDue = "AND p.status != 'learned' AND p.srs_box >= 1 AND p.srs_due > ?";
+      const freshFirst =
+          "ORDER BY (p.srs_last_review = ?) ASC, p.srs_due ASC, COALESCE(p.last_practiced_at, 0) ASC, RANDOM()";
+      take(await pass(notDue, [today], [...picked, ...lastSession], count - result.length,
+          order: freshFirst, orderArgs: [today]));
+      if (result.length < count) {
+        take(await pass(notDue, [today], picked.toList(), count - result.length,
+            order: freshFirst, orderArgs: [today]));
+      }
     }
 
     return result;

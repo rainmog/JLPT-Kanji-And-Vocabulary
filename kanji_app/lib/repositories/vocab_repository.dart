@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:math';
 import '../services/database_service.dart';
 import '../utils/learning_constants.dart';
+import '../utils/reading_distractors.dart';
 import '../utils/srs_scheduler.dart';
 
 class VocabWord {
@@ -153,6 +155,19 @@ class VocabRepository {
     return rows.map(VocabWord.fromMap).toList();
   }
 
+  final Random _rng = Random();
+
+  /// Three wrong readings for [word], shaped so the options can't be told
+  /// apart by their endings: a word that ends in hiragana (喜び) gets options
+  /// ending in the same kana (たび, おび …). Katakana words get katakana
+  /// options so the style never gives the answer away either.
+  Future<List<String>> getReadingDistractors(VocabWord word, {int count = 3}) async {
+    final pool = await loadWordReadingPool(dbService);
+    final picked = pickReadingDistractors(
+        word: word.word, reading: word.reading, pool: pool, rng: _rng, count: count);
+    return isAllKatakana(word.reading) ? picked.map(toKatakana).toList() : picked;
+  }
+
   Future<void> markLearned(int vocabId) async {
     final now = DateTime.now().millisecondsSinceEpoch;
     await dbService.execute(
@@ -267,14 +282,27 @@ class VocabRepository {
   /// not learned, ordered by due date. Due words (srs_due <= today, most
   /// overdue first) come first; if they don't fill the session, it's topped
   /// up with not-yet-due words, soonest first, so sessions keep their length.
-  /// New items are introduced separately by the daily introducer, not here.
+  /// Words already reviewed today sort last, so back-to-back sessions rotate
+  /// instead of cycling the same words. New items are introduced separately by
+  /// the daily introducer, not here.
   Future<List<VocabWord>> getDuePracticeVocab({required int sessionLen}) async {
     final rows = await dbService.query('''
       SELECT v.* FROM vocabulary v JOIN vocabulary_progress p ON v.id=p.vocab_id
       WHERE p.srs_box >= 1 AND p.learned_at IS NULL
-      ORDER BY p.srs_due ASC, v.id ASC LIMIT ?
-    ''', [sessionLen]);
+      ORDER BY (p.srs_last_review = ?) ASC, p.srs_due ASC, RANDOM() LIMIT ?
+    ''', [practiceDayKey(), sessionLen]);
     return rows.map(VocabWord.fromMap).toList();
+  }
+
+  /// In-rotation words not yet reviewed today — the pool a fresh "Study more"
+  /// session can draw from without repeating what was just practiced.
+  Future<int> countRotationNotReviewedToday() async {
+    final rows = await dbService.query('''
+      SELECT COUNT(*) AS cnt FROM vocabulary_progress
+      WHERE srs_box >= 1 AND learned_at IS NULL
+        AND (srs_last_review IS NULL OR srs_last_review != ?)
+    ''', [practiceDayKey()]);
+    return (rows.first['cnt'] as int?) ?? 0;
   }
 
   Future<Map<int, ({int learned, int total})>> getProgressByLevel() async {

@@ -12,6 +12,8 @@ class SessionSummaryScreen extends ConsumerStatefulWidget {
   // Practice-mode learning progress: each item's display char/word, whether it
   // reached 'learned' this session, and how many more correct answers remain.
   final List<({String display, bool learned, int percent})> practiceProgress;
+  // Starts a fresh session (new draw from the learning set). Null → plain pop.
+  final Future<void> Function()? onStudyMore;
 
   const SessionSummaryScreen({
     super.key,
@@ -20,6 +22,7 @@ class SessionSummaryScreen extends ConsumerStatefulWidget {
     required this.learnedChars,
     this.practiceCounts = const [],
     this.practiceProgress = const [],
+    this.onStudyMore,
   });
 
   @override
@@ -336,11 +339,12 @@ class _SessionSummaryScreenState extends ConsumerState<SessionSummaryScreen>
                       ),
                     ),
                   ),
+                  const SizedBox(height: 12),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: widget.onStudyMore ?? () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.muted,
                         side: BorderSide(color: AppColors.pillBg, width: 1.5),

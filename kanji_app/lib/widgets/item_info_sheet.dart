@@ -49,12 +49,14 @@ class KanjiInfoContent extends StatelessWidget {
         const SizedBox(height: 16),
         if (kanji.onReading.isNotEmpty) _infoRow('On', kanji.onReading),
         if (kanji.kunReading.isNotEmpty) _infoRow('Kun', kanji.kunReading),
+        if (kanji.strokeCount > 0) _infoRow('Strokes', '${kanji.strokeCount}'),
         const SizedBox(height: 4),
         Text(
           kanji.meaning,
           style: TextStyle(fontSize: 16, color: AppColors.fg, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 20),
+        _CommonWords(kanjiChar: kanji.character),
         Text(
           'Example Sentences',
           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700,
@@ -63,7 +65,8 @@ class KanjiInfoContent extends StatelessWidget {
         const SizedBox(height: 10),
         FutureBuilder<List<Map<String, dynamic>>>(
           future: dbService.query(
-            'SELECT text_kanji, english_translation FROM sentences WHERE kanji_id=? ORDER BY RANDOM() LIMIT 5',
+            'SELECT text_kanji, english_translation FROM sentences WHERE kanji_id=? '
+            'ORDER BY CASE WHEN difficulty <= 5 THEN 0 ELSE 1 END, RANDOM() LIMIT 4',
             [kanji.id],
           ),
           builder: (context, snapshot) {
@@ -183,10 +186,7 @@ class VocabInfoContent extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         FutureBuilder<List<Map<String, dynamic>>>(
-          future: dbService.query(
-            'SELECT text_kanji, english_translation FROM sentences WHERE text_kanji LIKE ? ORDER BY RANDOM() LIMIT 5',
-            ['%${word.word}%'],
-          ),
+          future: sentencesContaining(word.word),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -334,6 +334,77 @@ Widget _sentenceCard(String japanese, String english) => Padding(
       Text(english, style: TextStyle(fontSize: 13, color: AppColors.muted)),
     ]),
   ),
+);
+
+// ── Shared queries & small widgets ────────────────────────────────────────────
+
+/// Example sentences that use [word] as a whole token (not just as a substring
+/// of some longer word), easiest first. Falls back to a plain substring match
+/// for words the tokenizer never split out.
+Future<List<Map<String, dynamic>>> sentencesContaining(String word, {int limit = 4}) async {
+  final exact = await dbService.query(
+    'SELECT text_kanji, english_translation FROM sentences '
+    'WHERE text_structured LIKE ? '
+    'ORDER BY CASE WHEN difficulty <= 5 THEN 0 ELSE 1 END, RANDOM() LIMIT ?',
+    ['%"surface": "$word"%', limit],
+  );
+  if (exact.isNotEmpty || word.runes.length < 2) return exact;
+  return dbService.query(
+    'SELECT text_kanji, english_translation FROM sentences WHERE text_kanji LIKE ? '
+    'ORDER BY RANDOM() LIMIT ?',
+    ['%$word%', limit],
+  );
+}
+
+/// "Common words" using a kanji: a short dictionary-style list.
+class _CommonWords extends StatelessWidget {
+  final String kanjiChar;
+  const _CommonWords({required this.kanjiChar});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: dbService.query(
+        'SELECT word, reading, meanings FROM vocabulary WHERE word LIKE ? AND word != ? '
+        'ORDER BY jlpt_level DESC, id ASC LIMIT 6',
+        ['%$kanjiChar%', kanjiChar],
+      ),
+      builder: (context, snapshot) {
+        final rows = snapshot.data ?? const [];
+        if (rows.isEmpty) return const SizedBox.shrink();
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('Common Words',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700,
+                  color: AppColors.muted, letterSpacing: 0.4)),
+          const SizedBox(height: 10),
+          for (final r in rows) _wordRow(
+            r['word'] as String, r['reading'] as String, r['meanings'] as String? ?? ''),
+          const SizedBox(height: 14),
+        ]);
+      },
+    );
+  }
+}
+
+Widget _wordRow(String word, String reading, String meaning) => Padding(
+  padding: const EdgeInsets.only(bottom: 8),
+  child: Row(crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic, children: [
+    Text(word, style: TextStyle(
+      fontSize: 18, color: AppColors.kanjiColor, fontWeight: FontWeight.w600,
+      fontFamily: AppFonts.japaneseFont, fontFamilyFallback: AppFonts.japaneseFallback,
+    )),
+    const SizedBox(width: 8),
+    Text(reading, style: TextStyle(
+      fontSize: 13, color: AppColors.muted,
+      fontFamily: AppFonts.japaneseFont, fontFamilyFallback: AppFonts.japaneseFallback,
+    )),
+    const SizedBox(width: 10),
+    Expanded(child: Text(
+      meaning.split(RegExp(r'[;,]')).first.trim(),
+      style: TextStyle(fontSize: 13, color: AppColors.fg),
+      maxLines: 1, overflow: TextOverflow.ellipsis,
+    )),
+  ]),
 );
 
 // ── Show helpers ──────────────────────────────────────────────────────────────

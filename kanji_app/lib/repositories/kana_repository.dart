@@ -271,11 +271,13 @@ class KanaRepository {
   /// length. Optionally filtered by type.
   Future<List<KanaCharacter>> getDuePracticeKana({required int sessionLen, String? type}) async {
     final typeClause = type != null ? 'AND k.type = ?' : '';
-    final args = <dynamic>[if (type != null) type, sessionLen];
+    final args = <dynamic>[if (type != null) type, practiceDayKey(), sessionLen];
+    // Characters already reviewed today sort last, so back-to-back sessions
+    // rotate instead of cycling the same ones.
     final rows = await dbService.query('''
       SELECT k.*, p.status FROM kana k JOIN kana_progress p ON k.id=p.kana_id
       WHERE p.srs_box >= 1 AND p.status != 'learned' $typeClause
-      ORDER BY p.srs_due ASC, k.id ASC LIMIT ?
+      ORDER BY (p.srs_last_review = ?) ASC, p.srs_due ASC, RANDOM() LIMIT ?
     ''', args);
     return rows.map(KanaCharacter.fromRow).toList();
   }

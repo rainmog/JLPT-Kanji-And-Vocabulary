@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show ValueNotifier;
 import '../services/database_service.dart';
 import '../utils/learning_constants.dart';
 import '../utils/srs_scheduler.dart';
@@ -192,14 +193,44 @@ class ProgressRepository {
     return rows.first['cnt'] as int? ?? 0;
   }
 
-  Future<int> getTodaySessionCount() async {
+  /// Bumped after every logged answer so the home screen's goal ring can
+  /// refresh while it sits underneath a running session.
+  final ValueNotifier<int> answerTick = ValueNotifier<int>(0);
+
+  /// Records one answered question (right or wrong) toward today's goal.
+  /// Fire-and-forget safe: a failed write never interrupts a quiz.
+  /// [track] ∈ kanji | vocab | kana | speed.
+  Future<void> logAnswer({required String track, required bool correct}) async {
+    try {
+      await dbService.insert('answer_log', {
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+        'track': track,
+        'correct': correct ? 1 : 0,
+      });
+      answerTick.value++;
+    } catch (_) {}
+  }
+
+  /// Questions answered today (correct or not) across every quiz mode.
+  Future<int> getTodayAnswerCount() async {
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
     final rows = await dbService.query(
-      'SELECT SUM(COALESCE(question_count, 1)) as cnt FROM session_log WHERE timestamp >= ?',
+      'SELECT COUNT(*) as cnt FROM answer_log WHERE timestamp >= ?',
       [midnight],
     );
     return rows.first['cnt'] as int? ?? 0;
+  }
+
+  /// In-rotation kanji not yet reviewed today — the pool a fresh "Study more"
+  /// session can draw from without repeating what was just practiced.
+  Future<int> countRotationNotReviewedToday() async {
+    final rows = await dbService.query('''
+      SELECT COUNT(*) AS cnt FROM user_progress
+      WHERE status != 'learned' AND srs_box >= 1
+        AND (srs_last_review IS NULL OR srs_last_review != ?)
+    ''', [practiceDayKey()]);
+    return (rows.first['cnt'] as int?) ?? 0;
   }
 
   /// Kanji ids of the most recent kanji-practice session (any kanji mode).

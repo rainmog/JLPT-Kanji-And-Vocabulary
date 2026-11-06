@@ -6,9 +6,15 @@
 /// must never be used as a quiz answer.
 bool isPlausibleWordReading(String surface, String reading) {
   if (reading.isEmpty) return false;
+  // A reading is kana only. Stray punctuation or latin letters ("うつくしい。",
+  // "ぶngaku") mean the source row is corrupt.
+  if (!reading.runes.every(_isKana)) return false;
   final kanjiCount = surface.runes.where(_isKanji).length;
   return reading.runes.length >= kanjiCount;
 }
 
 bool _isKanji(int code) =>
     (code >= 0x4E00 && code <= 0x9FFF) || code == 0x3005; // 々
+
+bool _isKana(int c) =>
+    (c >= 0x3041 && c <= 0x3096) || (c >= 0x30A1 && c <= 0x30FC);

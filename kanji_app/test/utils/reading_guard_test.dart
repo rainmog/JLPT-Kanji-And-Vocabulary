@@ -31,4 +31,12 @@ void main() {
       expect(isPlausibleWordReading('人々', 'ひ'), isFalse);
     });
   });
+
+  test('rejects readings with punctuation, latin letters or kanji in them', () {
+    expect(isPlausibleWordReading('美しい', 'うつくしい。'), isFalse);
+    expect(isPlausibleWordReading('文学', 'ぶngaku'), isFalse);
+    expect(isPlausibleWordReading('騙し取る', 'だまし取る'), isFalse);
+    expect(isPlausibleWordReading('文学', 'ぶんがく'), isTrue);
+    expect(isPlausibleWordReading('煙草', 'タバコ'), isTrue);
+  });
 }

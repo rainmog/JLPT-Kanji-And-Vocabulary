@@ -161,6 +161,7 @@ class QuizController extends Notifier<QuizState> {
     if (state.session.questions.isEmpty) return;
 
     final q = state.session.questions[state.currentIndex];
+    progressRepo.logAnswer(track: 'kanji', correct: isCorrect); // daily goal
     _persistAnswer(q.kanjiId, isCorrect); // fire-and-forget
 
     final updatedSession = state.session.copyWith(

@@ -2,6 +2,8 @@
 
 Testing pass on **1.0.6+15** (uploaded to Play 2026-10-23). Report findings next session.
 
+**Uncommitted bug-fix batch (asset DB v12; bump pubspec to +16 before the next release build)**: reading repair round 2, okurigana-matched distractors, kanji on/kun + meaning distractors from the full deck, Study More fresh draw, "CURRENT TARGETS" live per-answer counter (`answer_log`), swipe-up dictionary sheet after every answer. Verify on device: swipe-up works in kanji/vocab/kana/test/speed-read sessions; Study More draws new items.
+
 - **Verify in real use**: (a) every practice session shows the selected count — kanji (all modes), vocab, kana; (b) word-practice answers are full-word readings (会議 → かいぎ, not ぎ); (c) SRS progression feels right — items return on the 1/2/4/9/21-day ladder, learned items leave rotation, new items arrive daily (defaults 15 kanji / 30 vocab per day).
 - **Tune if needed**: new-items-per-day = Settings → auto-progression quotas. Sessions top up with not-yet-due items to reach the count; if items feel over-reviewed, consider topping up with new items first instead.
 - **Small cleanups (non-blocking)**: delete dead `getNextUntargetedVocab` (`vocab_repository.dart`) and unused `_fetchVocabMeanings` (`sentence_repository.dart`, analyzer warning); rename the `backfill*ForTest` helpers in `database_service.dart` (production methods with test names); prune old `srs_new_<track>_<day>` prefs keys; `lib_backup_redesign/` is analyzer noise — delete it or exclude it in `analysis_options.yaml`.

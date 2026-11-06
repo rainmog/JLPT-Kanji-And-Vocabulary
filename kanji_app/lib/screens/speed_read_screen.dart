@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../repositories/progress_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/speed_read_question.dart';
 import '../services/sound_service.dart';
@@ -11,6 +12,8 @@ import '../widgets/falling_blocks_overlay.dart';
 import '../widgets/sakura_overlay.dart';
 import '../widgets/snow_overlay.dart';
 import '../widgets/space_age_overlay.dart';
+import '../widgets/swipe_up_detector.dart';
+import '../widgets/entry_sheet.dart';
 
 enum _Phase { showing, answering, feedback, ready, done }
 
@@ -93,6 +96,7 @@ class _SpeedReadScreenState extends ConsumerState<SpeedReadScreen> {
   void _onAnswer(String answer) {
     if (_phase != _Phase.answering) return;
     final isCorrect = answer == _current.correct;
+    progressRepo.logAnswer(track: 'speed', correct: isCorrect); // daily goal
     if (isCorrect) {
       _correct++;
       soundService.playCorrect();
@@ -235,6 +239,13 @@ class _SpeedReadScreenState extends ConsumerState<SpeedReadScreen> {
                     : GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: _phase == _Phase.feedback ? _advanceFromFeedback : null,
+                        onVerticalDragEnd: _phase == _Phase.feedback
+                            ? (d) {
+                                if ((d.primaryVelocity ?? 0) < -250) {
+                                  showEntryForDisplay(context, _current.display, _current.correct);
+                                }
+                              }
+                            : null,
                         child: _GameBody(
                           question: _current,
                           phase: _phase,
@@ -287,7 +298,7 @@ class _GameBody extends StatelessWidget {
               ),
             _Phase.feedback => Center(
                 child: Text(
-                  'Tap to continue',
+                  continueHint,
                   style: TextStyle(color: AppColors.muted, fontSize: 13),
                 ),
               ),
@@ -515,7 +526,7 @@ class _FeedbackCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Tap to continue',
+              continueHint,
               style: TextStyle(
                 color: AppColors.muted.withValues(alpha: 0.5),
                 fontSize: 12,

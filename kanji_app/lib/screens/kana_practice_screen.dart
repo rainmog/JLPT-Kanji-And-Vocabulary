@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../repositories/progress_repository.dart';
 import '../repositories/kana_repository.dart';
 import '../services/settings_service.dart';
 import '../services/sound_service.dart';
@@ -11,6 +12,8 @@ import '../utils/srs_scheduler.dart';
 import '../utils/app_route.dart';
 import '../widgets/scale_on_press.dart';
 import '../widgets/practice_delta_badge.dart';
+import '../widgets/swipe_up_detector.dart';
+import '../widgets/entry_sheet.dart';
 
 enum KanaQuizType {
   kanaToRomajiMC,
@@ -294,6 +297,7 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
   }
 
   void _onResult(bool correct) {
+    progressRepo.logAnswer(track: 'kana', correct: correct); // daily goal
     _lastCorrect = correct;
     _lastPractice = null;
     if (correct) {
@@ -488,11 +492,19 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
           // Tap-to-advance overlay (invisible, early-advance mechanism)
           if (_showingFeedback)
             Positioned.fill(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
+              child: SwipeUpDetector(
                 onTap: () {
                   _autoNextTimer?.cancel();
                   _next();
+                },
+                onSwipeUp: () {
+                  _autoNextTimer?.cancel();
+                  final c = _current.char, w = _current.word;
+                  if (c != null) {
+                    showKanaEntry(context, c);
+                  } else if (w != null) {
+                    showKanaWordSheet(context, w);
+                  }
                 },
               ),
             ),
@@ -594,7 +606,7 @@ class _KanaPracticeScreenState extends ConsumerState<KanaPracticeScreen>
               opacity: _showingFeedback ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 150),
               child: Text(
-                'Tap anywhere to continue',
+                continueHint,
                 style: TextStyle(fontSize: 13, color: AppColors.muted),
                 textAlign: TextAlign.center,
               ),
