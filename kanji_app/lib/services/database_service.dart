@@ -19,7 +19,8 @@ class DatabaseService {
   // v12: wrong compound readings fixed against JMdict (tools/fix_reading_mismatches.py)
   //      — ~450 words (不足 ぶそく→ふそく, 暫定 ぎん→ざんてい …), junk glued onto
   //      readings stripped, ~85 sentences with corrupted furigana dropped.
-  static const int _assetDbVersion = 12;
+  // v13: N3/N2/N1 JLPT questions scaled up (145→305, 109→258, 67→205).
+  static const int _assetDbVersion = 13;
   static const String _prefDbVersion = 'db_asset_version';
 
   // Every table that holds USER data (not shipped content). These are saved
