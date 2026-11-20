@@ -1984,9 +1984,13 @@
     "option_3": "12日と19日",
     "option_4": "19日",
     "correct_option": 4,
-    "question_stem_display": "ロンさんは{友達|ともだち}と3{人|にん}で{旅行|りょこう}に{行|い}きたいです。3{人|にん}がみんな{空|あ}いている{日|ひ}で{予約|よやく}ができるのはいつですか。ソニアさんは5{日|にち}、12{日|にち}、19{日|にち}。チョウさんは12{日|にち}、13{日|にち}、19{日|にち}、20{日|にち}。ロンさんは5{日|にち}、12{日|にち}、13{日|にち}、19{日|にち}が{空|あ}いています。",
+    "question_stem_display": "ロンさんは{友達|ともだち}と3{人|にん}で{旅行|りょこう}に{行|い}きたいです。3{人|にん}がみんな{空|あ}いている{日|ひ}で{予約|よやく}ができるのはいつですか。ソニアさんは{5日|いつか}、12{日|にち}、19{日|にち}。チョウさんは12{日|にち}、13{日|にち}、19{日|にち}、{20日|はつか}。ロンさんは{5日|いつか}、12{日|にち}、13{日|にち}、19{日|にち}が{空|あ}いています。",
     "question_translation": "Ron-san wants to go on a trip with two friends. On which day can all three of them make a reservation when they're all free? Sonia-san is free on the 5th, 12th, and 19th. Chou-san is free on the 12th, 13th, 19th, and 20th. Ron-san is free on the 5th, 12th, 13th, and 19th.",
-    "passage_translation": "One-Day Trip to Midori Island in August\nWouldn't you like to enjoy the beautiful sea at Midori Island? There are lots of cute fish too!\n<Schedule>\nOutbound: Nishida Station or Imanaka Station (8:00) → Imanaka Port (9:00) → Midori Island (10:00)\nReturn: Midori Island (15:00) → Imanaka Port (16:00) → Nishida Station or Imanaka Station (17:00)\nYou can choose your departure station from Nishida Station or Imanaka Station.\n<Fees>\nNishida Station   Adult 12,000 yen   Child 6,000 yen\nImanaka Station   Adult 10,000 yen   Child 5,000 yen\n※Adult: High school students and older\n※Child: Elementary and middle school students (Children not yet in elementary school are free)\n<Reservations>\n8/5 (Sat) ◎ Available   8/6 (Sun) ×Not available   8/12 (Sat) ×Not available\n8/13 (Sun) △ Filling up soon   8/19 (Sat) ◎ Available\n8/20 (Sun) ◎ Available   8/26 (Sat) ×Not available   8/27 (Sun) ◎ Available\nYuuki Travel"
+    "passage_translation": "One-Day Trip to Midori Island in August\nWouldn't you like to enjoy the beautiful sea at Midori Island? There are lots of cute fish too!\n<Schedule>\nOutbound: Nishida Station or Imanaka Station (8:00) → Imanaka Port (9:00) → Midori Island (10:00)\nReturn: Midori Island (15:00) → Imanaka Port (16:00) → Nishida Station or Imanaka Station (17:00)\nYou can choose your departure station from Nishida Station or Imanaka Station.\n<Fees>\nNishida Station   Adult 12,000 yen   Child 6,000 yen\nImanaka Station   Adult 10,000 yen   Child 5,000 yen\n※Adult: High school students and older\n※Child: Elementary and middle school students (Children not yet in elementary school are free)\n<Reservations>\n8/5 (Sat) ◎ Available   8/6 (Sun) ×Not available   8/12 (Sat) ×Not available\n8/13 (Sun) △ Filling up soon   8/19 (Sat) ◎ Available\n8/20 (Sun) ◎ Available   8/26 (Sat) ×Not available   8/27 (Sun) ◎ Available\nYuuki Travel",
+    "option_1_display": "{5日|いつか}と{13日|じゅうさんにち}と{19日|じゅうくにち}",
+    "option_2_display": "{12日|じゅうににち}",
+    "option_3_display": "{12日|じゅうににち}と{19日|じゅうくにち}",
+    "option_4_display": "{19日|じゅうくにち}"
   },
   {
     "level": 4,
